@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/farming-game-cbr-v2
 
   workflow_dispatch:
 
@@ -57,3 +56,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
