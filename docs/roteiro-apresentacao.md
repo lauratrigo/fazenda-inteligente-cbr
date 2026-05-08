@@ -1,37 +1,37 @@
 ﻿# Roteiro de Apresentação
 
-## 1. Introdução ao problema
+## 1. O problema
 
-"Nosso projeto simula uma fazenda inteligente. O jogador informa a situação da plantação, como clima, solo, folhas, pragas e crescimento. A partir disso, a IA recomenda uma ação para cuidar melhor da planta."
+"Queríamos demonstrar Raciocínio Baseado em Casos de uma forma prática, visual e jogável. Em vez de criar apenas um formulário de recomendação, transformamos o projeto em um jogo de fazendinha."
 
-## 2. O que é CBR
+## 2. A ideia do jogo
 
-"CBR significa Raciocínio Baseado em Casos. A ideia principal é resolver um problema novo comparando com problemas antigos parecidos. O sistema procura uma experiência anterior, reaproveita a solução, adapta quando necessário e salva a nova experiência."
+"O jogador controla um personagem em uma fazenda vista de cima. Ele anda pelo mapa, usa ferramentas, prepara canteiros, planta sementes, rega, aduba, trata pragas e colhe alimentos."
 
-## 3. Como o jogo funciona
+## 3. O que o jogador faz
 
-"Na tela, temos a plantação, os campos para montar uma situação e o Painel CBR. Podemos escolher os atributos manualmente ou gerar uma situação aleatória."
+"O jogador começa com 10 sementes e 0 moedas. Para produzir, precisa preparar o solo com a enxada, plantar, cuidar da umidade, controlar pragas e colher quando a planta estiver pronta."
 
-## 4. Demonstração do caso atual
+## 4. Onde está a IA
 
-"Este é o caso atual. Ele representa o estado da plantação agora. O caso possui clima, solo, folhas, pragas e crescimento."
+"A IA aparece dentro do jogo como o Assistente CBR, representado por um espantalho inteligente. Ela não domina a tela. Ela ajuda o jogador quando ele pressiona Q perto de um canteiro."
 
-## 5. Demonstração do caso recuperado
+## 5. Como o CBR funciona no jogo
 
-"Ao clicar em Analisar com CBR, o sistema compara o caso atual com a base de casos. O caso mais parecido aparece no painel, junto com a solução usada anteriormente."
+"Quando pedimos uma recomendação, o assistente monta o caso atual do canteiro. Esse caso possui clima, solo, umidade, pragas, crescimento, saúde e estágio da planta."
 
-## 6. Explicação da similaridade
+## 6. Demonstração prática
 
-"A similaridade é calculada por pontos. Clima igual vale 20, solo igual vale 25, folhas iguais vale 25, pragas iguais vale 20 e crescimento igual vale 10. A soma máxima é 100%, então o resultado aparece como porcentagem."
+"Agora vamos aproximar o personagem de um canteiro com problema. Pressionamos Q. O assistente recupera um caso parecido da base, mostra a similaridade e recomenda uma ação. Por exemplo, se o solo estiver seco e a planta murcha, ele recomenda regar."
 
-## 7. Explicação do ciclo CBR
+## 7. Retrieve, Reuse, Revise e Retain
 
-"No Retrieve, o sistema recupera o caso mais parecido. No Reuse, reaproveita a solução. No Revise, adapta a recomendação com regras simples. No Retain, salva o novo caso depois que a ação é aplicada."
+"No Retrieve, o sistema recupera o caso mais parecido. No Reuse, reaproveita a ação usada anteriormente. No Revise, adapta a ação com regras fortes, como priorizar tratar pragas altas ou colher planta pronta. No Retain, salva o novo caso depois que o jogador age e passa o dia."
 
-## 8. Aprendizado ao salvar novos casos
+## 8. Como a base aprende
 
-"Quando aplicamos a ação recomendada, o sistema gera um resultado e salva o novo caso no LocalStorage. Isso mostra como o sistema aprende novas experiências para usar no futuro."
+"Depois que usamos uma ferramenta e avançamos para o próximo dia, o jogo avalia se a ação melhorou, melhorou parcialmente, piorou, não teve efeito ou gerou colheita. Esse novo caso é salvo no LocalStorage e passa a fazer parte da memória do assistente."
 
 ## 9. Conclusão
 
-"O projeto demonstra uma aplicação simples de Inteligência Artificial simbólica. Ele não usa machine learning complexo. A inteligência está na comparação com casos anteriores e nas regras de adaptação da solução."
+"O projeto mostra uma aplicação de IA simbólica baseada em conhecimento. O sistema não usa machine learning complexo. Ele usa comparação entre casos, regras de adaptação e armazenamento de novas experiências para melhorar as próximas recomendações."

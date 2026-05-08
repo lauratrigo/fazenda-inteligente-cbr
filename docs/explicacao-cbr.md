@@ -1,86 +1,95 @@
-﻿# Explicação do CBR
+﻿# Explicação do CBR no jogo
 
-## O que é CBR
+## O que é Raciocínio Baseado em Casos
 
-CBR significa Raciocínio Baseado em Casos, do inglês Case-Based Reasoning. É uma abordagem de Inteligência Artificial em que o sistema resolve um problema novo usando experiências anteriores parecidas.
+Raciocínio Baseado em Casos, ou CBR, é uma abordagem de Inteligência Artificial em que um problema novo é resolvido a partir de experiências anteriores semelhantes.
 
-Em vez de treinar um modelo estatístico complexo, o sistema consulta uma memória de casos. Cada caso descreve um problema, a solução aplicada e o resultado obtido.
+A ideia central é: se o sistema já viu uma situação parecida antes, ele pode reaproveitar a solução que funcionou e adaptá-la ao novo contexto.
 
-## Como funciona a base de casos
+## Como o jogo representa um caso
 
-No projeto Fazenda Inteligente CBR, a base de casos funciona como a memória da fazenda. Ela contém situações antigas da plantação, como:
+Em Fazendinha CBR, cada caso representa uma situação agrícola de um canteiro. Um caso descreve o estado do ambiente e da planta:
 
 - clima;
-- condição do solo;
-- aparência das folhas;
+- tipo de solo;
+- umidade;
 - nível de pragas;
-- nível de crescimento;
-- solução aplicada;
+- crescimento;
+- saúde da planta;
+- estágio da planta;
+- ação aplicada;
 - resultado observado;
-- explicação do caso.
+- explicação.
 
-A aplicação começa com 10 casos prontos e também salva novos casos no LocalStorage do navegador quando o jogador aplica uma ação recomendada.
+Exemplo de caso:
 
-## O que é similaridade
+```json
+{
+  "clima": "seco",
+  "solo": "seco",
+  "umidade": "baixa",
+  "pragas": "nenhuma",
+  "crescimento": "broto",
+  "saude": "murcha",
+  "estagioPlanta": "crescendo",
+  "acaoAplicada": "regar",
+  "resultado": "melhorou"
+}
+```
 
-Similaridade é a medida de quanto o caso atual se parece com um caso antigo.
+## Como o assistente recupera casos semelhantes
 
-O projeto calcula a pontuação assim:
+Quando o jogador pressiona `Q` perto de um canteiro, o Assistente CBR cria um caso atual com os dados daquele canteiro e do clima do dia.
 
-- clima igual: +20 pontos;
-- solo igual: +25 pontos;
-- folhas iguais: +25 pontos;
-- pragas iguais: +20 pontos;
-- crescimento igual: +10 pontos.
+Depois, o sistema compara o caso atual com todos os casos da base. A similaridade é calculada por pontos:
 
-A soma máxima é 100 pontos. Por isso, a pontuação final é exibida como porcentagem.
+- clima igual: +10;
+- solo igual: +20;
+- umidade igual: +15;
+- pragas iguais: +20;
+- crescimento igual: +10;
+- saúde igual: +15;
+- estágio da planta igual: +10.
 
-Exemplo: se clima, solo e pragas forem iguais, a similaridade será 20 + 25 + 20 = 65%.
+O caso com maior pontuação é recuperado. Em caso de empate, o sistema prefere o caso com melhor resultado anterior.
 
-## Como o projeto usa Retrieve, Reuse, Revise e Retain
+## Como reutiliza uma solução
 
-### Retrieve
+Depois de recuperar o caso mais parecido, o assistente reutiliza a ação aplicada no caso antigo. Essa ação pode ser, por exemplo, regar, adubar, tratar pragas, plantar, colher ou esperar.
 
-O sistema compara o caso atual com todos os casos da base e recupera o caso mais parecido.
+Essa etapa corresponde ao Reuse do ciclo CBR.
 
-Se houver empate na pontuação, o sistema escolhe o caso com melhor resultado anterior. A ordem de preferência é:
+## Como adapta a solução
 
-1. melhorou;
-2. melhorou parcialmente;
-3. não resolveu.
+A solução antiga nem sempre é perfeita para o novo contexto. Por isso, o jogo aplica regras de revisão:
 
-### Reuse
+- canteiro vazio: preparar solo;
+- solo preparado: plantar;
+- planta pronta: colher;
+- pragas altas: tratar pragas;
+- solo seco ou baixa umidade: regar;
+- solo pobre e planta amarelada: adubar;
+- solo encharcado: evitar regar.
 
-Depois de recuperar o caso mais parecido, o sistema reaproveita a solução daquele caso. Por exemplo, se o caso antigo recomendava irrigar, essa solução é usada como ponto de partida.
+Essa adaptação corresponde ao Revise.
 
-### Revise
+## Como salva novas experiências
 
-Na etapa de revisão, o sistema verifica se a solução precisa ser adaptada para a situação atual.
+Quando o jogador usa uma ferramenta em um canteiro, o jogo guarda o caso atual e a ação aplicada. Ao avançar o dia, a plantação cresce, melhora ou piora. O sistema avalia o resultado e salva uma nova experiência no LocalStorage.
 
-As regras usadas são:
+Essa etapa corresponde ao Retain. Com isso, a base de casos aprendidos cresce com o tempo.
 
-- se o solo estiver seco e a solução não for irrigar, sugerir o complemento "verificar irrigação";
-- se as pragas forem altas, priorizar "aplicar controle de pragas";
-- se as folhas estiverem amarelas e o solo estiver pobre em nutrientes, sugerir "adubar";
-- se o solo estiver encharcado, evitar recomendar irrigação.
+## Por que isso é IA simbólica/baseada em conhecimento
 
-### Retain
+O projeto é uma aplicação simples de IA simbólica porque as decisões são feitas com regras explícitas, atributos compreensíveis e comparação entre casos conhecidos.
 
-Quando o jogador aplica a ação recomendada, o sistema gera um resultado simples e salva o novo caso no LocalStorage. Assim, a base de casos passa a ter mais uma experiência para comparações futuras.
-
-## Por que é uma aplicação simples de IA simbólica
-
-O projeto pode ser considerado uma aplicação simples de IA simbólica ou baseada em conhecimento porque usa regras explícitas e comparação entre casos conhecidos.
-
-As decisões são compreensíveis: é possível ver qual caso foi recuperado, qual solução foi reaproveitada, qual adaptação foi feita e por que o novo caso foi salvo.
-
-O sistema não aprende padrões por redes neurais ou estatística avançada. Ele aprende no sentido de armazenar novas experiências e reutilizá-las depois.
+O sistema não usa redes neurais nem machine learning estatístico. Ele raciocina comparando situações agrícolas e reutilizando soluções de experiências anteriores.
 
 ## Limitações do projeto
 
-- A similaridade usa apenas igualdade exata entre atributos.
-- Os pesos foram definidos manualmente.
-- O resultado da ação é simplificado.
-- O sistema não considera tempo, tipo de cultura, estação do ano ou quantidade real de água.
-- O aprendizado depende dos casos salvos no navegador do usuário.
-- O LocalStorage não é uma base de dados compartilhada entre computadores.
+- A similaridade usa comparação exata de atributos.
+- Os pesos de similaridade foram definidos manualmente.
+- A avaliação de resultado é simplificada.
+- O clima é sorteado de forma simples.
+- O LocalStorage salva dados apenas no navegador do jogador.
+- O sistema não considera tipo de cultura, estação do ano ou nutrientes em escala numérica.
