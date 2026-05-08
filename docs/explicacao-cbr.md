@@ -8,7 +8,7 @@ A ideia central é: se o sistema já viu uma situação parecida antes, ele pode
 
 ## Como o jogo representa um caso
 
-Em Fazendinha CBR, cada caso representa uma situação agrícola de um canteiro. Um caso descreve o estado do ambiente e da planta:
+Em Fazendinha CBR, cada caso representa uma situação agrícola de um canteiro. Um caso descreve:
 
 - clima;
 - tipo de solo;
@@ -21,7 +21,7 @@ Em Fazendinha CBR, cada caso representa uma situação agrícola de um canteiro.
 - resultado observado;
 - explicação.
 
-Exemplo de caso:
+Exemplo:
 
 ```json
 {
@@ -39,7 +39,7 @@ Exemplo de caso:
 
 ## Como o assistente recupera casos semelhantes
 
-Quando o jogador pressiona `Q` perto de um canteiro, o Assistente CBR cria um caso atual com os dados daquele canteiro e do clima do dia.
+Quando o jogador pressiona `Q` perto de um canteiro, o `CBRSystem` cria um caso atual com os dados daquele canteiro e do clima do dia.
 
 Depois, o sistema compara o caso atual com todos os casos da base. A similaridade é calculada por pontos:
 
@@ -55,13 +55,13 @@ O caso com maior pontuação é recuperado. Em caso de empate, o sistema prefere
 
 ## Como reutiliza uma solução
 
-Depois de recuperar o caso mais parecido, o assistente reutiliza a ação aplicada no caso antigo. Essa ação pode ser, por exemplo, regar, adubar, tratar pragas, plantar, colher ou esperar.
+Depois de recuperar o caso mais parecido, o assistente reutiliza a ação aplicada no caso antigo. Essa ação pode ser regar, adubar, tratar pragas, plantar, colher ou esperar.
 
 Essa etapa corresponde ao Reuse do ciclo CBR.
 
 ## Como adapta a solução
 
-A solução antiga nem sempre é perfeita para o novo contexto. Por isso, o jogo aplica regras de revisão:
+A solução antiga nem sempre serve diretamente para o novo contexto. Por isso, o jogo aplica regras de revisão:
 
 - canteiro vazio: preparar solo;
 - solo preparado: plantar;
@@ -69,27 +69,28 @@ A solução antiga nem sempre é perfeita para o novo contexto. Por isso, o jogo
 - pragas altas: tratar pragas;
 - solo seco ou baixa umidade: regar;
 - solo pobre e planta amarelada: adubar;
-- solo encharcado: evitar regar.
+- solo encharcado: evitar regar;
+- canteiro já plantado: não recomendar plantar novamente.
 
 Essa adaptação corresponde ao Revise.
 
 ## Como salva novas experiências
 
-Quando o jogador usa uma ferramenta em um canteiro, o jogo guarda o caso atual e a ação aplicada. Ao avançar o dia, a plantação cresce, melhora ou piora. O sistema avalia o resultado e salva uma nova experiência no LocalStorage.
+Quando o jogador usa uma ferramenta em um canteiro, o jogo guarda o caso atual e a ação aplicada. Ao avançar o dia, o `DayNightSystem` atualiza a plantação, e o `CropSystem` avalia se a ação melhorou, piorou, gerou colheita ou não teve efeito.
 
-Essa etapa corresponde ao Retain. Com isso, a base de casos aprendidos cresce com o tempo.
+O `CBRSystem` salva a nova experiência no LocalStorage. Essa etapa corresponde ao Retain.
 
 ## Por que isso é IA simbólica/baseada em conhecimento
 
-O projeto é uma aplicação simples de IA simbólica porque as decisões são feitas com regras explícitas, atributos compreensíveis e comparação entre casos conhecidos.
+O projeto é uma aplicação simples de IA simbólica porque usa regras explícitas, atributos compreensíveis e comparação entre casos conhecidos.
 
-O sistema não usa redes neurais nem machine learning estatístico. Ele raciocina comparando situações agrícolas e reutilizando soluções de experiências anteriores.
+O sistema não usa redes neurais nem machine learning estatístico. Ele raciocina por comparação, adaptação e armazenamento de experiências.
 
 ## Limitações do projeto
 
 - A similaridade usa comparação exata de atributos.
-- Os pesos de similaridade foram definidos manualmente.
-- A avaliação de resultado é simplificada.
+- Os pesos foram definidos manualmente.
+- A avaliação do resultado é simplificada.
 - O clima é sorteado de forma simples.
 - O LocalStorage salva dados apenas no navegador do jogador.
-- O sistema não considera tipo de cultura, estação do ano ou nutrientes em escala numérica.
+- O sistema ainda não considera tipos diferentes de cultura ou estações do ano.

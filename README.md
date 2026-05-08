@@ -1,20 +1,56 @@
 ﻿# Fazendinha CBR
 
-Fazendinha CBR é um jogo 2D top-down de fazenda feito com HTML5, CSS3, JavaScript puro e Canvas 2D. O jogador anda pelo mapa, prepara canteiros, planta sementes, rega, aduba, trata pragas, colhe alimentos e recebe recomendações de um assistente agrícola baseado em Raciocínio Baseado em Casos.
+Fazendinha CBR é um jogo 2D top-down de fazenda feito com Vite, TypeScript e Phaser 3. O jogador anda pelo mapa, prepara canteiros, planta sementes, rega, aduba, trata pragas, colhe alimentos e recebe recomendações de um assistente agrícola baseado em Raciocínio Baseado em Casos.
 
 ## Objetivo acadêmico
 
-O objetivo do projeto é demonstrar o paradigma de Raciocínio Baseado em Casos, ou CBR, dentro de uma experiência jogável. A IA não aparece como um formulário principal, mas como uma mecânica de apoio ao jogador durante o cuidado da plantação.
+O objetivo do projeto é demonstrar o paradigma de Raciocínio Baseado em Casos, ou CBR, dentro de uma experiência jogável. A IA não aparece como formulário principal: ela é um sistema interno de gameplay que observa o canteiro e recomenda ações ao jogador.
 
 Disciplina: Inteligência Artificial  
 Tema: Raciocínio Baseado em Casos  
 Autores: _preencher com os nomes do grupo_
 
-## Como executar
+## Como acessar online
 
-Abra o arquivo `index.html` diretamente no navegador.
+O jogo publicado no GitHub Pages ficará disponível em:
 
-O projeto não precisa de servidor, backend, instalação de dependências ou frameworks.
+https://soturine.github.io/fazenda-inteligente-cbr/
+
+## Como executar localmente
+
+Instale as dependências e rode o servidor de desenvolvimento:
+
+```bash
+npm install
+npm run dev
+```
+
+Para gerar a versão de produção:
+
+```bash
+npm run build
+npm run preview
+```
+
+## Deploy no GitHub Pages
+
+O projeto usa GitHub Actions para publicar automaticamente no GitHub Pages.
+
+O build é gerado com:
+
+```bash
+npm run build
+```
+
+O Vite gera os arquivos em `dist/`, e o workflow `.github/workflows/deploy.yml` publica esse conteúdo automaticamente no GitHub Pages.
+
+O `vite.config.ts` usa:
+
+```ts
+base: "/fazenda-inteligente-cbr/"
+```
+
+Esse caminho é necessário para que os assets funcionem corretamente no GitHub Pages.
 
 ## Controles
 
@@ -33,7 +69,7 @@ O projeto não precisa de servidor, backend, instalação de dependências ou fr
 
 O jogador começa com 10 sementes, 0 colheitas e 0 moedas.
 
-O mapa possui grama, caminho, casa, árvores, cerca, espantalho inteligente e uma área de plantio. Os canteiros podem passar por estados visuais diferentes:
+O mapa possui grama, caminho, casa, árvores, cerca, espantalho inteligente e uma área de plantio. Os canteiros passam por estados visuais:
 
 - vazio;
 - solo preparado;
@@ -44,36 +80,15 @@ O mapa possui grama, caminho, casa, árvores, cerca, espantalho inteligente e um
 - planta com problema;
 - pronta para colher.
 
-As ferramentas permitem:
+As ferramentas permitem preparar solo, plantar, regar, adubar, tratar pragas e colher plantas prontas. A colheita aumenta as moedas do jogador.
 
-- preparar solo com a enxada;
-- plantar sementes;
-- regar para aumentar a umidade;
-- adubar para recuperar solo pobre;
-- aplicar controle de pragas;
-- colher plantas prontas e ganhar moedas.
-
-O jogo tem sistema de dias e clima. Chuva ajuda a regar, clima seco reduz umidade, clima nublado é mais neutro e sol pode secar o solo aos poucos.
+O jogo também possui sistema de dias e clima. Chuva ajuda a regar, clima seco reduz a umidade, clima nublado é neutro e sol pode secar o solo aos poucos.
 
 ## Como o CBR aparece no gameplay
 
 O CBR é representado pelo Assistente CBR, um espantalho inteligente no mapa e em um painel compacto lateral. Quando o jogador fica perto de um canteiro e pressiona `Q`, o assistente analisa a situação agrícola daquele canteiro.
 
-O caso atual contém:
-
-```json
-{
-  "clima": "seco",
-  "solo": "seco",
-  "umidade": "baixa",
-  "pragas": "nenhuma",
-  "crescimento": "broto",
-  "saude": "murcha",
-  "estagioPlanta": "crescendo"
-}
-```
-
-O assistente compara esse caso com a base de casos e recomenda uma ação como regar, adubar, tratar pragas, plantar, colher ou esperar.
+O caso atual contém clima, solo, umidade, pragas, crescimento, saúde e estágio da planta. O assistente compara esse caso com a base de casos e recomenda ações como regar, adubar, tratar pragas, plantar, colher ou esperar.
 
 ## Ciclo CBR no jogo
 
@@ -87,15 +102,15 @@ A ação aplicada no caso recuperado é usada como solução inicial.
 
 ### Revise
 
-A solução é adaptada por regras fortes do jogo. Por exemplo:
+A solução é adaptada por regras fortes do jogo:
 
-- se o canteiro estiver vazio, recomendar preparar solo;
-- se o solo estiver preparado, recomendar plantar;
-- se a planta estiver pronta, recomendar colher;
-- se houver pragas altas, priorizar tratar pragas;
-- se o solo estiver seco ou a umidade estiver baixa, recomendar regar;
-- se o solo estiver pobre e a planta amarelada, recomendar adubar;
-- se o solo estiver encharcado, evitar regar.
+- canteiro vazio: preparar solo;
+- solo preparado: plantar;
+- planta pronta: colher;
+- pragas altas: tratar pragas;
+- solo seco ou baixa umidade: regar;
+- solo pobre e planta amarelada: adubar;
+- solo encharcado: evitar regar.
 
 ### Retain
 
@@ -115,47 +130,64 @@ A similaridade é calculada por pontos:
 
 A pontuação máxima é 100 pontos. O painel do assistente mostra a porcentagem do caso recuperado de forma discreta.
 
-## Estrutura de arquivos
+## Arquitetura
+
+O projeto foi organizado como um jogo modular em Vite + TypeScript + Phaser 3:
 
 ```text
 .
 ├── index.html
 ├── css/
 │   └── style.css
-├── js/
-│   ├── main.js
-│   ├── game.js
-│   ├── player.js
-│   ├── map.js
-│   ├── crops.js
-│   ├── cbr.js
-│   ├── storage.js
-│   └── ui.js
+├── src/
+│   ├── main.ts
+│   ├── types.ts
+│   ├── scenes/
+│   │   ├── BootScene.ts
+│   │   └── FarmScene.ts
+│   ├── systems/
+│   │   ├── CBRSystem.ts
+│   │   ├── CropSystem.ts
+│   │   ├── DayNightSystem.ts
+│   │   ├── FarmMap.ts
+│   │   ├── InventorySystem.ts
+│   │   ├── PlayerSystem.ts
+│   │   ├── SaveSystem.ts
+│   │   └── WeatherSystem.ts
+│   ├── entities/
+│   │   ├── Assistant.ts
+│   │   ├── CropPlot.ts
+│   │   └── Player.ts
+│   ├── data/
+│   │   ├── gameData.ts
+│   │   └── initialCases.ts
+│   └── ui/
+│       └── UISystem.ts
 ├── docs/
 │   ├── explicacao-cbr.md
 │   └── roteiro-apresentacao.md
+├── .github/workflows/deploy.yml
+├── vite.config.ts
+├── package.json
+├── tsconfig.json
 ├── README.md
 ├── CHANGELOG.md
 └── .gitignore
 ```
 
-## Responsabilidade dos scripts
+## Responsabilidade dos módulos
 
-- `main.js`: inicializa o jogo.
-- `game.js`: controla loop principal, atualização, renderização, input e passagem de dia.
-- `player.js`: movimentação, direção e interação do jogador.
-- `map.js`: mapa, tiles, colisões, decoração e área de plantio.
-- `crops.js`: regras das plantações, ferramentas, crescimento e resultados.
-- `cbr.js`: base de casos, similaridade, Retrieve, Reuse, Revise e Retain.
-- `storage.js`: progresso e casos aprendidos no LocalStorage.
-- `ui.js`: HUD, painel do assistente e mensagens do jogo.
+- `Scenes`: telas do jogo e integração com Phaser.
+- `Systems`: regras de gameplay, CBR, save, inventário, clima e dias.
+- `Entities`: jogador, canteiros e assistente visual.
+- `Data`: casos iniciais, labels, atalhos e constantes.
+- `UI`: HUD e painel compacto do Assistente CBR.
 
 ## Possíveis melhorias futuras
 
 - Adicionar loja de sementes e upgrades de ferramentas.
 - Criar diferentes culturas com tempos de crescimento próprios.
-- Implementar sons e música ambiente.
-- Adicionar missões ou metas por semana.
-- Criar mais animações para o personagem.
+- Adicionar sons e música ambiente.
+- Implementar animações mais ricas para personagem e plantas.
+- Criar metas semanais ou missões.
 - Exportar e importar a base de casos aprendidos.
-- Adicionar tela de vitória ou objetivos acadêmicos guiados.

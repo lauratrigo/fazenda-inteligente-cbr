@@ -1,110 +1,99 @@
-﻿<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fazendinha CBR</title>
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-  <header class="topbar" aria-label="HUD do jogo">
-    <div class="brand">
-      <span class="brand-mark">CBR</span>
-      <div>
-        <p>Fazendinha CBR</p>
-        <strong>Jogo de fazenda com assistente inteligente</strong>
-      </div>
-    </div>
-
-    <div class="hud-strip">
-      <div class="hud-chip"><span>Dia</span><strong id="hudDay">1</strong></div>
-      <div class="hud-chip"><span>Clima</span><strong id="hudWeather">ensolarado</strong></div>
-      <div class="hud-chip"><span>Moedas</span><strong id="hudCoins">0</strong></div>
-      <div class="hud-chip"><span>Sementes</span><strong id="hudSeeds">10</strong></div>
-      <div class="hud-chip"><span>Colheitas</span><strong id="hudHarvests">0</strong></div>
-      <div class="hud-chip tool-chip"><span>Ferramenta</span><strong id="hudTool">enxada</strong></div>
-    </div>
-  </header>
-
-  <main class="game-shell">
-    <section class="playfield" aria-label="Área jogável">
-      <canvas id="gameCanvas" width="768" height="576" aria-label="Mapa top-down da fazendinha"></canvas>
-      <div class="quick-message" id="quickMessage">Use WASD ou setas para andar. Pressione Q perto de um canteiro para pedir ajuda ao Assistente CBR.</div>
-    </section>
-
-    <aside class="side-panel" aria-label="Painéis do jogo">
-      <section class="assistant-panel" id="assistantPanel">
-        <div class="panel-heading">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fazendinha CBR</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div id="app-shell" class="app-shell">
+      <header class="game-hud" aria-label="HUD do jogo">
+        <div class="brand-block">
+          <span class="brand-badge">CBR</span>
           <div>
-            <p>Assistente CBR</p>
-            <h1>Espantalho inteligente</h1>
+            <p>Fazendinha CBR</p>
+            <strong>Fazenda top-down com IA baseada em casos</strong>
           </div>
-          <button id="askCbrButton" type="button" title="Pedir recomendação">Q</button>
         </div>
-        <div class="assistant-speech" id="assistantSpeech">
-          Aproxime-se de um canteiro e pressione Q. Eu comparo a situação com casos antigos e sugiro uma ação.
+
+        <div class="hud-grid">
+          <div class="hud-chip"><span>Dia</span><strong id="hud-day">1</strong></div>
+          <div class="hud-chip"><span>Clima</span><strong id="hud-weather">ensolarado</strong></div>
+          <div class="hud-chip"><span>Moedas</span><strong id="hud-coins">0</strong></div>
+          <div class="hud-chip"><span>Sementes</span><strong id="hud-seeds">10</strong></div>
+          <div class="hud-chip"><span>Colheitas</span><strong id="hud-harvests">0</strong></div>
+          <div class="hud-chip tool-chip"><span>Ferramenta</span><strong id="hud-tool">enxada</strong></div>
         </div>
-        <dl class="assistant-facts">
-          <div><dt>Caso parecido</dt><dd id="cbrSimilarity">--</dd></div>
-          <div><dt>Ação sugerida</dt><dd id="cbrAction">--</dd></div>
-          <div><dt>Ciclo</dt><dd id="cbrCycle">aguardando</dd></div>
-        </dl>
+      </header>
+
+      <main class="game-layout">
+        <section class="game-frame" aria-label="Jogo Phaser">
+          <div id="game-container" class="game-container"></div>
+          <div id="game-message" class="game-message">WASD ou setas movem. E usa ferramenta. Q consulta o Assistente CBR.</div>
+        </section>
+
+        <aside class="side-stack" aria-label="Painéis de jogo">
+          <section class="assistant-panel">
+            <div class="panel-title">
+              <div>
+                <p>Assistente CBR</p>
+                <h1>Espantalho inteligente</h1>
+              </div>
+              <button id="ask-cbr" type="button" title="Pedir recomendação">Q</button>
+            </div>
+            <div id="assistant-text" class="assistant-text">Chegue perto de um canteiro e pressione Q para pedir uma recomendação.</div>
+            <dl class="assistant-stats">
+              <div><dt>Caso parecido</dt><dd id="assistant-similarity">--</dd></div>
+              <div><dt>Ação</dt><dd id="assistant-action">--</dd></div>
+              <div><dt>Ciclo</dt><dd id="assistant-cycle">aguardando</dd></div>
+            </dl>
+          </section>
+
+          <section class="tools-panel">
+            <h2>Ferramentas</h2>
+            <div id="tool-buttons" class="tool-buttons">
+              <button type="button" data-tool="hoe"><kbd>1</kbd><span>Enxada</span></button>
+              <button type="button" data-tool="seed"><kbd>2</kbd><span>Semente</span></button>
+              <button type="button" data-tool="water"><kbd>3</kbd><span>Regador</span></button>
+              <button type="button" data-tool="fertilizer"><kbd>4</kbd><span>Adubo</span></button>
+              <button type="button" data-tool="pesticide"><kbd>5</kbd><span>Pragas</span></button>
+              <button type="button" data-tool="harvest"><kbd>6</kbd><span>Colher</span></button>
+            </div>
+          </section>
+
+          <section class="actions-panel">
+            <button id="next-day" class="primary-button" type="button">Dormir / Próximo dia <kbd>N</kbd></button>
+            <button id="save-game" type="button">Salvar jogo</button>
+            <button id="reset-game" class="danger-button" type="button">Resetar progresso</button>
+          </section>
+
+          <section class="controls-panel">
+            <h2>Controles</h2>
+            <p><kbd>WASD</kbd> ou <kbd>setas</kbd> mover</p>
+            <p><kbd>E</kbd> ou <kbd>Espaço</kbd> usar ferramenta</p>
+            <p><kbd>Q</kbd> consultar CBR</p>
+            <p><kbd>1-6</kbd> trocar ferramenta</p>
+          </section>
+        </aside>
+      </main>
+
+      <section class="learn-panel">
+        <details>
+          <summary>Como o CBR funciona neste jogo</summary>
+          <div>
+            <p>O CBR é um sistema interno de gameplay. O assistente observa o canteiro, recupera casos parecidos, reaproveita uma ação, revisa a recomendação e aprende quando o jogador avança o dia.</p>
+            <ul>
+              <li><strong>Retrieve:</strong> compara o canteiro atual com casos da memória.</li>
+              <li><strong>Reuse:</strong> reaproveita a ação aplicada no caso recuperado.</li>
+              <li><strong>Revise:</strong> adapta por regras agrícolas fortes.</li>
+              <li><strong>Retain:</strong> salva nova experiência no LocalStorage.</li>
+            </ul>
+          </div>
+        </details>
       </section>
+    </div>
 
-      <section class="tool-panel" aria-label="Ferramentas">
-        <h2>Ferramentas</h2>
-        <div class="tool-grid" id="toolGrid">
-          <button type="button" data-tool="hoe"><kbd>1</kbd><span>Enxada</span></button>
-          <button type="button" data-tool="seed"><kbd>2</kbd><span>Semente</span></button>
-          <button type="button" data-tool="water"><kbd>3</kbd><span>Regador</span></button>
-          <button type="button" data-tool="fertilizer"><kbd>4</kbd><span>Adubo</span></button>
-          <button type="button" data-tool="pesticide"><kbd>5</kbd><span>Pragas</span></button>
-          <button type="button" data-tool="harvest"><kbd>6</kbd><span>Colher</span></button>
-        </div>
-      </section>
-
-      <section class="action-panel" aria-label="Ações de jogo">
-        <button class="primary-action" id="nextDayButton" type="button">Dormir / Próximo dia <kbd>N</kbd></button>
-        <button id="saveButton" type="button">Salvar jogo</button>
-        <button id="resetButton" type="button">Resetar progresso</button>
-      </section>
-
-      <section class="controls-panel" aria-label="Controles">
-        <h2>Controles</h2>
-        <p><kbd>WASD</kbd> ou <kbd>setas</kbd> mover</p>
-        <p><kbd>E</kbd> ou <kbd>Espaço</kbd> usar ferramenta</p>
-        <p><kbd>Q</kbd> pedir recomendação CBR</p>
-        <p><kbd>1-6</kbd> trocar ferramenta</p>
-      </section>
-    </aside>
-  </main>
-
-  <section class="learn-panel">
-    <details>
-      <summary>Como o CBR funciona neste jogo</summary>
-      <div class="learn-content">
-        <p>
-          O assistente monta um caso do canteiro mais próximo, compara com experiências antigas,
-          reaproveita a ação de maior sucesso, aplica regras de adaptação e salva novas experiências
-          depois que o jogador usa uma ferramenta e avança o dia.
-        </p>
-        <ul>
-          <li><strong>Retrieve:</strong> recupera o caso agrícola mais parecido.</li>
-          <li><strong>Reuse:</strong> reutiliza a ação aplicada no caso antigo.</li>
-          <li><strong>Revise:</strong> adapta a ação se houver solo seco, pragas altas, solo pobre ou planta pronta.</li>
-          <li><strong>Retain:</strong> salva o novo caso no LocalStorage após a passagem do dia.</li>
-        </ul>
-      </div>
-    </details>
-  </section>
-
-  <script src="js/storage.js"></script>
-  <script src="js/cbr.js"></script>
-  <script src="js/map.js"></script>
-  <script src="js/crops.js"></script>
-  <script src="js/player.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/game.js"></script>
-  <script src="js/main.js"></script>
-</body>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

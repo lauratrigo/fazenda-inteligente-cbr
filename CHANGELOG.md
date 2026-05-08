@@ -1,5 +1,17 @@
 ﻿# Changelog
 
+## [2.1.0] - 2026-05-08
+### Adicionado
+- Migração do jogo para Vite, TypeScript e Phaser 3.
+- Arquitetura modular com Scenes, Systems, Entities, Data e UI.
+- Configuração de deploy automático no GitHub Pages.
+- Workflow GitHub Actions para build e publicação.
+- Base path do Vite ajustado para `/fazenda-inteligente-cbr/`.
+
+### Alterado
+- O jogo passou a usar Phaser como runtime de Canvas/WebGL.
+- A documentação foi atualizada com arquitetura, execução local e deploy.
+
 ## [2.0.0] - 2026-05-08
 ### Adicionado
 - Transformação do projeto de simulador/formulário para jogo 2D de fazendinha.
