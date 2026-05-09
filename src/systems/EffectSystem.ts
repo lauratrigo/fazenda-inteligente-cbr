@@ -65,6 +65,25 @@ export class EffectSystem {
         onComplete: () => dust.destroy(),
       });
     }
+
+    if (weather === "ensolarado" || weather === "nublado" || weather === "chuvoso") {
+      const chance = weather === "ensolarado" ? 0.18 : weather === "nublado" ? 0.34 : 0.28;
+      if (Math.random() < chance) {
+        const leaf = this.scene.add.rectangle(Phaser.Math.Between(-20, this.width), Phaser.Math.Between(40, this.height - 80), 7, 3, weather === "chuvoso" ? 0x4f9143 : 0x8fd460, 0.36)
+          .setDepth(depth.weather)
+          .setAngle(Phaser.Math.Between(-28, 28));
+        this.scene.tweens.add({
+          targets: leaf,
+          x: leaf.x + Phaser.Math.Between(48, 118),
+          y: leaf.y + Phaser.Math.Between(-14, 18),
+          angle: leaf.angle + Phaser.Math.Between(90, 210),
+          alpha: 0,
+          duration: Phaser.Math.Between(1100, 1900),
+          ease: "Sine.easeInOut",
+          onComplete: () => leaf.destroy(),
+        });
+      }
+    }
   }
 
   playStep(x: number, y: number): boolean {
@@ -107,7 +126,7 @@ export class EffectSystem {
     if (tool === "fertilizer") this.playFertilizer(tile);
     if (tool === "pesticide") this.playPesticide(tile);
     if (tool === "harvest") this.playHarvest(tile);
-    if (tool === "fishingRod") this.playFishingCast(tile, false);
+    if (tool === "fishingRod") this.playFishingCatch(tile, false);
   }
 
   highlightTile(tile: Vector2Like, color = 0xffe066, duration = 900): void {
@@ -198,18 +217,69 @@ export class EffectSystem {
   }
 
   playFishingCast(tile: Vector2Like, success: boolean): void {
+    this.playFishingCatch(tile, success);
+  }
+
+  playFishingCastFromPlayer(from: Vector2Like, tile: Vector2Like, success: boolean): void {
     const { x, y } = this.tileCenter(tile);
-    const line = this.scene.add.line(0, 0, x - 18, y - 18, x + 14, y + 10, 0xfff7dc, 0.9).setOrigin(0).setDepth(depth.uiWorld);
+    const line = this.scene.add.line(0, 0, from.x, from.y, x, y, 0xfff7dc, 0.9).setOrigin(0).setDepth(depth.uiWorld);
+    const bobber = this.scene.add.circle(x, y, 4, 0xf4cc58, 1).setDepth(depth.uiWorld);
     this.scene.tweens.add({
       targets: line,
-      alpha: 0,
-      duration: 900,
+      alpha: 0.42,
+      duration: 1300,
       onComplete: () => line.destroy(),
+    });
+    this.scene.tweens.add({
+      targets: bobber,
+      y: y + 3,
+      scale: 0.86,
+      alpha: 0,
+      delay: 1150,
+      duration: 720,
+      onComplete: () => bobber.destroy(),
     });
 
     const splashColor = success ? 0xf4cc58 : 0x9edfff;
+    for (let i = 0; i < 6; i += 1) {
+      this.spawnParticle(x, y, splashColor, Phaser.Math.Between(-14, 14), Phaser.Math.Between(-10, 8), 620, 3, 0.7);
+    }
+  }
+
+  playFishingBubbles(tile: Vector2Like): void {
+    const { x, y } = this.tileCenter(tile);
     for (let i = 0; i < 8; i += 1) {
-      this.spawnParticle(x + 14, y + 10, splashColor, Phaser.Math.Between(-18, 18), Phaser.Math.Between(-18, 6), 700, 4, 0.75);
+      const bubble = this.scene.add.circle(x + Phaser.Math.Between(-26, 24), y + Phaser.Math.Between(4, 20), Phaser.Math.Between(2, 4), 0xeef8ff, 0.58).setDepth(depth.uiWorld);
+      this.scene.tweens.add({
+        targets: bubble,
+        x: x + Phaser.Math.Between(-4, 5),
+        y: y + Phaser.Math.Between(-8, 2),
+        alpha: 0,
+        duration: Phaser.Math.Between(550, 920),
+        onComplete: () => bubble.destroy(),
+      });
+    }
+
+  }
+
+  playFishingNibble(tile: Vector2Like): void {
+    this.highlightTile(tile, 0x9edfff, 500);
+    const { x, y } = this.tileCenter(tile);
+    const ripple = this.scene.add.circle(x, y, 5, 0xeef8ff, 0).setStrokeStyle(2, 0xeef8ff, 0.85).setDepth(depth.uiWorld);
+    this.scene.tweens.add({
+      targets: ripple,
+      scale: 3,
+      alpha: 0,
+      duration: 700,
+      onComplete: () => ripple.destroy(),
+    });
+  }
+
+  playFishingCatch(tile: Vector2Like, success: boolean): void {
+    const { x, y } = this.tileCenter(tile);
+    const splashColor = success ? 0xf4cc58 : 0x9edfff;
+    for (let i = 0; i < 10; i += 1) {
+      this.spawnParticle(x, y, splashColor, Phaser.Math.Between(-18, 18), Phaser.Math.Between(-18, 6), 700, 4, 0.75);
     }
   }
 

@@ -46,13 +46,13 @@ base: "/fazenda-inteligente-cbr/"
 
 - `WASD` ou `setas`: mover o personagem.
 - `1` a `7`: trocar ferramenta.
-- `TAB`: trocar tipo de semente.
+- `TAB`: trocar tipo de semente e equipar automaticamente a ferramenta Semente.
 - `E` ou `Espaço`: usar ferramenta ou interagir com casa/loja/lago.
-- Clique no canteiro: usar a ferramenta atual.
+- Clique esquerdo no canteiro: usar a ferramenta atual.
 - Clique direito no canteiro: pedir análise CBR daquele canteiro.
 - `Q`: consultar o Assistente CBR.
 - `N`: dormir/avançar o dia.
-- `ESC`: abrir pausa.
+- `ESC`: fechar modais ou abrir o menu interno.
 
 ## Mecânicas Do Jogo
 
@@ -71,7 +71,11 @@ Antes de entrar na fazenda, o jogo mostra um menu principal com:
 - Tela cheia;
 - customização do fazendeiro.
 
-A customização salva nome, cor da pele, cabelo, roupa e estilo visual. Essas escolhas alteram o personagem dentro do jogo e ficam salvas no LocalStorage.
+A customização salva nome, cor da pele, cor do cabelo, cor da roupa, estilo de cabelo e estilo de roupa. Há opções curtas, médias, longas, presas, cacheadas, femininas, neutras e com boné/chapéu. Essas escolhas alteram o personagem dentro do jogo e ficam salvas no LocalStorage. O menu também fecha os seletores de cor ao clicar fora ou apertar `ESC`.
+
+## Menu Interno
+
+O botão "Menu" no HUD e a tecla `ESC` abrem um painel interno com dormir, som, salvar, resetar, tela cheia, controles e uma explicação compacta do CBR. A lateral principal fica mais limpa, focada no Assistente CBR, ferramentas e sementes.
 
 ## Culturas
 
@@ -86,7 +90,7 @@ Cada cultura tem preço de semente, preço base de venda, tempo de crescimento, 
 
 ## Loja E Economia Dinâmica
 
-A loja da vila fica no mapa e abre ao interagir com a banca. Ela permite:
+A loja da vila fica no mapa, tem placa visual e NPC vendedor. Ela abre com `E`, `Espaço` ou clique perto da banca. A caixa perto da casa é identificada como caixa de venda e também leva o jogador ao fluxo de venda.
 
 - comprar sementes;
 - vender colheitas;
@@ -94,11 +98,19 @@ A loja da vila fica no mapa e abre ao interagir com a banca. Ela permite:
 - ver preços atuais;
 - acompanhar tendência de mercado.
 
-Os preços variam com o dia, clima, cultura, raridade, vendas recentes e eventos simples de mercado. Se o jogador vende muito um item, o preço tende a cair. Se o clima prejudica uma cultura, seu preço pode subir.
+Os preços variam com o dia, clima, cultura, raridade, vendas recentes e eventos simples de mercado. Se o jogador vende muito um item, o preço tende a cair nos próximos dias. Se o clima prejudica uma cultura, seu preço pode subir. O painel mostra tendência com alta, queda ou estabilidade.
 
 ## Lago E Pesca
 
-O mapa inclui um lago orgânico com água animada, reflexos, lírios e movimento. Com a vara de pesca equipada, o jogador pode pescar perto da água.
+O mapa inclui um lago orgânico com água animada, reflexos, bolhas, lírios, sombras de peixes e movimento. Com a vara de pesca equipada, o jogador pode pescar perto da água.
+
+A pesca tem etapas:
+
+- lançar a linha;
+- esperar a boia;
+- ver bolhas se aproximando;
+- puxar com `E` ou `Espaço` quando a boia tremer;
+- capturar o peixe ou perder a fisgada se demorar.
 
 Peixes disponíveis:
 
@@ -107,7 +119,7 @@ Peixes disponíveis:
 - carpa;
 - peixe dourado raro.
 
-O clima influencia a chance de pesca, e os peixes podem ser vendidos na loja por preços variáveis.
+O clima influencia a chance de pesca, e os peixes podem ser vendidos na loja por preços variáveis. Todos os peixes são de água doce.
 
 ## Clima Visual E Mundo Vivo
 
@@ -118,7 +130,9 @@ O clima aparece no céu, no mapa e nos efeitos:
 - nublado: nuvens passando e luz suave;
 - seco: tom amarelado, poeira e solo secando mais rápido.
 
-O mapa foi ampliado e usa câmera seguindo o jogador. Árvores maiores balançam com o vento, a casa possui detalhes, a cerca tem variações de madeira, há caminhos, flores, arbustos, pedras, loja, caixa de venda e lago.
+Ao dormir, o jogo faz uma transição de noite com lua e paleta mais fria antes de amanhecer. O fundo fora do canvas também muda com clima e noite.
+
+O mapa foi ampliado e usa câmera seguindo o jogador. Árvores maiores balançam com o vento, folhas cruzam a tela, a casa possui detalhes, a cerca tem variações de madeira vertical/horizontal, há caminhos conectando casa, loja, canteiros, caixa de venda e lago.
 
 ## Ferramentas Visíveis
 
@@ -128,7 +142,7 @@ O personagem segura visualmente a ferramenta atual:
 - saquinho de sementes;
 - regador;
 - saco de adubo;
-- borrifador contra pragas;
+- inseticida/borrifador contra pragas;
 - ferramenta de colheita;
 - vara de pesca.
 
@@ -149,6 +163,8 @@ O Assistente CBR é o espantalho inteligente. Ao pressionar `Q` ou clicar com o 
 
 O sistema recupera o caso mais parecido, reutiliza a ação antiga, revisa a recomendação por regras fortes e aprende quando o jogador avança o dia. O painel compacto mostra similaridade, ação recomendada e ciclo CBR sem dominar a tela.
 
+O assistente também comenta mercado e pesca quando o jogador está perto da loja, caixa de venda ou lago. Ele pode avisar que uma cultura está valorizada, que vender muito derrubou preço, ou que chuva ajuda a pesca.
+
 Exemplos de adaptação:
 
 - tomate com pragas médias/altas prioriza tratar pragas;
@@ -157,6 +173,8 @@ Exemplos de adaptação:
 - planta pronta prioriza colher;
 - solo encharcado evita regar;
 - morango valoriza umidade média/alta.
+- tomate barato no mercado pode ser melhor vender depois;
+- clima chuvoso pode tornar a pesca uma boa alternativa.
 
 ## Fórmula De Similaridade
 
@@ -197,6 +215,7 @@ Em caso de empate, o sistema prefere o caso com melhor resultado anterior.
 │   │   ├── EffectSystem.ts
 │   │   ├── FarmMap.ts
 │   │   ├── FishingSystem.ts
+│   │   ├── IconSystem.ts
 │   │   ├── InventorySystem.ts
 │   │   ├── PlayerSystem.ts
 │   │   ├── PointerInteractionSystem.ts

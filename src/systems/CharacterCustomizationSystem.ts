@@ -1,5 +1,5 @@
 import { defaultCustomization } from "../data/characterOptions";
-import type { CharacterCustomization } from "../types";
+import type { CharacterCustomization, CharacterHairStyle, CharacterOutfitStyle } from "../types";
 
 const customizationKey = "fazendinha-cbr-customization";
 
@@ -28,12 +28,26 @@ export class CharacterCustomizationSystem {
   }
 
   static normalize(value?: Partial<CharacterCustomization>): CharacterCustomization {
+    const rawStyle = value?.style as unknown;
+    const legacyStyle = rawStyle === "B" ? "medio" : rawStyle === "C" ? "longo" : rawStyle;
+
     return {
       farmerName: typeof value?.farmerName === "string" && value.farmerName.trim() ? value.farmerName.trim().slice(0, 20) : defaultCustomization.farmerName,
       skinColor: sanitizeColor(value?.skinColor, defaultCustomization.skinColor),
       hairColor: sanitizeColor(value?.hairColor, defaultCustomization.hairColor),
       outfitColor: sanitizeColor(value?.outfitColor, defaultCustomization.outfitColor),
-      style: value?.style === "B" || value?.style === "C" ? value.style : defaultCustomization.style,
+      style: this.normalizeHairStyle(legacyStyle),
+      outfitStyle: this.normalizeOutfitStyle(value?.outfitStyle),
     };
+  }
+
+  private static normalizeHairStyle(value: unknown): CharacterHairStyle {
+    const allowed: CharacterHairStyle[] = ["curto", "medio", "longo", "rabo", "cacheado", "femininoA", "femininoB", "neutroA", "bone", "chapeu"];
+    return allowed.includes(value as CharacterHairStyle) ? value as CharacterHairStyle : defaultCustomization.style;
+  }
+
+  private static normalizeOutfitStyle(value: unknown): CharacterOutfitStyle {
+    const allowed: CharacterOutfitStyle[] = ["avental", "macacao", "camisa", "jardineira", "casaco"];
+    return allowed.includes(value as CharacterOutfitStyle) ? value as CharacterOutfitStyle : defaultCustomization.outfitStyle;
   }
 }

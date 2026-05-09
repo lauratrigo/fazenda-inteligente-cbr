@@ -20,6 +20,7 @@ import { PointerInteractionSystem } from "../systems/PointerInteractionSystem";
 import { SaveSystem } from "../systems/SaveSystem";
 import { ShopSystem } from "../systems/ShopSystem";
 import { SoundSystem, type GameSound } from "../systems/SoundSystem";
+import { WaterSystem } from "../systems/WaterSystem";
 import { WeatherSystem } from "../systems/WeatherSystem";
 import { WeatherVisualSystem } from "../systems/WeatherVisualSystem";
 import { UISystem } from "../ui/UISystem";
@@ -67,8 +68,12 @@ export class FarmScene extends Phaser.Scene {
   private mapGraphics!: Phaser.GameObjects.Graphics;
   private cropGraphics!: Phaser.GameObjects.Graphics;
   private overlayGraphics!: Phaser.GameObjects.Graphics;
+  private interactionPrompt?: Phaser.GameObjects.Text;
+  private fishingPrompt?: Phaser.GameObjects.Text;
   private lastRenderTime = 0;
   private customization!: CharacterCustomization;
+  private lastContextHint = "";
+  private lastFishingPhase = "";
 
   constructor() {
     super("FarmScene");
@@ -105,6 +110,7 @@ export class FarmScene extends Phaser.Scene {
     this.player.setTool(this.inventory.currentTool);
 
     CameraSystem.setup(this, this.map, this.player);
+    this.createWorldLabels();
 
     this.playerSystem = new PlayerSystem(this, this.player, this.map, {
       onUseTool: () => this.useTool(),
@@ -129,6 +135,7 @@ export class FarmScene extends Phaser.Scene {
       onSellFish: (fishId) => this.sellFish(fishId),
       onSleep: () => this.sleepInHouse(),
       onFullscreen: () => this.openFullscreen(),
+      onMainMenu: () => this.returnToMainMenu(),
     });
     this.ui.showAssistantWaiting();
     this.ui.syncSound(this.audio.isMuted);
@@ -152,6 +159,8 @@ export class FarmScene extends Phaser.Scene {
 
     this.renderCrops(time);
     this.renderOverlay();
+    this.updateInteractionPrompt(time);
+    this.updateFishingVisuals(time);
     this.effects.updateWeather(time, this.weather.weather);
     this.effects.showTargetIndicator(this.getTargetPlotInfo()?.tile ?? null);
   }
@@ -165,14 +174,18 @@ export class FarmScene extends Phaser.Scene {
 
   selectCrop(cropType: CropType): void {
     this.inventory.setSelectedCrop(cropType);
+    this.inventory.setTool("seed");
+    this.player.setTool("seed");
     this.syncUI();
-    this.ui.showMessage(`Semente selecionada: ${cropTypes[cropType].name}.`, { duration: 3600, type: "info" });
+    this.ui.showMessage(`Semente selecionada: ${cropTypes[cropType].name}. Ferramenta alterada para Semente.`, { duration: 4200, type: "info" });
   }
 
   cycleCrop(): void {
     const cropType = this.inventory.cycleSelectedCrop();
+    this.inventory.setTool("seed");
+    this.player.setTool("seed");
     this.syncUI();
-    this.ui.showMessage(`Semente selecionada: ${cropTypes[cropType].name}.`, { duration: 3600, type: "info" });
+    this.ui.showMessage(`Semente selecionada: ${cropTypes[cropType].name}. Ferramenta alterada para Semente.`, { duration: 4200, type: "info" });
   }
 
   useTool(): void {
@@ -185,6 +198,12 @@ export class FarmScene extends Phaser.Scene {
       return;
     }
 
+    const signKind = this.map.getSignKind(currentTile) ?? this.map.getSignKind(facingTile);
+    if (signKind) {
+      this.showSignTip(signKind);
+      return;
+    }
+
     if (this.map.isNearShop(currentTile) || this.map.isNearShop(facingTile) || this.map.isNearSellBox(currentTile)) {
       this.ui.showShop();
       this.audio.play("click");
@@ -193,6 +212,11 @@ export class FarmScene extends Phaser.Scene {
 
     if (this.inventory.currentTool === "fishingRod") {
       this.tryFishing(currentTile);
+      return;
+    }
+
+    if (this.map.isNearWater(currentTile) || this.map.isNearWater(facingTile)) {
+      this.ui.showMessage("Equipe a vara de pesca para pescar aqui.", { type: "info", duration: 3600 });
       return;
     }
 
@@ -216,6 +240,11 @@ export class FarmScene extends Phaser.Scene {
         return;
       }
 
+      if (this.map.isNearShop(currentTile) || this.map.isNearSellBox(currentTile)) {
+        this.showMarketCbrTip();
+        return;
+      }
+
       this.ui.showNoPlot();
       this.ui.showMessage("O assistente precisa de um canteiro perto de você.", { type: "error" });
       this.audio.play("error");
@@ -230,7 +259,13 @@ export class FarmScene extends Phaser.Scene {
 
     this.time.delayedCall(450, () => {
       const analysis = this.cbr.analyze(currentCase);
+      if (analysis.recommendedAction === "plantar" && this.inventory.data.seedStock[this.inventory.selectedCrop] <= 0) {
+        analysis.recommendedAction = "esperar";
+        analysis.explanation += ` Eu não vou recomendar plantar agora porque você está sem sementes de ${cropTypes[this.inventory.selectedCrop].name}.`;
+      }
       this.ui.showAnalysis(analysis);
+      const marketInsight = this.marketInsightForCase(currentCase);
+      if (marketInsight) this.ui.appendAssistantText(marketInsight);
       this.effects.playCbrRecommendation(target.tile, this.map.assistantTile);
       this.ui.showMessage(`O espantalho recomendou: ${actionLabels[analysis.recommendedAction]}.`, { duration: 8000, type: "cbr" });
     });
@@ -329,23 +364,28 @@ export class FarmScene extends Phaser.Scene {
 
   private tryFishing(playerTile: Vector2Like): void {
     const facingTile = this.playerSystem.getFacingTile();
-    const fishingTile = this.map.isWaterTile(facingTile.x, facingTile.y) ? facingTile : playerTile;
+    const fishingTile = this.map.isWaterTile(facingTile.x, facingTile.y) ? facingTile : WaterSystem.nearestWaterTile(playerTile);
 
-    if (!this.map.isNearWater(playerTile) && !this.map.isNearWater(facingTile)) {
+    if (!fishingTile || (!this.map.isNearWater(playerTile) && !this.map.isNearWater(facingTile))) {
       this.ui.showMessage("Aproxime-se do lago para pescar.", { type: "warning" });
       this.audio.play("error");
       return;
     }
 
     this.player.playToolAction("fishingRod");
-    this.effects.playToolEffect("fishingRod", fishingTile);
-    this.audio.play("fish");
+    const outcome = this.fishing.use(this.weather.weather, this.lastRenderTime, fishingTile);
 
-    const outcome = this.fishing.fish(this.weather.weather, this.lastRenderTime);
+    if (outcome.phase === "casting") {
+      this.effects.playFishingCastFromPlayer({ x: this.player.x, y: this.player.y - 6 }, fishingTile, false);
+      this.audio.play("fish");
+    } else if (outcome.phase === "hooked" || outcome.phase === "waiting" || outcome.phase === "approaching") {
+      this.audio.play("click");
+    }
+
     this.ui.showMessage(outcome.message, { type: outcome.ok ? "success" : "warning", duration: outcome.ok ? 5600 : 4200 });
 
     if (outcome.ok && outcome.fishId) {
-      this.effects.playFishingCast(fishingTile, true);
+      this.effects.playFishingCatch(fishingTile, true);
       this.audio.play("coin");
       this.ui.showMessage(`${fishTypes[outcome.fishId].name} fisgado! Venda na loja quando quiser.`, { type: "success", duration: 5200 });
     }
@@ -364,6 +404,48 @@ export class FarmScene extends Phaser.Scene {
     this.ui.showMessage(text, { duration: 7600, type: "cbr" });
     this.effects.playAssistantThinking(this.map.assistantTile);
     this.audio.play("cbr");
+  }
+
+  private showMarketCbrTip(): void {
+    const cropIds = Object.keys(cropTypes) as CropType[];
+    const best = cropIds
+      .map((id) => ({ id, price: this.economy.getPrice(id), base: cropTypes[id].sellPrice }))
+      .sort((a, b) => b.price / b.base - a.price / a.base)[0];
+    const trend = this.economy.getTrend(best.id);
+    const trendText = trend === "up" ? "subiu" : trend === "down" ? "caiu" : "está estável";
+    const text = `Análise CBR de mercado: ${cropTypes[best.id].name} está com preço ${trendText} e vale ${best.price} moedas hoje. Se tiver sementes, pode ser uma boa planejar essa cultura.`;
+    this.ui.showFishingTip(text);
+    this.ui.showMessage(text, { duration: 7600, type: "cbr" });
+    this.effects.playAssistantThinking(this.map.assistantTile);
+    this.audio.play("cbr");
+  }
+
+  private marketInsightForCase(currentCase: CBRCurrentCase): string {
+    if (currentCase.tipoCultura === "nenhuma") {
+      const selected = this.inventory.selectedCrop;
+      const price = this.economy.getPrice(selected);
+      if (price > cropTypes[selected].sellPrice * 1.08 && this.inventory.data.seedStock[selected] > 0) {
+        return `${cropTypes[selected].name} está valorizada hoje; pode valer plantar se o canteiro estiver pronto.`;
+      }
+      return "";
+    }
+
+    const price = this.economy.getPrice(currentCase.tipoCultura);
+    const base = cropTypes[currentCase.tipoCultura].sellPrice;
+    const trend = this.economy.getTrend(currentCase.tipoCultura);
+    if (trend === "down") return `O preço de ${cropTypes[currentCase.tipoCultura].name} caiu hoje. Se puder, vender depois pode ser melhor.`;
+    if (price > base * 1.08) return `${cropTypes[currentCase.tipoCultura].name} está valorizada no mercado hoje. Cuidar bem dessa planta pode dar bom retorno.`;
+    return "";
+  }
+
+  private showSignTip(kind: "tutorial" | "shop" | "lake"): void {
+    const text = kind === "tutorial"
+      ? "Placa: E/Espaço interage, clique esquerdo usa ferramenta no canteiro, clique direito consulta CBR e TAB troca sementes."
+      : kind === "shop"
+        ? "Placa da loja: os preços mudam todo dia. Venda muito um item e o preço dele pode cair."
+        : "Placa do lago: equipe a vara de pesca, lance a linha e aperte E quando a boia tremer.";
+    this.ui.showMessage(text, { type: "info", duration: 6500 });
+    this.audio.play("click");
   }
 
   private buySeed(cropType: CropType): void {
@@ -402,6 +484,7 @@ export class FarmScene extends Phaser.Scene {
 
   private sleepInHouse(): void {
     this.ui.hideHouse();
+    this.weatherVisual.playNightCycle();
     this.nextDay();
   }
 
@@ -440,6 +523,12 @@ export class FarmScene extends Phaser.Scene {
       }
 
       this.tryFishing(currentTile);
+      return;
+    }
+
+    const signKind = this.map.getSignKind(tile);
+    if (signKind && this.pointerSystem.isInRange(currentTile, tile, 4)) {
+      this.showSignTip(signKind);
       return;
     }
 
@@ -512,6 +601,124 @@ export class FarmScene extends Phaser.Scene {
 
   private openFullscreen(): void {
     void document.documentElement.requestFullscreen?.();
+  }
+
+  private createWorldLabels(): void {
+    const addLabel = (tile: Vector2Like, text: string, color = "#623819") => {
+      const pos = this.map.tileToPixel(tile);
+      this.add.text(pos.x, pos.y - 24, text, {
+        color,
+        fontFamily: "Arial",
+        fontSize: "13px",
+        fontStyle: "900",
+        stroke: "#fff7dc",
+        strokeThickness: 4,
+      }).setOrigin(0.5).setDepth(6);
+    };
+
+    addLabel({ x: 31, y: 7 }, "LOJA");
+    addLabel({ x: 9, y: 9 }, "Caixa de venda", "#4f3520");
+    addLabel(this.map.tutorialSignTile, "?");
+    addLabel(this.map.lakeSignTile, "Pesca", "#2f6e8d");
+  }
+
+  private updateInteractionPrompt(time: number): void {
+    const currentTile = this.playerSystem.getCurrentTile();
+    const facingTile = this.playerSystem.getFacingTile();
+    const signKind = this.map.getSignKind(currentTile) ?? this.map.getSignKind(facingTile);
+    let tile: Vector2Like | null = null;
+    let label = "";
+    let message = "";
+
+    if (this.map.isNearHouseDoor(currentTile) || this.map.isNearHouseDoor(facingTile)) {
+      tile = this.map.houseDoorTile;
+      label = "E";
+      message = "Pressione E ou Espaço para entrar em casa.";
+    } else if (this.map.isNearShop(currentTile) || this.map.isNearShop(facingTile)) {
+      tile = this.map.shopDoorTile;
+      label = "E";
+      message = "Pressione E ou Espaço para abrir a loja.";
+    } else if (this.map.isNearWater(currentTile) || this.map.isNearWater(facingTile)) {
+      tile = WaterSystem.nearestWaterTile(currentTile);
+      label = this.inventory.currentTool === "fishingRod" ? "E" : "7";
+      message = this.inventory.currentTool === "fishingRod" ? "Pressione E ou Espaço para lançar a vara." : "Equipe a vara de pesca para pescar aqui.";
+    } else if (signKind) {
+      tile = signKind === "tutorial" ? this.map.tutorialSignTile : signKind === "shop" ? this.map.shopSignTile : this.map.lakeSignTile;
+      label = "?";
+      message = "Pressione E ou Espaço para ler a placa.";
+    } else if (Math.abs(currentTile.x - this.map.assistantTile.x) <= 2 && Math.abs(currentTile.y - this.map.assistantTile.y) <= 2) {
+      tile = this.map.assistantTile;
+      label = "Q";
+      message = "Pressione Q para pedir uma recomendação CBR.";
+    }
+
+    if (!tile) {
+      this.interactionPrompt?.setVisible(false);
+      return;
+    }
+
+    const pos = this.map.tileToPixel(tile);
+    if (!this.interactionPrompt) {
+      this.interactionPrompt = this.add.text(pos.x, pos.y - 26, label, {
+        backgroundColor: "rgba(255,247,220,0.95)",
+        color: "#623819",
+        fontFamily: "Arial",
+        fontSize: "15px",
+        fontStyle: "900",
+        padding: { x: 7, y: 3 },
+      }).setOrigin(0.5).setDepth(10);
+    }
+
+    this.interactionPrompt.setText(label).setPosition(pos.x, pos.y - 26 + Math.sin(time / 210) * 2).setVisible(true);
+    if (message !== this.lastContextHint) {
+      this.lastContextHint = message;
+      this.ui.showMessage(message, { duration: 2600, type: "info" });
+    }
+  }
+
+  private updateFishingVisuals(time: number): void {
+    const phase = this.fishing.update(time);
+    const bobberTile = this.fishing.bobberTile;
+    if (!bobberTile) {
+      this.fishingPrompt?.setVisible(false);
+      this.lastFishingPhase = phase;
+      return;
+    }
+
+    const pos = this.map.tileToPixel(bobberTile);
+    if (!this.fishingPrompt) {
+      this.fishingPrompt = this.add.text(pos.x, pos.y - 12, "", {
+        color: "#fff7dc",
+        fontFamily: "Arial",
+        fontSize: "16px",
+        fontStyle: "900",
+        stroke: "#2f6e8d",
+        strokeThickness: 4,
+      }).setOrigin(0.5).setDepth(10);
+    }
+
+    const label = phase === "hooked" ? "!" : phase === "approaching" ? "..." : phase === "waiting" ? "o" : "";
+    this.fishingPrompt.setText(label).setPosition(pos.x, pos.y - 12 + Math.sin(time / 120) * 2).setVisible(Boolean(label));
+
+    if (phase !== this.lastFishingPhase) {
+      if (phase === "approaching") this.effects.playFishingBubbles(bobberTile);
+      if (phase === "hooked") {
+        this.effects.playFishingNibble(bobberTile);
+        this.ui.showMessage("Fisgou! Pressione E ou Espaço agora para puxar.", { type: "success", duration: 1800 });
+        this.audio.play("cbr");
+      }
+      if (phase === "failed") {
+        this.ui.showMessage("O peixe fugiu. Espere um pouco e tente de novo.", { type: "warning", duration: 3600 });
+        this.audio.play("error");
+      }
+      this.lastFishingPhase = phase;
+    }
+  }
+
+  private returnToMainMenu(): void {
+    this.saveGame(false);
+    this.ui.hidePause();
+    this.scene.start("MenuScene");
   }
 
   private serialize(): GameSaveState {

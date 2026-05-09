@@ -25,6 +25,7 @@ export class MenuScene extends Phaser.Scene {
     const hair = getElement<HTMLInputElement>("custom-hair");
     const outfit = getElement<HTMLInputElement>("custom-outfit");
     const style = getElement<HTMLSelectElement>("custom-style");
+    const outfitStyle = getElement<HTMLSelectElement>("custom-outfit-style");
     const help = getElement("menu-help");
 
     const savedCustomization = CharacterCustomizationSystem.load();
@@ -33,11 +34,13 @@ export class MenuScene extends Phaser.Scene {
     hair.value = savedCustomization.hairColor;
     outfit.value = savedCustomization.outfitColor;
     style.value = savedCustomization.style;
+    outfitStyle.value = savedCustomization.outfitStyle;
     this.updatePreview(savedCustomization);
 
-    [name, skin, hair, outfit, style].forEach((input) => {
+    [name, skin, hair, outfit, style, outfitStyle].forEach((input) => {
       input.oninput = () => this.updatePreview(this.readCustomization());
     });
+    this.installColorPickerGuards([skin, hair, outfit]);
 
     getElement<HTMLButtonElement>("menu-play").onclick = () => {
       CharacterCustomizationSystem.save(this.readCustomization());
@@ -59,7 +62,7 @@ export class MenuScene extends Phaser.Scene {
     };
 
     getElement<HTMLButtonElement>("menu-how").onclick = () => {
-      help.textContent = "Use WASD/setas para andar, E para interagir, clique nos canteiros para usar ferramentas, TAB troca sementes, Q pede ajuda CBR.";
+      help.textContent = "Use WASD/setas para andar, E ou Espaço para interagir, clique esquerdo nos canteiros para usar ferramentas, clique direito consulta CBR, TAB troca sementes e equipa Semente.";
       help.classList.toggle("is-hidden");
     };
 
@@ -83,6 +86,7 @@ export class MenuScene extends Phaser.Scene {
       hairColor: getElement<HTMLInputElement>("custom-hair").value,
       outfitColor: getElement<HTMLInputElement>("custom-outfit").value,
       style: getElement<HTMLSelectElement>("custom-style").value as CharacterCustomization["style"],
+      outfitStyle: getElement<HTMLSelectElement>("custom-outfit-style").value as CharacterCustomization["outfitStyle"],
     });
   }
 
@@ -92,5 +96,20 @@ export class MenuScene extends Phaser.Scene {
     preview.style.setProperty("--preview-hair", customization.hairColor);
     preview.style.setProperty("--preview-outfit", customization.outfitColor);
     preview.dataset.style = customization.style;
+    preview.dataset.outfit = customization.outfitStyle;
+  }
+
+  private installColorPickerGuards(inputs: HTMLInputElement[]): void {
+    const closePickers = () => inputs.forEach((input) => input.blur());
+
+    document.addEventListener("pointerdown", (event) => {
+      const target = event.target as HTMLElement | null;
+      if (!target || inputs.some((input) => input === target || input.parentElement?.contains(target))) return;
+      closePickers();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closePickers();
+    });
   }
 }

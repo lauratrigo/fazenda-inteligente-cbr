@@ -16,6 +16,8 @@ export class Player extends Phaser.GameObjects.Container {
   private readonly head: Phaser.GameObjects.Rectangle;
   private readonly hair: Phaser.GameObjects.Rectangle;
   private readonly hat: Phaser.GameObjects.Rectangle;
+  private readonly ponytail: Phaser.GameObjects.Rectangle;
+  private readonly outfitDetail: Phaser.GameObjects.Rectangle;
   private readonly leftFoot: Phaser.GameObjects.Rectangle;
   private readonly rightFoot: Phaser.GameObjects.Rectangle;
   private readonly toolGraphics: Phaser.GameObjects.Graphics;
@@ -33,15 +35,18 @@ export class Player extends Phaser.GameObjects.Container {
     this.shadow = scene.add.rectangle(0, 15, 24, 7, 0x000000, 0.2);
     this.leftFoot = scene.add.rectangle(-5, 17, 6, 6, 0x263027, 1);
     this.rightFoot = scene.add.rectangle(5, 17, 6, 6, 0x263027, 1);
-    this.shirt = scene.add.rectangle(0, 5, 16, 18, outfit, 1);
+    const bodyWidth = customization?.outfitStyle === "casaco" ? 19 : customization?.outfitStyle === "jardineira" ? 17 : 16;
+    this.shirt = scene.add.rectangle(0, 5, bodyWidth, 18, outfit, 1);
     this.scarf = scene.add.rectangle(0, -2, 18, 4, 0xf4cc58, 1);
     this.head = scene.add.rectangle(0, -12, 14, 12, skin, 1);
-    this.hair = scene.add.rectangle(0, -19, customization?.style === "C" ? 18 : 15, customization?.style === "B" ? 9 : 6, hairColor, 1);
-    this.hat = scene.add.rectangle(0, -24, 20, 5, 0x7a4a24, 1);
+    this.hair = scene.add.rectangle(0, -19, this.hairWidth(customization?.style), this.hairHeight(customization?.style), hairColor, 1);
+    this.ponytail = scene.add.rectangle(0, -9, 6, 14, hairColor, 1).setVisible(customization?.style === "rabo" || customization?.style === "longo" || customization?.style === "femininoB");
+    this.hat = scene.add.rectangle(0, -24, 20, 5, customization?.style === "bone" ? 0x2f6e8d : 0x7a4a24, 1).setVisible(customization?.style === "bone" || customization?.style === "chapeu");
+    this.outfitDetail = scene.add.rectangle(0, 7, customization?.outfitStyle === "macacao" ? 10 : 14, 3, customization?.outfitStyle === "camisa" ? 0xfff7dc : 0xf4cc58, 1);
     this.face = [scene.add.rectangle(-4, -14, 3, 3, 0x263027, 1), scene.add.rectangle(4, -14, 3, 3, 0x263027, 1)];
     this.toolGraphics = scene.add.graphics();
 
-    this.add([this.shadow, this.leftFoot, this.rightFoot, this.toolGraphics, this.shirt, this.scarf, this.head, this.hair, this.hat, ...this.face]);
+    this.add([this.shadow, this.leftFoot, this.rightFoot, this.toolGraphics, this.shirt, this.outfitDetail, this.scarf, this.ponytail, this.head, this.hair, this.hat, ...this.face]);
     this.setSize(this.bodyWidth, this.bodyHeight);
     this.setFacing(this.facing);
     this.setTool(this.currentTool);
@@ -68,6 +73,7 @@ export class Player extends Phaser.GameObjects.Container {
     this.face[1].setX(4 + eyeOffset);
     this.hat.setY(direction === "up" ? -25 : -24);
     this.hair.setY(direction === "up" ? -20 : -19);
+    this.ponytail.setY(direction === "up" ? -11 : -9);
     this.redrawTool(0);
   }
 
@@ -82,6 +88,7 @@ export class Player extends Phaser.GameObjects.Container {
     this.scarf.setY(-2 - bob);
     this.head.setY(-12 - bob);
     this.hair.setY((this.facing === "up" ? -20 : -19) - bob);
+    this.ponytail.setY((this.facing === "up" ? -11 : -9) - bob * 0.7);
     this.hat.setY((this.facing === "up" ? -25 : -24) - bob);
     this.face.forEach((part) => part.setY(-14 - bob));
     this.shadow.setScale(this.moving ? 1.05 + Math.abs(stride) * 0.08 : 1, 1);
@@ -99,5 +106,20 @@ export class Player extends Phaser.GameObjects.Container {
   private redrawTool(swing: number): void {
     ToolVisualSystem.drawHeldTool(this.toolGraphics, this.currentTool, this.facing, swing);
     this.toolGraphics.setDepth(this.facing === "up" ? -1 : 1);
+  }
+
+  private hairWidth(style: CharacterCustomization["style"] | undefined): number {
+    if (style === "longo" || style === "femininoB") return 22;
+    if (style === "cacheado") return 21;
+    if (style === "femininoA" || style === "rabo") return 19;
+    if (style === "neutroA" || style === "medio") return 17;
+    return 15;
+  }
+
+  private hairHeight(style: CharacterCustomization["style"] | undefined): number {
+    if (style === "longo" || style === "femininoB") return 13;
+    if (style === "cacheado") return 11;
+    if (style === "medio" || style === "femininoA") return 9;
+    return 6;
   }
 }

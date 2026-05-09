@@ -115,7 +115,7 @@ export class CropSystem {
       plot.pests = this.improvePests(plot.pests);
       if (plot.health === "com_manchas" && plot.pests !== "alta") plot.health = "saudavel";
       this.recoverIfCared(plot);
-      return { ok: true, action, message: "Pragas controladas." };
+      return { ok: true, action, message: "Inseticida aplicado. Pragas controladas." };
     }
 
     if (tool === "harvest") {

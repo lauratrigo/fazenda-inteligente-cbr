@@ -1,5 +1,35 @@
 # Changelog
 
+## [2.5.0] - 2026-05-08
+### Corrigido
+- Seletor de cor recebendo blur ao clicar fora ou apertar `ESC`.
+- Textos de controles incompletos para `E`, `Espaço`, clique esquerdo e clique direito.
+- Pesca instantânea e fácil de spammar.
+- Linha de pesca desalinhada, agora saindo do personagem até a água.
+- Ferramenta "Pragas" renomeada para "Inseticida".
+- Placas sem função, agora com dicas contextuais.
+- Bug visual de árvores invadindo a área da casa.
+- Cerca vertical usando o mesmo visual da cerca horizontal.
+
+### Adicionado
+- Pesca com estados de lançamento, espera, aproximação, fisgada, captura e falha.
+- Bolhas, boia, ondulações e tempo de reação na pesca.
+- Ícones SVG simples para sementes, colheitas, peixes, clima, ferramentas e loja.
+- Indicadores de interação sobre casa, loja, lago, placas e Assistente CBR.
+- NPC vendedor e placa visual da loja.
+- Interior de casa mais completo, com cama, tapete, mesa, janela, baú e calendário.
+- Menu interno do jogo com dormir, som, salvar, resetar, controles e explicação CBR.
+- Ciclo visual de noite ao dormir, com lua e paleta mais fria.
+- Vento dinâmico com folhas leves e mais movimento ambiental.
+- CBR com comentários de economia e pesca.
+
+### Alterado
+- Melhorias visuais no lago, casa, loja, cercas, árvores, grama, flores, espantalho e HUD.
+- Economia da loja continua dinâmica e agora é comentada pelo Assistente CBR.
+- Trocar sementes com `TAB` ou pelo painel passa a equipar automaticamente a ferramenta Semente.
+- Customização do personagem ampliada com estilos de cabelo e roupa.
+- Interface lateral mais limpa, com ações gerais movidas para o menu interno.
+
 ## [2.4.0] - 2026-05-08
 ### Adicionado
 - Menu principal com customização de personagem.

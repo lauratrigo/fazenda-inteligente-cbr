@@ -9,6 +9,7 @@
   <body>
     <div id="sky-layer" class="sky-layer" aria-hidden="true">
       <span class="sun-disk"></span>
+      <span class="moon-disk"></span>
       <span class="cloud cloud-a"></span>
       <span class="cloud cloud-b"></span>
       <span class="cloud cloud-c"></span>
@@ -35,13 +36,29 @@
           <label>Nome <input id="custom-name" maxlength="20" value="Fazendeiro CBR" /></label>
           <div class="custom-grid">
             <label>Pele <input id="custom-skin" type="color" value="#f1b77a" /></label>
-            <label>Cabelo <input id="custom-hair" type="color" value="#7a4a24" /></label>
-            <label>Roupa <input id="custom-outfit" type="color" value="#4d6fb3" /></label>
-            <label>Estilo
+            <label>Cor do cabelo <input id="custom-hair" type="color" value="#7a4a24" /></label>
+            <label>Cor da roupa <input id="custom-outfit" type="color" value="#4d6fb3" /></label>
+            <label>Estilo do cabelo
               <select id="custom-style">
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
+                <option value="curto">Curto</option>
+                <option value="medio">Médio</option>
+                <option value="longo">Longo</option>
+                <option value="rabo">Rabo de cavalo</option>
+                <option value="cacheado">Cacheado</option>
+                <option value="femininoA">Feminino A</option>
+                <option value="femininoB">Feminino B</option>
+                <option value="neutroA">Neutro A</option>
+                <option value="bone">Boné</option>
+                <option value="chapeu">Chapéu</option>
+              </select>
+            </label>
+            <label>Estilo da roupa
+              <select id="custom-outfit-style">
+                <option value="avental">Avental</option>
+                <option value="macacao">Macacão</option>
+                <option value="camisa">Camisa</option>
+                <option value="jardineira">Jardineira</option>
+                <option value="casaco">Casaco</option>
               </select>
             </label>
           </div>
@@ -51,7 +68,7 @@
             <span class="preview-body"></span>
           </div>
         </div>
-        <p id="menu-help" class="menu-help is-hidden">Ande com WASD/setas, use E nos objetos, TAB troca sementes, Q chama o Assistente CBR. Clique em canteiros para usar a ferramenta.</p>
+        <p id="menu-help" class="menu-help is-hidden">Ande com WASD/setas. Use E ou Espaço para interagir. Clique esquerdo usa ferramenta no canteiro e clique direito consulta CBR. TAB troca sementes.</p>
       </div>
     </section>
 
@@ -64,6 +81,7 @@
             <strong>Fazenda top-down com IA baseada em casos</strong>
           </div>
         </div>
+        <button id="game-menu" class="hud-menu-button" type="button">Menu</button>
 
         <div class="hud-grid">
           <div class="hud-chip"><span>Dia</span><strong><i>☀</i><b id="hud-day">1</b></strong></div>
@@ -107,9 +125,9 @@
               <button type="button" data-tool="seed"><kbd>2</kbd><span>Semente</span></button>
               <button type="button" data-tool="water"><kbd>3</kbd><span>Regador</span></button>
               <button type="button" data-tool="fertilizer"><kbd>4</kbd><span>Adubo</span></button>
-              <button type="button" data-tool="pesticide"><kbd>5</kbd><span>Pragas</span></button>
-              <button type="button" data-tool="harvest"><kbd>6</kbd><span>Colher</span></button>
-              <button type="button" data-tool="fishingRod"><kbd>7</kbd><span>Pescar</span></button>
+              <button type="button" data-tool="pesticide" title="Controle de pragas"><kbd>5</kbd><span>Inseticida</span></button>
+              <button type="button" data-tool="harvest"><kbd>6</kbd><span>Colheita</span></button>
+              <button type="button" data-tool="fishingRod"><kbd>7</kbd><span>Vara de pesca</span></button>
             </div>
           </section>
 
@@ -118,17 +136,12 @@
             <div id="seed-buttons" class="seed-buttons"></div>
           </section>
 
-          <section class="actions-panel">
-            <button id="next-day" class="primary-button" type="button">Dormir / Próximo dia <kbd>N</kbd></button>
-            <button id="mute-audio" type="button">Som: ligado</button>
-            <button id="save-game" type="button">Salvar jogo</button>
-            <button id="reset-game" class="danger-button" type="button">Resetar progresso</button>
-          </section>
-
           <section class="controls-panel">
             <h2>Controles</h2>
             <p><kbd>WASD</kbd> ou <kbd>setas</kbd> mover</p>
-            <p><kbd>E</kbd> ou <kbd>Espaço</kbd> usar ferramenta</p>
+            <p><kbd>E</kbd> ou <kbd>Espaço</kbd> usar ferramenta / interagir</p>
+            <p>Clique esquerdo usa ferramenta no canteiro</p>
+            <p>Clique direito consulta CBR no canteiro</p>
             <p><kbd>Q</kbd> consultar CBR</p>
             <p><kbd>TAB</kbd> trocar semente</p>
             <p><kbd>1-7</kbd> trocar ferramenta</p>
@@ -154,7 +167,15 @@
         <div class="modal-card house-card">
           <button id="house-close" class="modal-close" type="button">x</button>
           <h2>Casa</h2>
-          <p>Uma cama quentinha, um calendário e um baú simples. Dormir salva o jogo e avança o dia.</p>
+          <div class="house-room" aria-hidden="true">
+            <span class="room-window"></span>
+            <span class="room-bed"></span>
+            <span class="room-rug"></span>
+            <span class="room-table"></span>
+            <span class="room-chest"></span>
+            <span class="room-calendar"></span>
+          </div>
+          <p>Uma cama quentinha, calendário, baú e mesa. Dormir salva o jogo, avança o dia, muda clima e atualiza economia.</p>
           <button id="house-sleep" class="primary-button" type="button">Dormir e avançar o dia</button>
         </div>
       </section>
@@ -162,13 +183,26 @@
       <section id="pause-modal" class="game-modal is-hidden" aria-label="Pausa">
         <div class="modal-card pause-card">
           <button id="pause-close" class="modal-close" type="button">x</button>
-          <h2>Pausado</h2>
+          <h2>Menu do jogo</h2>
+          <button id="next-day" class="primary-button" type="button">Dormir / Próximo dia <kbd>N</kbd></button>
+          <button id="mute-audio" type="button">Som: ligado</button>
+          <button id="save-game" type="button">Salvar jogo</button>
           <button id="pause-fullscreen" type="button">Tela cheia</button>
-          <button id="pause-save" type="button">Salvar jogo</button>
+          <button id="pause-save" type="button">Salvar e continuar</button>
+          <button id="reset-game" class="danger-button" type="button">Resetar progresso</button>
+          <details class="menu-details">
+            <summary>Controles</summary>
+            <p>WASD/setas movem. E/Espaço usam ferramenta ou interagem. Clique esquerdo usa ferramenta no canteiro. Clique direito consulta CBR. TAB troca sementes e já equipa Semente.</p>
+          </details>
+          <details class="menu-details">
+            <summary>Como o CBR funciona neste jogo</summary>
+            <p>O assistente compara o canteiro atual com experiências antigas, reaproveita uma solução, adapta por regras agrícolas e aprende ao dormir.</p>
+          </details>
+          <button id="pause-main-menu" type="button">Voltar ao menu principal</button>
         </div>
       </section>
 
-      <section class="learn-panel">
+      <section class="learn-panel is-collapsed">
         <details>
           <summary>Como o CBR funciona neste jogo</summary>
           <div>

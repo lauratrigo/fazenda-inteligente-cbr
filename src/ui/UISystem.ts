@@ -2,6 +2,7 @@ import { cropTypeOrder, cropTypes } from "../data/cropTypes";
 import { fishTypeOrder, fishTypes } from "../data/fishTypes";
 import { actionLabels, resultLabels, toolLabels, weatherLabels } from "../data/gameData";
 import type { CBRAnalysis, CBRResult, CropType, EconomyState, FishTypeId, InventoryState, ToolId, Weather } from "../types";
+import { IconSystem } from "../systems/IconSystem";
 
 type MessageType = "info" | "success" | "warning" | "error" | "cbr";
 
@@ -29,6 +30,7 @@ interface UIElements {
   assistantPanel: HTMLElement;
   toolButtons: HTMLElement;
   seedButtons: HTMLElement;
+  menuButton: HTMLButtonElement;
   askButton: HTMLButtonElement;
   nextDayButton: HTMLButtonElement;
   saveButton: HTMLButtonElement;
@@ -47,6 +49,7 @@ interface UIElements {
   pauseClose: HTMLButtonElement;
   pauseSave: HTMLButtonElement;
   pauseFullscreen: HTMLButtonElement;
+  pauseMainMenu: HTMLButtonElement;
 }
 
 interface UIActions {
@@ -62,6 +65,7 @@ interface UIActions {
   onSellFish: (fishId: FishTypeId) => void;
   onSleep: () => void;
   onFullscreen: () => void;
+  onMainMenu: () => void;
 }
 
 const defaultDurations: Record<MessageType, number> = {
@@ -118,6 +122,7 @@ export class UISystem {
       assistantPanel: getElement("assistant-panel"),
       toolButtons: getElement("tool-buttons"),
       seedButtons: getElement("seed-buttons"),
+      menuButton: getElement<HTMLButtonElement>("game-menu"),
       askButton: getElement<HTMLButtonElement>("ask-cbr"),
       nextDayButton: getElement<HTMLButtonElement>("next-day"),
       saveButton: getElement<HTMLButtonElement>("save-game"),
@@ -136,8 +141,10 @@ export class UISystem {
       pauseClose: getElement<HTMLButtonElement>("pause-close"),
       pauseSave: getElement<HTMLButtonElement>("pause-save"),
       pauseFullscreen: getElement<HTMLButtonElement>("pause-fullscreen"),
+      pauseMainMenu: getElement<HTMLButtonElement>("pause-main-menu"),
     };
 
+    this.elements.menuButton.addEventListener("click", () => this.togglePause());
     this.elements.askButton.addEventListener("click", actions.onAskAssistant);
     this.elements.nextDayButton.addEventListener("click", actions.onNextDay);
     this.elements.saveButton.addEventListener("click", actions.onSave);
@@ -149,6 +156,7 @@ export class UISystem {
     this.elements.pauseClose.addEventListener("click", () => this.hidePause());
     this.elements.pauseSave.addEventListener("click", actions.onSave);
     this.elements.pauseFullscreen.addEventListener("click", actions.onFullscreen);
+    this.elements.pauseMainMenu.addEventListener("click", actions.onMainMenu);
 
     this.elements.toolButtons.querySelectorAll<HTMLButtonElement>("button[data-tool]").forEach((button) => {
       button.addEventListener("click", () => actions.onSelectTool(button.dataset.tool as ToolId));
@@ -169,7 +177,7 @@ export class UISystem {
     this.elements.harvests.textContent = String(inventory.harvests);
     this.elements.fish.textContent = String(totalFish(inventory));
     this.elements.selectedCrop.textContent = crop.name;
-    this.elements.selectedCropIcon.textContent = crop.icon;
+    this.elements.selectedCropIcon.innerHTML = IconSystem.svg(inventory.selectedCrop, "hud-svg-icon");
     this.elements.tool.textContent = toolLabels[inventory.currentTool];
 
     this.elements.toolButtons.querySelectorAll<HTMLButtonElement>("button[data-tool]").forEach((button) => {
@@ -186,7 +194,7 @@ export class UISystem {
   }
 
   showInitialHint(): void {
-    this.showMessage("Explore a fazenda. Clique nos canteiros, use E nos prédios, TAB troca sementes e Q chama o Assistente CBR.", {
+    this.showMessage("Explore a fazenda. E ou Espaço interage, clique nos canteiros usa ferramenta, botão direito consulta CBR e TAB troca sementes.", {
       duration: 6500,
       type: "info",
     });
@@ -210,6 +218,16 @@ export class UISystem {
   }
 
   togglePause(): void {
+    if (!this.elements.shopModal.classList.contains("is-hidden")) {
+      this.hideShop();
+      return;
+    }
+
+    if (!this.elements.houseModal.classList.contains("is-hidden")) {
+      this.hideHouse();
+      return;
+    }
+
     this.elements.pauseModal.classList.toggle("is-hidden");
   }
 
@@ -245,7 +263,7 @@ export class UISystem {
   }
 
   showAssistantWaiting(): void {
-    this.elements.assistantText.textContent = "Chegue perto de um canteiro e pressione Q. Eu comparo clima, solo, pragas e cultura com experiências antigas.";
+    this.elements.assistantText.textContent = "Chegue perto de um canteiro e pressione Q ou clique direito. Eu comparo clima, solo, pragas, cultura e experiências antigas.";
     this.elements.assistantSimilarity.textContent = "--";
     this.elements.assistantAction.textContent = "--";
     this.elements.assistantCycle.textContent = "aguardando";
@@ -282,6 +300,11 @@ export class UISystem {
     this.flashAssistantPanel();
   }
 
+  appendAssistantText(text: string): void {
+    this.elements.assistantText.textContent = `${this.elements.assistantText.textContent} ${text}`;
+    this.flashAssistantPanel();
+  }
+
   showRetain(learnedCount: number, result: CBRResult): void {
     this.elements.assistantCycle.textContent = `Retain: ${learnedCount} casos`;
     this.elements.assistantText.textContent = `Nova experiência salva na memória CBR. Resultado registrado: ${resultLabels[result]}. Vou usar isso nas próximas recomendações.`;
@@ -295,7 +318,7 @@ export class UISystem {
       const button = document.createElement("button");
       button.type = "button";
       button.className = inventory.selectedCrop === id ? "is-active" : "";
-      button.innerHTML = `<strong>${crop.icon}</strong><span>${crop.name}</span><em>${inventory.seedStock[id]}</em>`;
+      button.innerHTML = `<strong>${IconSystem.svg(id, "seed-svg-icon")}</strong><span>${crop.name}</span><em>${inventory.seedStock[id]}</em>`;
       button.addEventListener("click", () => this.actions.onSelectCrop(id));
       this.elements.seedButtons.appendChild(button);
     });
@@ -311,13 +334,13 @@ export class UISystem {
       const crop = cropTypes[id];
       const seedButton = document.createElement("button");
       seedButton.type = "button";
-      seedButton.innerHTML = `<strong>${crop.icon} ${crop.name}</strong><span>Semente: ${Math.round(crop.seedPrice)} moedas · estoque ${economy.shopSeedStock[id]}</span>`;
+      seedButton.innerHTML = `<strong>${IconSystem.svg(id, "shop-svg-icon")} ${crop.name}</strong><span>Semente: ${Math.round(crop.seedPrice)} moedas · estoque ${economy.shopSeedStock[id]}</span>`;
       seedButton.addEventListener("click", () => this.actions.onBuySeed(id));
       this.elements.shopSeeds.appendChild(seedButton);
 
       const cropButton = document.createElement("button");
       cropButton.type = "button";
-      cropButton.innerHTML = `<strong>${crop.icon} ${crop.name}</strong><span>${inventory.harvestStock[id]} un. · ${economy.prices[id]} moedas <b class="trend-${economy.trends[id]}">${trendSymbol(economy.trends[id])}</b></span>`;
+      cropButton.innerHTML = `<strong>${IconSystem.svg(id, "shop-svg-icon")} ${crop.name}</strong><span>${inventory.harvestStock[id]} un. · ${economy.prices[id]} moedas <b class="trend-${economy.trends[id]}">${trendSymbol(economy.trends[id])}</b></span>`;
       cropButton.addEventListener("click", () => this.actions.onSellCrop(id));
       this.elements.shopHarvests.appendChild(cropButton);
     });
@@ -326,7 +349,7 @@ export class UISystem {
       const fish = fishTypes[id];
       const fishButton = document.createElement("button");
       fishButton.type = "button";
-      fishButton.innerHTML = `<strong>${fish.icon} ${fish.name}</strong><span>${inventory.fishStock[id]} un. · ${economy.prices[id]} moedas <b class="trend-${economy.trends[id]}">${trendSymbol(economy.trends[id])}</b></span>`;
+      fishButton.innerHTML = `<strong>${IconSystem.svg(id, "shop-svg-icon")} ${fish.name}</strong><span>${inventory.fishStock[id]} un. · ${economy.prices[id]} moedas <b class="trend-${economy.trends[id]}">${trendSymbol(economy.trends[id])}</b></span>`;
       fishButton.addEventListener("click", () => this.actions.onSellFish(id));
       this.elements.shopFish.appendChild(fishButton);
     });

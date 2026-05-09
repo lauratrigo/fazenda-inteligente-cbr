@@ -16,6 +16,9 @@ export type PlantStage = "vazio" | "preparado" | "plantado" | "crescendo" | "pro
 export type CropVisualStage = "empty" | "prepared" | "seed" | "sprout" | "middle" | "adult" | "problem" | "ready";
 export type CBRResult = "melhorou" | "melhorou_parcialmente" | "piorou" | "colheu" | "sem_efeito";
 export type Direction = "up" | "down" | "left" | "right";
+export type CharacterHairStyle = "curto" | "medio" | "longo" | "rabo" | "cacheado" | "femininoA" | "femininoB" | "neutroA" | "bone" | "chapeu";
+export type CharacterOutfitStyle = "avental" | "macacao" | "camisa" | "jardineira" | "casaco";
+export type FishingPhase = "idle" | "casting" | "waiting" | "approaching" | "hooked" | "captured" | "failed" | "cooldown";
 
 export interface Vector2Like {
   x: number;
@@ -134,7 +137,8 @@ export interface CharacterCustomization {
   skinColor: string;
   hairColor: string;
   outfitColor: string;
-  style: "A" | "B" | "C";
+  style: CharacterHairStyle;
+  outfitStyle: CharacterOutfitStyle;
 }
 
 export interface PlayerSaveState {
@@ -175,4 +179,7 @@ export interface FishingOutcome {
   fishId?: FishTypeId;
   value?: number;
   rarity?: string;
+  phase?: FishingPhase;
+  bobberTile?: Vector2Like;
+  ready?: boolean;
 }
