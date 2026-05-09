@@ -19,6 +19,7 @@ export class MenuScene extends Phaser.Scene {
     const appShell = getElement("app-shell");
     menu.classList.remove("is-hidden");
     appShell.classList.add("is-menu-open");
+    document.body.classList.remove("is-night", "is-auto-night");
 
     const name = getElement<HTMLInputElement>("custom-name");
     const skin = getElement<HTMLInputElement>("custom-skin");
@@ -37,10 +38,12 @@ export class MenuScene extends Phaser.Scene {
     outfitStyle.value = savedCustomization.outfitStyle;
     this.updatePreview(savedCustomization);
 
-    [name, skin, hair, outfit, style, outfitStyle].forEach((input) => {
+    [name, style, outfitStyle].forEach((input) => {
       input.oninput = () => this.updatePreview(this.readCustomization());
     });
-    this.installColorPickerGuards([skin, hair, outfit]);
+    this.installPalette("custom-skin");
+    this.installPalette("custom-hair");
+    this.installPalette("custom-outfit");
 
     getElement<HTMLButtonElement>("menu-play").onclick = () => {
       CharacterCustomizationSystem.save(this.readCustomization());
@@ -99,17 +102,28 @@ export class MenuScene extends Phaser.Scene {
     preview.dataset.outfit = customization.outfitStyle;
   }
 
-  private installColorPickerGuards(inputs: HTMLInputElement[]): void {
-    const closePickers = () => inputs.forEach((input) => input.blur());
+  private installPalette(fieldId: string): void {
+    const input = getElement<HTMLInputElement>(fieldId);
+    const palette = document.querySelector<HTMLElement>(`[data-color-field="${fieldId}"]`);
+    if (!palette) return;
 
-    document.addEventListener("pointerdown", (event) => {
-      const target = event.target as HTMLElement | null;
-      if (!target || inputs.some((input) => input === target || input.parentElement?.contains(target))) return;
-      closePickers();
+    const buttons = Array.from(palette.querySelectorAll<HTMLButtonElement>(".color-swatch"));
+    const syncButtons = () => {
+      buttons.forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.color === input.value);
+      });
+    };
+
+    buttons.forEach((button) => {
+      button.onclick = () => {
+        const color = button.dataset.color;
+        if (!color) return;
+        input.value = color;
+        syncButtons();
+        this.updatePreview(this.readCustomization());
+      };
     });
 
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") closePickers();
-    });
+    syncButtons();
   }
 }

@@ -37,7 +37,7 @@ body {
 
 body[data-weather="ensolarado"] {
   background:
-    radial-gradient(circle at 82% 10%, rgba(255, 229, 132, 0.9), rgba(255, 229, 132, 0) 19rem),
+    radial-gradient(circle at var(--sun-x, 82%) var(--sun-y, 10%), rgba(255, 229, 132, 0.9), rgba(255, 229, 132, 0) 19rem),
     linear-gradient(180deg, #7fd1f0, #fff2b8 43%, #8ccf70);
 }
 
@@ -55,7 +55,7 @@ body[data-weather="nublado"] {
 
 body[data-weather="seco"] {
   background:
-    radial-gradient(circle at 80% 8%, rgba(255, 207, 92, 0.8), rgba(255, 207, 92, 0) 17rem),
+    radial-gradient(circle at var(--sun-x, 80%) var(--sun-y, 8%), rgba(255, 207, 92, 0.8), rgba(255, 207, 92, 0) 17rem),
     linear-gradient(180deg, #e5c57b, #f2d89c 43%, #91b76b);
 }
 
@@ -123,28 +123,30 @@ kbd {
 
 .sun-disk {
   position: absolute;
-  top: 32px;
-  right: 9vw;
+  top: var(--sun-y, 32px);
+  left: var(--sun-x, 82%);
   width: 96px;
   height: 96px;
   border-radius: 50%;
   background: radial-gradient(circle, #fff7b2 0 30%, #f4cc58 31% 64%, rgba(244, 204, 88, 0) 65%);
   box-shadow: 0 0 42px rgba(255, 225, 115, 0.55);
   opacity: 0.82;
-  animation: sun-path 42s ease-in-out infinite alternate;
+  transform: translate(-50%, -20%);
+  transition: top 0.7s ease, left 0.7s ease, opacity 0.35s ease, filter 0.35s ease;
 }
 
 .moon-disk {
   position: absolute;
-  top: 54px;
-  right: 12vw;
+  top: var(--moon-y, 54px);
+  left: var(--moon-x, 16%);
   width: 74px;
   height: 74px;
   border-radius: 50%;
   background: radial-gradient(circle at 42% 35%, #fffef8, #dbe6e8 62%, rgba(219, 230, 232, 0) 64%);
   box-shadow: 0 0 28px rgba(238, 248, 255, 0.55);
   opacity: 0;
-  transform: translateY(22px);
+  transform: translate(-50%, 22px);
+  transition: top 0.7s ease, left 0.7s ease, opacity 0.35s ease, transform 0.35s ease;
 }
 
 .cloud {
@@ -186,20 +188,23 @@ body[data-weather="seco"] .sun-disk {
   filter: sepia(0.55) saturate(1.2);
 }
 
-body.is-night {
+body.is-night,
+body.is-auto-night {
   background:
-    radial-gradient(circle at 77% 10%, rgba(238, 248, 255, 0.45), rgba(238, 248, 255, 0) 16rem),
+    radial-gradient(circle at var(--moon-x, 77%) var(--moon-y, 10%), rgba(238, 248, 255, 0.45), rgba(238, 248, 255, 0) 16rem),
     linear-gradient(180deg, #1f3550, #405d70 45%, #3d6d50);
 }
 
-body.is-night .sun-disk {
+body.is-night .sun-disk,
+body.is-auto-night .sun-disk {
   opacity: 0;
-  transform: translateY(90px);
+  transform: translate(-50%, 90px);
 }
 
-body.is-night .moon-disk {
+body.is-night .moon-disk,
+body.is-auto-night .moon-disk {
   opacity: 0.92;
-  transform: translateY(0);
+  transform: translate(-50%, 0);
 }
 
 body[data-weather="chuvoso"] .cloud,
@@ -296,14 +301,19 @@ body[data-weather="nublado"] .cloud {
   color: var(--soil-dark);
 }
 
-.custom-card label {
+.custom-card label,
+.color-field {
   display: grid;
   gap: 5px;
   color: var(--muted);
   font-weight: 900;
 }
 
-.custom-card input,
+.color-field > span {
+  display: block;
+}
+
+.custom-card input:not([type="hidden"]),
 .custom-card select {
   min-height: 38px;
   border: 2px solid rgba(36, 51, 38, 0.18);
@@ -311,6 +321,34 @@ body[data-weather="nublado"] .cloud {
   background: #fffef8;
   color: var(--ink);
   font-weight: 800;
+}
+
+.color-field {
+  padding: 8px;
+  border: 2px solid rgba(36, 51, 38, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 254, 248, 0.6);
+}
+
+.color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.color-swatch {
+  width: 32px;
+  min-height: 32px !important;
+  padding: 0;
+  border: 3px solid rgba(36, 51, 38, 0.18) !important;
+  border-radius: 999px !important;
+  background: var(--swatch) !important;
+  box-shadow: inset 0 -4px rgba(0, 0, 0, 0.12), 0 3px 0 rgba(98, 56, 25, 0.13) !important;
+}
+
+.color-swatch.is-active {
+  border-color: var(--soil-dark) !important;
+  outline: 3px solid rgba(244, 204, 88, 0.52);
 }
 
 .custom-grid {
@@ -345,6 +383,29 @@ body[data-weather="nublado"] .cloud {
   background: var(--preview-skin, #f1b77a);
 }
 
+.preview-head::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #263027;
+  box-shadow: 11px 0 0 #263027;
+}
+
+.preview-head::after {
+  content: "";
+  position: absolute;
+  left: 9px;
+  bottom: 5px;
+  width: 9px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(79, 53, 32, 0.8);
+}
+
 .preview-hair {
   top: 18px;
   width: 34px;
@@ -362,21 +423,22 @@ body[data-weather="nublado"] .cloud {
   background: var(--preview-outfit, #4d6fb3);
 }
 
-.custom-preview[data-style="B"] .preview-hair {
+.custom-preview[data-style="medio"] .preview-hair {
   width: 40px;
-  height: 22px;
+  height: 20px;
 }
 
 .custom-preview[data-style="longo"] .preview-hair,
 .custom-preview[data-style="femininoB"] .preview-hair,
-.custom-preview[data-style="C"] .preview-hair {
+.custom-preview[data-style="tranca"] .preview-hair {
   width: 44px;
   height: 28px;
   border-radius: 10px 10px 16px 16px;
 }
 
 .custom-preview[data-style="rabo"] .preview-hair::after,
-.custom-preview[data-style="femininoA"] .preview-hair::after {
+.custom-preview[data-style="femininoA"] .preview-hair::after,
+.custom-preview[data-style="tranca"] .preview-hair::after {
   content: "";
   position: absolute;
   right: -8px;
@@ -387,6 +449,14 @@ body[data-weather="nublado"] .cloud {
   background: var(--preview-hair, #7a4a24);
 }
 
+.custom-preview[data-style="tranca"] .preview-hair::after {
+  width: 8px;
+  height: 30px;
+  right: -5px;
+  background:
+    linear-gradient(180deg, var(--preview-hair, #7a4a24) 0 30%, rgba(255, 247, 220, 0.28) 31% 35%, var(--preview-hair, #7a4a24) 36% 66%, rgba(255, 247, 220, 0.28) 67% 71%, var(--preview-hair, #7a4a24) 72%);
+}
+
 .custom-preview[data-style="cacheado"] .preview-hair {
   width: 42px;
   height: 24px;
@@ -395,7 +465,8 @@ body[data-weather="nublado"] .cloud {
 }
 
 .custom-preview[data-style="bone"] .preview-hair::before,
-.custom-preview[data-style="chapeu"] .preview-hair::before {
+.custom-preview[data-style="chapeu"] .preview-hair::before,
+.custom-preview[data-style="chapeuPalha"] .preview-hair::before {
   content: "";
   position: absolute;
   left: -4px;
@@ -404,6 +475,19 @@ body[data-weather="nublado"] .cloud {
   height: 8px;
   border-radius: 999px;
   background: #7a4a24;
+}
+
+.custom-preview[data-style="bone"] .preview-hair::before {
+  background: #2f6e8d;
+  box-shadow: 15px 5px 0 -1px #2f6e8d;
+}
+
+.custom-preview[data-style="chapeuPalha"] .preview-hair::before {
+  left: -9px;
+  right: -9px;
+  top: -8px;
+  background: #d8b06b;
+  box-shadow: 10px -7px 0 -1px #f4cc58;
 }
 
 .custom-preview[data-outfit="macacao"] .preview-body {
@@ -424,6 +508,33 @@ body[data-weather="nublado"] .cloud {
 
 .custom-preview[data-outfit="casaco"] .preview-body {
   width: 44px;
+}
+
+.custom-preview[data-outfit="avental"] .preview-body::after,
+.custom-preview[data-outfit="fazenda"] .preview-body::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 6px;
+  height: 9px;
+  border-radius: 3px;
+  background: rgba(255, 247, 220, 0.62);
+}
+
+.custom-preview[data-outfit="vestido"] .preview-body {
+  width: 42px;
+  height: 38px;
+  clip-path: polygon(18% 0, 82% 0, 100% 100%, 0 100%);
+}
+
+.custom-preview[data-outfit="alca"] .preview-body {
+  border-left: 7px solid rgba(255, 247, 220, 0.5);
+  border-right: 7px solid rgba(255, 247, 220, 0.5);
+}
+
+.custom-preview[data-outfit="fazenda"] .preview-body {
+  box-shadow: inset 0 8px rgba(79, 53, 32, 0.22), inset 0 -7px rgba(255, 247, 220, 0.18);
 }
 
 .menu-help {
@@ -453,17 +564,6 @@ body[data-weather="nublado"] .cloud {
   z-index: 8;
   background: rgba(255, 250, 240, 0.92);
   backdrop-filter: blur(10px);
-}
-
-.hud-menu-button {
-  min-height: 44px;
-  min-width: 84px;
-  border: 3px solid rgba(98, 56, 25, 0.22);
-  border-radius: var(--radius);
-  background: var(--gold);
-  color: var(--soil-dark);
-  font-weight: 900;
-  box-shadow: inset 0 -4px rgba(98, 56, 25, 0.12), 0 5px 0 rgba(98, 56, 25, 0.15);
 }
 
 .brand-block {
@@ -567,6 +667,12 @@ body[data-weather="nublado"] .cloud {
   margin: 20px auto 14px;
 }
 
+.play-column {
+  display: grid;
+  min-width: 0;
+  gap: 12px;
+}
+
 .game-frame {
   position: relative;
   min-width: 0;
@@ -575,6 +681,21 @@ body[data-weather="nublado"] .cloud {
   border-radius: var(--radius);
   background: #396c34;
   box-shadow: var(--shadow);
+}
+
+.game-menu-button {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 4;
+  min-height: 42px;
+  min-width: 88px;
+  border: 3px solid rgba(98, 56, 25, 0.36);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #fff1a6, var(--gold));
+  color: var(--soil-dark);
+  font-weight: 900;
+  box-shadow: inset 0 -4px rgba(98, 56, 25, 0.14), 0 6px 0 rgba(65, 42, 22, 0.22);
 }
 
 .game-container {
@@ -640,7 +761,6 @@ body[data-weather="nublado"] .cloud {
 .tools-panel,
 .seeds-panel,
 .actions-panel,
-.controls-panel,
 .learn-panel details {
   border: 2px solid var(--line);
   border-radius: var(--radius);
@@ -650,8 +770,7 @@ body[data-weather="nublado"] .cloud {
 
 .assistant-panel,
 .tools-panel,
-.seeds-panel,
-.controls-panel {
+.seeds-panel {
   padding: 14px;
 }
 
@@ -680,15 +799,13 @@ body[data-weather="nublado"] .cloud {
 
 .panel-title p,
 .panel-title h1,
-.tools-panel h2,
-.controls-panel h2 {
+.tools-panel h2 {
   margin: 0;
 }
 
 .panel-title p,
 .tools-panel h2,
-.seeds-panel h2,
-.controls-panel h2 {
+.seeds-panel h2 {
   color: var(--soil-dark);
   font-size: 0.82rem;
   font-weight: 900;
@@ -766,10 +883,19 @@ body[data-weather="nublado"] .cloud {
 
 .tool-buttons button {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto auto 1fr;
   align-items: center;
   gap: 7px;
   text-align: left;
+}
+
+.tool-button-icon {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(255, 247, 220, 0.72);
 }
 
 .tool-buttons button.is-active,
@@ -840,15 +966,9 @@ body[data-weather="nublado"] .cloud {
   color: white !important;
 }
 
-.controls-panel p {
-  margin: 8px 0 0;
-  color: var(--muted);
-  font-weight: 800;
-}
-
 .learn-panel {
-  width: min(100% - 24px, 1160px);
-  margin: 0 auto 28px;
+  width: 100%;
+  margin: 0;
 }
 
 .learn-panel details {
@@ -1052,10 +1172,6 @@ body[data-weather="nublado"] .cloud {
   border: 2px solid rgba(98, 56, 25, 0.16);
   border-radius: var(--radius);
   background: rgba(255, 254, 248, 0.6);
-}
-
-.learn-panel.is-collapsed {
-  display: none;
 }
 
 @keyframes assistant-glow {

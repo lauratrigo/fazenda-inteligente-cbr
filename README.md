@@ -18,6 +18,17 @@ O jogo publicado no GitHub Pages ficará disponível em:
 
 https://soturine.github.io/fazenda-inteligente-cbr/
 
+## Capturas Do Jogo
+
+As imagens abaixo mostram a versão atual da interface, com menu de jogo, fazenda jogável, loja, casa, pesca e painel CBR integrado ao gameplay.
+
+![Menu principal](docs/screenshots/menu.png)
+![Fazenda](docs/screenshots/fazenda.png)
+![Loja](docs/screenshots/loja.png)
+![Casa](docs/screenshots/casa.png)
+![Pesca](docs/screenshots/pesca.png)
+![CBR analisando um canteiro](docs/screenshots/cbr.png)
+
 ## Como Executar Localmente
 
 ```bash
@@ -69,13 +80,13 @@ Antes de entrar na fazenda, o jogo mostra um menu principal com:
 - Resetar progresso;
 - Como jogar;
 - Tela cheia;
-- customização do fazendeiro.
+- customização do personagem.
 
-A customização salva nome, cor da pele, cor do cabelo, cor da roupa, estilo de cabelo e estilo de roupa. Há opções curtas, médias, longas, presas, cacheadas, femininas, neutras e com boné/chapéu. Essas escolhas alteram o personagem dentro do jogo e ficam salvas no LocalStorage. O menu também fecha os seletores de cor ao clicar fora ou apertar `ESC`.
+A customização salva nome, cor da pele, cor do cabelo, cor da roupa, estilo de cabelo e estilo de roupa. As cores são escolhidas por paletas próprias do jogo, sem depender do seletor nativo do navegador. Há opções curtas, médias, longas, rabo de cavalo, cacheadas, trança, femininas, neutras, boné, chapéu de campo e chapéu de palha. As roupas incluem avental, macacão, camisa, jardineira, casaco, roupa longa, camiseta com alça e roupa de fazenda. Essas escolhas alteram o personagem dentro do jogo e ficam salvas no LocalStorage.
 
 ## Menu Interno
 
-O botão "Menu" no HUD e a tecla `ESC` abrem um painel interno com dormir, som, salvar, resetar, tela cheia, controles e uma explicação compacta do CBR. A lateral principal fica mais limpa, focada no Assistente CBR, ferramentas e sementes.
+O botão "Menu" fica dentro do quadro do jogo, no canto superior direito da área jogável. Ele e a tecla `ESC` abrem um painel interno com dormir, som, salvar, resetar, tela cheia, controles e uma explicação compacta do CBR. A lateral principal fica mais limpa, focada no Assistente CBR, ferramentas e sementes.
 
 ## Culturas
 
@@ -132,7 +143,7 @@ O clima aparece no céu, no mapa e nos efeitos:
 
 Ao dormir, o jogo faz uma transição de noite com lua e paleta mais fria antes de amanhecer. O fundo fora do canvas também muda com clima e noite.
 
-O mapa foi ampliado e usa câmera seguindo o jogador. Árvores maiores balançam com o vento, folhas cruzam a tela, a casa possui detalhes, a cerca tem variações de madeira vertical/horizontal, há caminhos conectando casa, loja, canteiros, caixa de venda e lago.
+O mapa foi ampliado e usa câmera seguindo o jogador. Árvores maiores balançam com o vento, folhas cruzam a tela, a casa possui detalhes, a cerca tem variações de madeira vertical/horizontal e cantos, há caminhos conectando casa, loja, canteiros, caixa de venda e lago.
 
 ## Ferramentas Visíveis
 
@@ -164,6 +175,8 @@ O Assistente CBR é o espantalho inteligente. Ao pressionar `Q` ou clicar com o 
 O sistema recupera o caso mais parecido, reutiliza a ação antiga, revisa a recomendação por regras fortes e aprende quando o jogador avança o dia. O painel compacto mostra similaridade, ação recomendada e ciclo CBR sem dominar a tela.
 
 O assistente também comenta mercado e pesca quando o jogador está perto da loja, caixa de venda ou lago. Ele pode avisar que uma cultura está valorizada, que vender muito derrubou preço, ou que chuva ajuda a pesca.
+
+Uma explicação acadêmica recolhível fica logo abaixo do quadro do jogo, facilitando a apresentação sem poluir a tela principal.
 
 Exemplos de adaptação:
 
@@ -240,6 +253,9 @@ Em caso de empate, o sistema prefere o caso com melhor resultado anterior.
 │   │   └── shopData.ts
 │   └── ui/UISystem.ts
 ├── docs/
+│   ├── screenshots/
+│   ├── explicacao-cbr.md
+│   └── roteiro-apresentacao.md
 ├── .github/workflows/deploy.yml
 ├── vite.config.ts
 ├── package.json

@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.6.0] - 2026-05-09
+### Corrigido
+- Botão "Menu" reposicionado para dentro do quadro do jogo.
+- Painel fixo de controles removido da lateral principal.
+- Seletor nativo de cor substituído por paletas próprias, evitando abertura acidental.
+- Texto "Seu fazendeiro" ajustado para "Seu personagem".
+- Camadas do mapa revisadas para evitar árvores invadindo visualmente a casa.
+
+### Adicionado
+- Prints do menu, fazenda, loja, pesca, casa e CBR na documentação.
+- Novos estilos de cabelo, incluindo trança simples e chapéu de palha.
+- Novos estilos de roupa, incluindo roupa longa, camiseta com alça e roupa de fazenda.
+- Botões de paleta de cor com destaque visual da seleção atual.
+- Movimento visual de sol/lua e paleta automática de noite durante sessões longas.
+
+### Alterado
+- Explicação "Como o CBR funciona neste jogo" reposicionada logo abaixo do jogo.
+- Personagem com rosto e variações visuais mais claras de cabelo, roupa e acessórios.
+- Loja, NPC vendedor, cerca, caminhos e sinalização visual receberam polimento.
+- README atualizado para refletir a UX atual e incluir capturas do jogo.
+
 ## [2.5.0] - 2026-05-08
 ### Corrigido
 - Seletor de cor recebendo blur ao clicar fora ou apertar `ESC`.

@@ -16,8 +16,8 @@ export type PlantStage = "vazio" | "preparado" | "plantado" | "crescendo" | "pro
 export type CropVisualStage = "empty" | "prepared" | "seed" | "sprout" | "middle" | "adult" | "problem" | "ready";
 export type CBRResult = "melhorou" | "melhorou_parcialmente" | "piorou" | "colheu" | "sem_efeito";
 export type Direction = "up" | "down" | "left" | "right";
-export type CharacterHairStyle = "curto" | "medio" | "longo" | "rabo" | "cacheado" | "femininoA" | "femininoB" | "neutroA" | "bone" | "chapeu";
-export type CharacterOutfitStyle = "avental" | "macacao" | "camisa" | "jardineira" | "casaco";
+export type CharacterHairStyle = "curto" | "medio" | "longo" | "rabo" | "cacheado" | "tranca" | "femininoA" | "femininoB" | "neutroA" | "bone" | "chapeu" | "chapeuPalha";
+export type CharacterOutfitStyle = "avental" | "macacao" | "camisa" | "jardineira" | "casaco" | "vestido" | "alca" | "fazenda";
 export type FishingPhase = "idle" | "casting" | "waiting" | "approaching" | "hooked" | "captured" | "failed" | "cooldown";
 
 export interface Vector2Like {

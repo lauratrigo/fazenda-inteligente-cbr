@@ -18,11 +18,13 @@ export const styleOptions: Array<{ id: CharacterCustomization["style"]; label: s
   { id: "longo", label: "Longo" },
   { id: "rabo", label: "Rabo de cavalo" },
   { id: "cacheado", label: "Cacheado" },
+  { id: "tranca", label: "Trança simples" },
   { id: "femininoA", label: "Feminino A" },
   { id: "femininoB", label: "Feminino B" },
   { id: "neutroA", label: "Neutro A" },
   { id: "bone", label: "Boné" },
-  { id: "chapeu", label: "Chapéu" },
+  { id: "chapeu", label: "Chapéu de campo" },
+  { id: "chapeuPalha", label: "Chapéu de palha" },
 ];
 
 export const outfitStyleOptions: Array<{ id: CharacterCustomization["outfitStyle"]; label: string }> = [
@@ -31,4 +33,7 @@ export const outfitStyleOptions: Array<{ id: CharacterCustomization["outfitStyle
   { id: "camisa", label: "Camisa" },
   { id: "jardineira", label: "Jardineira" },
   { id: "casaco", label: "Casaco" },
+  { id: "vestido", label: "Roupa longa" },
+  { id: "alca", label: "Camiseta com alça" },
+  { id: "fazenda", label: "Roupa de fazenda" },
 ];

@@ -126,11 +126,11 @@ export class FarmMap {
       }
     }
 
+    this.drawTrees(graphics, time, weather);
     this.drawHouse(graphics);
     this.drawShop(graphics);
     this.drawSellBox(graphics);
     this.drawVendor(graphics, time);
-    this.drawTrees(graphics, time, weather);
     this.drawSignposts(graphics);
   }
 
@@ -184,33 +184,51 @@ export class FarmMap {
       const edgeRight = x === this.width - 1;
       const edgeTop = y === 0;
       const edgeBottom = y === this.height - 1;
+      const isVertical = edgeLeft || edgeRight;
+      const isHorizontal = edgeTop || edgeBottom;
+      const isCorner = (edgeLeft || edgeRight) && (edgeTop || edgeBottom);
+
       graphics.fillStyle(0x000000, 0.14);
-      if (edgeLeft || edgeRight) {
-        graphics.fillRect(px + 12, py + 4, 5, this.tileSize - 8);
-        graphics.fillRect(px + 24, py + 4, 5, this.tileSize - 8);
+      if (isCorner) {
+        graphics.fillRect(px + 8, py + 8, 18, 18);
+      } else if (isVertical) {
+        graphics.fillRect(px + 10, py + 3, 6, this.tileSize - 6);
+        graphics.fillRect(px + 22, py + 3, 6, this.tileSize - 6);
       } else {
-        graphics.fillRect(px + 5, py + 11, this.tileSize - 9, 5);
-        graphics.fillRect(px + 5, py + 23, this.tileSize - 9, 5);
+        graphics.fillRect(px + 4, py + 10, this.tileSize - 8, 6);
+        graphics.fillRect(px + 4, py + 22, this.tileSize - 8, 6);
       }
+
       graphics.fillStyle(shade === 0 ? 0xa06933 : 0x8d5627, 1);
-      if (edgeLeft || edgeRight) {
-        graphics.fillRect(px + 10, py + 4, 5, this.tileSize - 8);
-        graphics.fillRect(px + 22, py + 4, 5, this.tileSize - 8);
+      if (isCorner) {
+        graphics.fillRoundedRect(px + 8, py + 8, 17, 17, 3);
+        graphics.fillStyle(0x6f3f1e, 1);
+        graphics.fillRect(px + 12, py + 4, 9, 25);
+        graphics.fillRect(px + 4, py + 12, 25, 9);
+      } else if (isVertical) {
+        graphics.fillRect(px + 9, py + 4, 6, this.tileSize - 8);
+        graphics.fillRect(px + 21, py + 4, 6, this.tileSize - 8);
+        graphics.fillStyle(0x6f3f1e, 1);
+        graphics.fillRect(px + 7, py + 7, 22, 5);
+        graphics.fillRect(px + 7, py + 20, 22, 5);
       } else {
         graphics.fillRect(px + 3, py + 8, this.tileSize - 6, 5);
         graphics.fillRect(px + 3, py + 20, this.tileSize - 6, 5);
+        graphics.fillStyle(0x6f3f1e, 1);
+        graphics.fillRect(px + 7, py + 5, 6, 24);
+        graphics.fillRect(px + 21, py + 5, 6, 24);
       }
-      graphics.fillStyle(0x6f3f1e, 1);
-      if (edgeTop || edgeBottom) {
-        graphics.fillRect(px + 7, py + 4, 6, 25);
-        graphics.fillRect(px + 21, py + 4, 6, 25);
-      } else {
-        graphics.fillRect(px + 8, py + 6, 18, 6);
-        graphics.fillRect(px + 8, py + 20, 18, 6);
-      }
-      if ((x + y) % 7 === 0) {
+
+      if ((x + y) % 7 === 0 && !isCorner) {
         graphics.fillStyle(0xf4cc58, 0.85);
         graphics.fillRect(px + 13, py + 14, 6, 3);
+      }
+
+      if (isHorizontal && x === 6 && y === 0) {
+        graphics.fillStyle(0x7a4a24, 1);
+        graphics.fillRect(px + 2, py + 9, 28, 13);
+        graphics.fillStyle(0xf4cc58, 1);
+        graphics.fillRect(px + 14, py + 11, 4, 9);
       }
     }
   }
@@ -277,11 +295,19 @@ export class FarmMap {
     graphics.fillStyle(0xfff7dc, 1);
     graphics.fillRect(x + 45, y + 14, 70, 20);
     graphics.fillStyle(0x623819, 1);
-    graphics.fillRect(x + 52, y + 19, 8, 3);
-    graphics.fillRect(x + 63, y + 19, 8, 3);
-    graphics.fillRect(x + 75, y + 19, 8, 3);
-    graphics.fillRect(x + 88, y + 19, 8, 3);
-    graphics.fillRect(x + 99, y + 19, 8, 3);
+    graphics.fillRect(x + 53, y + 18, 3, 11);
+    graphics.fillRect(x + 53, y + 26, 10, 3);
+    graphics.fillRect(x + 68, y + 18, 11, 3);
+    graphics.fillRect(x + 68, y + 18, 3, 11);
+    graphics.fillRect(x + 76, y + 18, 3, 11);
+    graphics.fillRect(x + 68, y + 26, 11, 3);
+    graphics.fillRect(x + 84, y + 18, 11, 3);
+    graphics.fillRect(x + 92, y + 18, 3, 11);
+    graphics.fillRect(x + 84, y + 26, 11, 3);
+    graphics.fillRect(x + 100, y + 18, 3, 11);
+    graphics.fillRect(x + 108, y + 18, 3, 11);
+    graphics.fillRect(x + 101, y + 18, 9, 3);
+    graphics.fillRect(x + 100, y + 22, 11, 3);
     graphics.fillStyle(0x3f9a49, 1);
     graphics.fillCircle(x + 46, y + 96, 6);
     graphics.fillStyle(0xe85b75, 1);
@@ -313,16 +339,28 @@ export class FarmMap {
     const bob = Math.sin(time / 620) * 1.2;
     graphics.fillStyle(0x000000, 0.18);
     graphics.fillEllipse(px, py + 14, 22, 7);
-    graphics.fillStyle(0x3f9a49, 1);
-    graphics.fillRect(px - 8, py - 2 + bob, 16, 18);
+    graphics.fillStyle(0xb95234, 1);
+    graphics.fillRect(px - 9, py - 1 + bob, 18, 19);
+    graphics.fillStyle(0xfff7dc, 1);
+    graphics.fillRect(px - 5, py + 2 + bob, 10, 5);
     graphics.fillStyle(0xf1b77a, 1);
-    graphics.fillRect(px - 6, py - 15 + bob, 12, 11);
+    graphics.fillRoundedRect(px - 7, py - 16 + bob, 14, 12, 3);
     graphics.fillStyle(0x7a4a24, 1);
-    graphics.fillRect(px - 8, py - 20 + bob, 16, 5);
+    graphics.fillRect(px - 9, py - 21 + bob, 18, 5);
+    graphics.fillStyle(0x263027, 1);
+    graphics.fillRect(px - 4, py - 12 + bob, 2, 2);
+    graphics.fillRect(px + 3, py - 12 + bob, 2, 2);
+    graphics.fillStyle(0x7a3f2c, 1);
+    graphics.fillRect(px - 3, py - 8 + bob, 6, 2);
     graphics.fillStyle(0xfff7dc, 0.94);
     graphics.fillRoundedRect(px - 42, py - 47 + bob, 84, 19, 4);
     graphics.fillStyle(0x623819, 1);
-    graphics.fillRect(px - 34, py - 39 + bob, 68, 3);
+    graphics.fillRect(px - 31, py - 42 + bob, 4, 10);
+    graphics.fillRect(px - 31, py - 42 + bob, 16, 3);
+    graphics.fillRect(px - 31, py - 38 + bob, 13, 3);
+    graphics.fillRect(px - 31, py - 34 + bob, 16, 3);
+    graphics.fillStyle(0x623819, 1);
+    graphics.fillRect(px - 6, py - 39 + bob, 30, 3);
   }
 
   private drawTrees(graphics: Phaser.GameObjects.Graphics, time: number, weather: Weather): void {
@@ -430,11 +468,16 @@ export class FarmMap {
 
   private isPathTile(x: number, y: number): boolean {
     return (x >= 6 && x <= 32 && y === 10)
+      || (x >= 6 && x <= 32 && y === 11 && x % 2 === 0)
       || (x === 12 && y >= 10 && y <= 20)
+      || (x === 13 && y >= 12 && y <= 19)
       || (x >= 23 && x <= 32 && y === 20)
       || (x === 32 && y >= 10 && y <= 22)
       || (x >= 6 && x <= 12 && y === 9)
       || (x >= 9 && x <= 12 && y === 11)
-      || (x >= 25 && x <= 32 && y === 22);
+      || (x >= 25 && x <= 32 && y === 22)
+      || (x >= 9 && x <= 12 && y === 8)
+      || (x === 9 && y >= 8 && y <= 11)
+      || (x >= 25 && x <= 28 && y === 11);
   }
 }

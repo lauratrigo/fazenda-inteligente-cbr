@@ -8,6 +8,8 @@
 
 "Fazendinha CBR é um jogo top-down feito com Vite, TypeScript e Phaser 3. O jogador anda por uma fazenda maior, cuida de canteiros, compra sementes, vende colheitas, pesca no lago e dorme na casa para avançar o dia."
 
+"A interface foi organizada para parecer um jogo web casual: há menu principal, customização do personagem, botão de menu dentro da área jogável, ícones, loja, lago, casa e mensagens curtas."
+
 ## 3. O que o jogador faz
 
 "O jogador alterna entre culturas como cenoura, milho, tomate e morango. Para produzir, ele precisa preparar o solo, plantar, cuidar da umidade, controlar pragas, colher quando a planta estiver pronta e vender os itens na loja."
@@ -31,6 +33,8 @@
 ## 8. Como a base aprende
 
 "Depois que usamos uma ferramenta e dormimos, o jogo avalia o resultado. Se melhorou, piorou, colheu ou não teve efeito, essa experiência é salva no LocalStorage e passa a fazer parte da memória do assistente."
+
+"O assistente também aproveita contexto de mercado e pesca para dar dicas simples, como preço de cultura valorizado ou clima favorável para pescar, mas a demonstração principal do CBR continua sendo a análise dos canteiros."
 
 ## 9. Arquitetura
 

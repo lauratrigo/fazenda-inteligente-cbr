@@ -42,12 +42,12 @@ export class CharacterCustomizationSystem {
   }
 
   private static normalizeHairStyle(value: unknown): CharacterHairStyle {
-    const allowed: CharacterHairStyle[] = ["curto", "medio", "longo", "rabo", "cacheado", "femininoA", "femininoB", "neutroA", "bone", "chapeu"];
+    const allowed: CharacterHairStyle[] = ["curto", "medio", "longo", "rabo", "cacheado", "tranca", "femininoA", "femininoB", "neutroA", "bone", "chapeu", "chapeuPalha"];
     return allowed.includes(value as CharacterHairStyle) ? value as CharacterHairStyle : defaultCustomization.style;
   }
 
   private static normalizeOutfitStyle(value: unknown): CharacterOutfitStyle {
-    const allowed: CharacterOutfitStyle[] = ["avental", "macacao", "camisa", "jardineira", "casaco"];
+    const allowed: CharacterOutfitStyle[] = ["avental", "macacao", "camisa", "jardineira", "casaco", "vestido", "alca", "fazenda"];
     return allowed.includes(value as CharacterOutfitStyle) ? value as CharacterOutfitStyle : defaultCustomization.outfitStyle;
   }
 }

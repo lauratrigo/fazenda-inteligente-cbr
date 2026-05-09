@@ -85,6 +85,12 @@ Quando o jogador usa uma ferramenta em um canteiro, o jogo guarda o caso atual e
 
 O `CBRSystem` salva a nova experiência no LocalStorage. Essa etapa corresponde ao Retain.
 
+## Integração com economia e pesca
+
+O foco acadêmico continua sendo o CBR agrícola, mas o assistente também usa o contexto do jogo para dar dicas curtas de mercado e pesca. Perto da loja, ele pode comentar se uma cultura está valorizada ou se o preço caiu por excesso de vendas. Perto do lago, ele pode sugerir pescar quando o clima favorece peixes de água doce.
+
+Essas dicas não substituem o ciclo CBR principal dos canteiros. Elas deixam a IA mais integrada ao gameplay e ajudam o jogador a perceber que o assistente observa o estado atual da fazenda.
+
 ## Por que isso é IA simbólica/baseada em conhecimento
 
 O projeto é uma aplicação simples de IA simbólica porque usa regras explícitas, atributos compreensíveis e comparação entre casos conhecidos.

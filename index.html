@@ -32,12 +32,45 @@
           <button id="menu-reset" class="danger-button" type="button">Resetar progresso</button>
         </div>
         <div class="custom-card">
-          <h2>Seu fazendeiro</h2>
+          <h2>Seu personagem</h2>
           <label>Nome <input id="custom-name" maxlength="20" value="Fazendeiro CBR" /></label>
           <div class="custom-grid">
-            <label>Pele <input id="custom-skin" type="color" value="#f1b77a" /></label>
-            <label>Cor do cabelo <input id="custom-hair" type="color" value="#7a4a24" /></label>
-            <label>Cor da roupa <input id="custom-outfit" type="color" value="#4d6fb3" /></label>
+            <div class="color-field">
+              <span>Pele</span>
+              <input id="custom-skin" type="hidden" value="#f1b77a" />
+              <div class="color-palette" data-color-field="custom-skin" aria-label="Cores de pele">
+                <button type="button" class="color-swatch" data-color="#f3cfaa" style="--swatch:#f3cfaa" aria-label="Pele clara"></button>
+                <button type="button" class="color-swatch" data-color="#f1b77a" style="--swatch:#f1b77a" aria-label="Pele dourada"></button>
+                <button type="button" class="color-swatch" data-color="#d6a06f" style="--swatch:#d6a06f" aria-label="Pele media"></button>
+                <button type="button" class="color-swatch" data-color="#c98b5d" style="--swatch:#c98b5d" aria-label="Pele bronzeada"></button>
+                <button type="button" class="color-swatch" data-color="#8b5a3c" style="--swatch:#8b5a3c" aria-label="Pele escura"></button>
+                <button type="button" class="color-swatch" data-color="#6f4634" style="--swatch:#6f4634" aria-label="Pele retinta"></button>
+              </div>
+            </div>
+            <div class="color-field">
+              <span>Cor do cabelo</span>
+              <input id="custom-hair" type="hidden" value="#7a4a24" />
+              <div class="color-palette" data-color-field="custom-hair" aria-label="Cores de cabelo">
+                <button type="button" class="color-swatch" data-color="#263027" style="--swatch:#263027" aria-label="Cabelo preto"></button>
+                <button type="button" class="color-swatch" data-color="#7a4a24" style="--swatch:#7a4a24" aria-label="Cabelo castanho"></button>
+                <button type="button" class="color-swatch" data-color="#c47a35" style="--swatch:#c47a35" aria-label="Cabelo ruivo"></button>
+                <button type="button" class="color-swatch" data-color="#f4cc58" style="--swatch:#f4cc58" aria-label="Cabelo loiro"></button>
+                <button type="button" class="color-swatch" data-color="#8f3d44" style="--swatch:#8f3d44" aria-label="Cabelo vinho"></button>
+                <button type="button" class="color-swatch" data-color="#4d6fb3" style="--swatch:#4d6fb3" aria-label="Cabelo azul"></button>
+              </div>
+            </div>
+            <div class="color-field">
+              <span>Cor da roupa</span>
+              <input id="custom-outfit" type="hidden" value="#4d6fb3" />
+              <div class="color-palette" data-color-field="custom-outfit" aria-label="Cores de roupa">
+                <button type="button" class="color-swatch" data-color="#4d6fb3" style="--swatch:#4d6fb3" aria-label="Roupa azul"></button>
+                <button type="button" class="color-swatch" data-color="#3f9a49" style="--swatch:#3f9a49" aria-label="Roupa verde"></button>
+                <button type="button" class="color-swatch" data-color="#b95234" style="--swatch:#b95234" aria-label="Roupa vermelha"></button>
+                <button type="button" class="color-swatch" data-color="#8d5fb8" style="--swatch:#8d5fb8" aria-label="Roupa roxa"></button>
+                <button type="button" class="color-swatch" data-color="#d68b3a" style="--swatch:#d68b3a" aria-label="Roupa amarela"></button>
+                <button type="button" class="color-swatch" data-color="#5fa8d3" style="--swatch:#5fa8d3" aria-label="Roupa azul clara"></button>
+              </div>
+            </div>
             <label>Estilo do cabelo
               <select id="custom-style">
                 <option value="curto">Curto</option>
@@ -45,11 +78,13 @@
                 <option value="longo">Longo</option>
                 <option value="rabo">Rabo de cavalo</option>
                 <option value="cacheado">Cacheado</option>
+                <option value="tranca">Trança simples</option>
                 <option value="femininoA">Feminino A</option>
                 <option value="femininoB">Feminino B</option>
                 <option value="neutroA">Neutro A</option>
                 <option value="bone">Boné</option>
-                <option value="chapeu">Chapéu</option>
+                <option value="chapeu">Chapéu de campo</option>
+                <option value="chapeuPalha">Chapéu de palha</option>
               </select>
             </label>
             <label>Estilo da roupa
@@ -59,6 +94,9 @@
                 <option value="camisa">Camisa</option>
                 <option value="jardineira">Jardineira</option>
                 <option value="casaco">Casaco</option>
+                <option value="vestido">Roupa longa</option>
+                <option value="alca">Camiseta com alça</option>
+                <option value="fazenda">Roupa de fazenda</option>
               </select>
             </label>
           </div>
@@ -81,8 +119,6 @@
             <strong>Fazenda top-down com IA baseada em casos</strong>
           </div>
         </div>
-        <button id="game-menu" class="hud-menu-button" type="button">Menu</button>
-
         <div class="hud-grid">
           <div class="hud-chip"><span>Dia</span><strong><i>☀</i><b id="hud-day">1</b></strong></div>
           <div class="hud-chip"><span>Clima</span><strong><i>☁</i><b id="hud-weather">ensolarado</b></strong></div>
@@ -96,9 +132,27 @@
       </header>
 
       <main class="game-layout">
-        <section class="game-frame" aria-label="Jogo Phaser">
-          <div id="game-container" class="game-container"></div>
-          <div id="game-message" class="game-message is-hidden"></div>
+        <section class="play-column">
+          <section class="game-frame" aria-label="Jogo Phaser">
+            <button id="game-menu" class="game-menu-button" type="button">Menu</button>
+            <div id="game-container" class="game-container"></div>
+            <div id="game-message" class="game-message is-hidden"></div>
+          </section>
+
+          <section class="learn-panel">
+            <details>
+              <summary>Como o CBR funciona neste jogo</summary>
+              <div>
+                <p>O CBR é um sistema interno de gameplay. O assistente observa o canteiro, recupera casos parecidos, reaproveita uma ação, revisa a recomendação e aprende quando o jogador avança o dia.</p>
+                <ul>
+                  <li><strong>Retrieve:</strong> compara o canteiro atual com casos da memória.</li>
+                  <li><strong>Reuse:</strong> reaproveita a ação aplicada no caso recuperado.</li>
+                  <li><strong>Revise:</strong> adapta por regras agrícolas fortes.</li>
+                  <li><strong>Retain:</strong> salva nova experiência no LocalStorage.</li>
+                </ul>
+              </div>
+            </details>
+          </section>
         </section>
 
         <aside class="side-stack" aria-label="Painéis de jogo">
@@ -134,17 +188,6 @@
           <section class="seeds-panel">
             <h2>Sementes <kbd>TAB</kbd></h2>
             <div id="seed-buttons" class="seed-buttons"></div>
-          </section>
-
-          <section class="controls-panel">
-            <h2>Controles</h2>
-            <p><kbd>WASD</kbd> ou <kbd>setas</kbd> mover</p>
-            <p><kbd>E</kbd> ou <kbd>Espaço</kbd> usar ferramenta / interagir</p>
-            <p>Clique esquerdo usa ferramenta no canteiro</p>
-            <p>Clique direito consulta CBR no canteiro</p>
-            <p><kbd>Q</kbd> consultar CBR</p>
-            <p><kbd>TAB</kbd> trocar semente</p>
-            <p><kbd>1-7</kbd> trocar ferramenta</p>
           </section>
         </aside>
       </main>
@@ -202,20 +245,6 @@
         </div>
       </section>
 
-      <section class="learn-panel is-collapsed">
-        <details>
-          <summary>Como o CBR funciona neste jogo</summary>
-          <div>
-            <p>O CBR é um sistema interno de gameplay. O assistente observa o canteiro, recupera casos parecidos, reaproveita uma ação, revisa a recomendação e aprende quando o jogador avança o dia.</p>
-            <ul>
-              <li><strong>Retrieve:</strong> compara o canteiro atual com casos da memória.</li>
-              <li><strong>Reuse:</strong> reaproveita a ação aplicada no caso recuperado.</li>
-              <li><strong>Revise:</strong> adapta por regras agrícolas fortes.</li>
-              <li><strong>Retain:</strong> salva nova experiência no LocalStorage.</li>
-            </ul>
-          </div>
-        </details>
-      </section>
     </div>
 
     <script type="module" src="/src/main.ts"></script>

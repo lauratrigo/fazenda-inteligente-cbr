@@ -159,7 +159,14 @@ export class UISystem {
     this.elements.pauseMainMenu.addEventListener("click", actions.onMainMenu);
 
     this.elements.toolButtons.querySelectorAll<HTMLButtonElement>("button[data-tool]").forEach((button) => {
-      button.addEventListener("click", () => actions.onSelectTool(button.dataset.tool as ToolId));
+      const tool = button.dataset.tool as ToolId;
+      if (!button.querySelector(".tool-button-icon")) {
+        const icon = document.createElement("span");
+        icon.className = "tool-button-icon";
+        icon.innerHTML = IconSystem.svg(tool, "seed-svg-icon");
+        button.insertBefore(icon, button.querySelector("span"));
+      }
+      button.onclick = () => actions.onSelectTool(button.dataset.tool as ToolId);
     });
 
     this.hideMessage(true);

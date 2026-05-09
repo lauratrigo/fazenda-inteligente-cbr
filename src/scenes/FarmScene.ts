@@ -162,6 +162,7 @@ export class FarmScene extends Phaser.Scene {
     this.updateInteractionPrompt(time);
     this.updateFishingVisuals(time);
     this.effects.updateWeather(time, this.weather.weather);
+    this.weatherVisual.syncDayProgress((time % 90000) / 90000);
     this.effects.showTargetIndicator(this.getTargetPlotInfo()?.tile ?? null);
   }
 
