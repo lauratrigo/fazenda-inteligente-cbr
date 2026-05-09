@@ -37,7 +37,7 @@ body {
 
 body[data-weather="ensolarado"] {
   background:
-    radial-gradient(circle at var(--sun-x, 82%) var(--sun-y, 10%), rgba(255, 229, 132, 0.9), rgba(255, 229, 132, 0) 19rem),
+    radial-gradient(circle at var(--sun-x, 82%) var(--sun-y, 120px), rgba(255, 229, 132, 0.9), rgba(255, 229, 132, 0) 19rem),
     linear-gradient(180deg, #7fd1f0, #fff2b8 43%, #8ccf70);
 }
 
@@ -55,7 +55,7 @@ body[data-weather="nublado"] {
 
 body[data-weather="seco"] {
   background:
-    radial-gradient(circle at var(--sun-x, 80%) var(--sun-y, 8%), rgba(255, 207, 92, 0.8), rgba(255, 207, 92, 0) 17rem),
+    radial-gradient(circle at var(--sun-x, 80%) var(--sun-y, 120px), rgba(255, 207, 92, 0.8), rgba(255, 207, 92, 0) 17rem),
     linear-gradient(180deg, #e5c57b, #f2d89c 43%, #91b76b);
 }
 
@@ -123,21 +123,21 @@ kbd {
 
 .sun-disk {
   position: absolute;
-  top: var(--sun-y, 32px);
+  top: var(--sun-y, 120px);
   left: var(--sun-x, 82%);
   width: 96px;
   height: 96px;
   border-radius: 50%;
   background: radial-gradient(circle, #fff7b2 0 30%, #f4cc58 31% 64%, rgba(244, 204, 88, 0) 65%);
   box-shadow: 0 0 42px rgba(255, 225, 115, 0.55);
-  opacity: 0.82;
-  transform: translate(-50%, -20%);
+  opacity: 0.92;
+  transform: translate(-50%, -50%);
   transition: top 0.7s ease, left 0.7s ease, opacity 0.35s ease, filter 0.35s ease;
 }
 
 .moon-disk {
   position: absolute;
-  top: var(--moon-y, 54px);
+  top: var(--moon-y, 130px);
   left: var(--moon-x, 16%);
   width: 74px;
   height: 74px;
@@ -145,7 +145,7 @@ kbd {
   background: radial-gradient(circle at 42% 35%, #fffef8, #dbe6e8 62%, rgba(219, 230, 232, 0) 64%);
   box-shadow: 0 0 28px rgba(238, 248, 255, 0.55);
   opacity: 0;
-  transform: translate(-50%, 22px);
+  transform: translate(-50%, -35%);
   transition: top 0.7s ease, left 0.7s ease, opacity 0.35s ease, transform 0.35s ease;
 }
 
@@ -191,7 +191,7 @@ body[data-weather="seco"] .sun-disk {
 body.is-night,
 body.is-auto-night {
   background:
-    radial-gradient(circle at var(--moon-x, 77%) var(--moon-y, 10%), rgba(238, 248, 255, 0.45), rgba(238, 248, 255, 0) 16rem),
+    radial-gradient(circle at var(--moon-x, 77%) var(--moon-y, 120px), rgba(238, 248, 255, 0.45), rgba(238, 248, 255, 0) 16rem),
     linear-gradient(180deg, #1f3550, #405d70 45%, #3d6d50);
 }
 
@@ -204,7 +204,7 @@ body.is-auto-night .sun-disk {
 body.is-night .moon-disk,
 body.is-auto-night .moon-disk {
   opacity: 0.92;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, -50%);
 }
 
 body[data-weather="chuvoso"] .cloud,

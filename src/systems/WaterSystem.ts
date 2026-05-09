@@ -4,6 +4,15 @@ import type { Vector2Like, Weather } from "../types";
 export class WaterSystem {
   static readonly center = { x: 32, y: 23 };
   static readonly radius = { x: 7.5, y: 4.4 };
+  private static readonly lilies = [
+    { x: 27, y: 22, ox: 8, oy: 17, size: 0.95, phase: 0.2 },
+    { x: 29, y: 25, ox: 24, oy: 8, size: 0.68, phase: 1.4 },
+    { x: 31, y: 24, ox: 7, oy: 20, size: 1.22, phase: 2.8 },
+    { x: 33, y: 26, ox: 18, oy: 10, size: 0.82, phase: 4.1 },
+    { x: 35, y: 22, ox: 23, oy: 18, size: 1.08, phase: 3.3 },
+    { x: 37, y: 23, ox: 9, oy: 13, size: 0.72, phase: 5.2 },
+    { x: 32, y: 27, ox: 12, oy: 18, size: 0.58, phase: 2.1 },
+  ];
 
   static isLakeTile(x: number, y: number): boolean {
     const dx = (x - this.center.x) / this.radius.x;
@@ -41,8 +50,8 @@ export class WaterSystem {
   static drawWaterTile(graphics: Phaser.GameObjects.Graphics, x: number, y: number, tileSize: number, time: number, weather: Weather): void {
     const px = x * tileSize;
     const py = y * tileSize;
-    const pulse = Math.sin(time / 520 + x * 0.7 + y * 0.3) * 0.08;
-    const wave = Math.sin(time / 360 + x * 0.9) * 3;
+    const pulse = Math.sin(time / 720 + x * 0.7 + y * 0.3) * 0.07;
+    const wave = Math.sin(time / 520 + x * 0.9 + y * 0.25) * 3;
     const color = weather === "chuvoso" ? 0x4a8db2 : weather === "seco" ? 0x4f9fc2 : 0x5fa8d3;
 
     graphics.fillStyle(0x2f6e8d, 1);
@@ -64,11 +73,23 @@ export class WaterSystem {
       graphics.fillEllipse(px + 14 + wave, py + 17, 22, 6);
     }
 
-    if ((x * 13 + y * 7) % 11 === 0) {
-      graphics.fillStyle(0x8fd460, 0.8);
-      graphics.fillEllipse(px + 12 + Math.sin(time / 700 + x) * 1.5, py + 12, 14, 7);
-      graphics.fillStyle(0xfff7dc, 0.8);
-      graphics.fillRect(px + 12, py + 9, 2, 2);
-    }
+    this.drawLilies(graphics, x, y, tileSize, time);
+  }
+
+  private static drawLilies(graphics: Phaser.GameObjects.Graphics, x: number, y: number, tileSize: number, time: number): void {
+    const px = x * tileSize;
+    const py = y * tileSize;
+    this.lilies.filter((lily) => lily.x === x && lily.y === y).forEach((lily) => {
+      const driftX = Math.sin(time / 1050 + lily.phase) * 2.1;
+      const driftY = Math.cos(time / 1320 + lily.phase) * 1.2;
+      const cx = px + lily.ox + driftX;
+      const cy = py + lily.oy + driftY;
+      graphics.fillStyle(0x8fd460, 0.82);
+      graphics.fillEllipse(cx, cy, 16 * lily.size, 9 * lily.size);
+      graphics.fillStyle(0x4f9143, 0.78);
+      graphics.fillTriangle(cx, cy, cx + 7 * lily.size, cy - 4 * lily.size, cx + 6 * lily.size, cy + 4 * lily.size);
+      graphics.fillStyle(0xfff7dc, 0.86);
+      graphics.fillCircle(cx + 1 * lily.size, cy - 3 * lily.size, 2.2 * lily.size);
+    });
   }
 }

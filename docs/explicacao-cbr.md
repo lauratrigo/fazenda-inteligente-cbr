@@ -54,7 +54,7 @@ Depois, o sistema compara o caso atual com todos os casos da base. A similaridad
 - estágio da planta igual: +10.
 - tipo de cultura igual: +10.
 
-O caso com maior pontuação é recuperado. Em caso de empate, o sistema prefere o caso com melhor resultado anterior.
+O caso com maior pontuação é recuperado. Em caso de empate, o sistema prefere o caso com melhor resultado anterior. Os casos aprendidos durante a partida são consultados antes da base inicial, então a memória criada pelo jogador passa a influenciar recomendações futuras.
 
 ## Como reutiliza uma solução
 
@@ -74,6 +74,8 @@ A solução antiga nem sempre serve diretamente para o novo contexto. Por isso, 
 - solo pobre e planta amarelada: adubar;
 - solo encharcado: evitar regar;
 - canteiro já plantado: não recomendar plantar novamente.
+- sem semente disponível: não recomendar plantar;
+- planta ainda não pronta: não recomendar colher;
 - tomate com pragas médias ou altas: priorizar tratar pragas;
 - morango com umidade adequada: manter ou reforçar cuidado com água.
 
@@ -84,6 +86,8 @@ Essa adaptação corresponde ao Revise.
 Quando o jogador usa uma ferramenta em um canteiro, o jogo guarda o caso atual e a ação aplicada. Ao avançar o dia, o `DayNightSystem` atualiza a plantação, e o `CropSystem` avalia se a ação melhorou, piorou, gerou colheita ou não teve efeito.
 
 O `CBRSystem` salva a nova experiência no LocalStorage. Essa etapa corresponde ao Retain.
+
+Na próxima análise, essa experiência salva volta para a base de casos. Assim, o jogo demonstra aprendizado incremental simples: ele não treina um modelo estatístico, mas aumenta sua memória de situações resolvidas.
 
 ## Integração com economia e pesca
 

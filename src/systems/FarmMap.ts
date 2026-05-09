@@ -12,6 +12,7 @@ export class FarmMap {
   readonly assistantTile = { x: 23, y: 14 };
   readonly houseDoorTile = { x: 6, y: 9 };
   readonly shopDoorTile = { x: 32, y: 10 };
+  readonly vendorTile = { x: 32, y: 9 };
   readonly sellBoxTile = { x: 9, y: 9 };
   readonly tutorialSignTile = { x: 11, y: 11 };
   readonly shopSignTile = { x: 28, y: 11 };
@@ -234,12 +235,22 @@ export class FarmMap {
   }
 
   private drawGrassDetails(graphics: Phaser.GameObjects.Graphics, x: number, y: number, time: number, weather: Weather): void {
-    const seed = (x * 37 + y * 19) % 17;
-    const wind = weather === "chuvoso" || weather === "nublado" ? 2 : weather === "seco" ? 1.4 : 0.8;
-    const sway = Math.sin(time / 520 + seed) * wind;
-    graphics.fillStyle(seed % 2 === 0 ? 0x347c30 : 0xffffff, seed % 2 === 0 ? 0.24 : 0.08);
-    graphics.fillRect(x * this.tileSize + 7 + seed + sway, y * this.tileSize + 8, 3, 8);
-    graphics.fillRect(x * this.tileSize + 19 + sway, y * this.tileSize + 17 + (seed % 4), 3, 6);
+    const seed = (x * 37 + y * 19) % 97;
+    const wind = weather === "chuvoso" || weather === "nublado" ? 2.1 : weather === "seco" ? 1.35 : 0.8;
+    const px = x * this.tileSize;
+    const py = y * this.tileSize;
+    const clumpCount = seed % 3 === 0 ? 3 : seed % 4 === 0 ? 2 : 1;
+
+    for (let i = 0; i < clumpCount; i += 1) {
+      const localSeed = seed + i * 23;
+      const sway = Math.sin(time / (650 + localSeed * 3) + localSeed) * wind;
+      const bladeHeight = 4 + (localSeed % 6);
+      const bladeX = 4 + ((localSeed * 7) % 23);
+      const bladeY = 6 + ((localSeed * 11) % 19);
+      graphics.fillStyle(localSeed % 2 === 0 ? 0x347c30 : 0x5bae58, localSeed % 2 === 0 ? 0.28 : 0.2);
+      graphics.fillRect(px + bladeX + sway, py + bladeY, 2, bladeHeight);
+      if (localSeed % 5 === 0) graphics.fillRect(px + bladeX + 4 - sway * 0.4, py + bladeY + 2, 2, Math.max(3, bladeHeight - 2));
+    }
   }
 
   private drawHouse(graphics: Phaser.GameObjects.Graphics): void {
@@ -295,19 +306,9 @@ export class FarmMap {
     graphics.fillStyle(0xfff7dc, 1);
     graphics.fillRect(x + 45, y + 14, 70, 20);
     graphics.fillStyle(0x623819, 1);
-    graphics.fillRect(x + 53, y + 18, 3, 11);
-    graphics.fillRect(x + 53, y + 26, 10, 3);
-    graphics.fillRect(x + 68, y + 18, 11, 3);
-    graphics.fillRect(x + 68, y + 18, 3, 11);
-    graphics.fillRect(x + 76, y + 18, 3, 11);
-    graphics.fillRect(x + 68, y + 26, 11, 3);
-    graphics.fillRect(x + 84, y + 18, 11, 3);
-    graphics.fillRect(x + 92, y + 18, 3, 11);
-    graphics.fillRect(x + 84, y + 26, 11, 3);
-    graphics.fillRect(x + 100, y + 18, 3, 11);
-    graphics.fillRect(x + 108, y + 18, 3, 11);
-    graphics.fillRect(x + 101, y + 18, 9, 3);
-    graphics.fillRect(x + 100, y + 22, 11, 3);
+    graphics.fillRect(x + 55, y + 29, 50, 3);
+    graphics.fillStyle(0xf4cc58, 0.8);
+    graphics.fillRect(x + 51, y + 17, 58, 2);
     graphics.fillStyle(0x3f9a49, 1);
     graphics.fillCircle(x + 46, y + 96, 6);
     graphics.fillStyle(0xe85b75, 1);
@@ -334,33 +335,30 @@ export class FarmMap {
   }
 
   private drawVendor(graphics: Phaser.GameObjects.Graphics, time: number): void {
-    const px = 34 * this.tileSize + 16;
-    const py = 11 * this.tileSize + 18;
+    const px = this.vendorTile.x * this.tileSize + this.tileSize / 2;
+    const py = this.vendorTile.y * this.tileSize + 8;
     const bob = Math.sin(time / 620) * 1.2;
+    const blink = time % 4300 > 4140;
     graphics.fillStyle(0x000000, 0.18);
-    graphics.fillEllipse(px, py + 14, 22, 7);
+    graphics.fillEllipse(px, py + 18, 24, 7);
+    graphics.fillStyle(0x7c4a25, 1);
+    graphics.fillRect(px - 18, py + 8, 36, 13);
     graphics.fillStyle(0xb95234, 1);
-    graphics.fillRect(px - 9, py - 1 + bob, 18, 19);
+    graphics.fillRoundedRect(px - 9, py - 1 + bob, 18, 20, 3);
     graphics.fillStyle(0xfff7dc, 1);
     graphics.fillRect(px - 5, py + 2 + bob, 10, 5);
     graphics.fillStyle(0xf1b77a, 1);
     graphics.fillRoundedRect(px - 7, py - 16 + bob, 14, 12, 3);
     graphics.fillStyle(0x7a4a24, 1);
     graphics.fillRect(px - 9, py - 21 + bob, 18, 5);
+    graphics.fillStyle(0xf4cc58, 1);
+    graphics.fillRect(px - 12, py - 24 + bob, 24, 4);
+    graphics.fillRect(px - 7, py - 29 + bob, 14, 6);
     graphics.fillStyle(0x263027, 1);
-    graphics.fillRect(px - 4, py - 12 + bob, 2, 2);
-    graphics.fillRect(px + 3, py - 12 + bob, 2, 2);
+    graphics.fillRect(px - 4, py - 12 + bob, 2, blink ? 1 : 2);
+    graphics.fillRect(px + 3, py - 12 + bob, 2, blink ? 1 : 2);
     graphics.fillStyle(0x7a3f2c, 1);
     graphics.fillRect(px - 3, py - 8 + bob, 6, 2);
-    graphics.fillStyle(0xfff7dc, 0.94);
-    graphics.fillRoundedRect(px - 42, py - 47 + bob, 84, 19, 4);
-    graphics.fillStyle(0x623819, 1);
-    graphics.fillRect(px - 31, py - 42 + bob, 4, 10);
-    graphics.fillRect(px - 31, py - 42 + bob, 16, 3);
-    graphics.fillRect(px - 31, py - 38 + bob, 13, 3);
-    graphics.fillRect(px - 31, py - 34 + bob, 16, 3);
-    graphics.fillStyle(0x623819, 1);
-    graphics.fillRect(px - 6, py - 39 + bob, 30, 3);
   }
 
   private drawTrees(graphics: Phaser.GameObjects.Graphics, time: number, weather: Weather): void {
@@ -372,20 +370,45 @@ export class FarmMap {
         if (this.getTile(x, y) !== "tree") continue;
         const px = x * this.tileSize;
         const py = y * this.tileSize;
-        const sway = Math.sin(time / 700 + x * 0.9 + y) * wind;
+        const seed = (x * 17 + y * 31) % 5;
+        const sway = Math.sin(time / (760 + seed * 95) + x * 0.9 + y) * wind;
+        const heightBoost = seed === 3 ? -8 : seed === 1 ? 4 : 0;
         graphics.fillStyle(0x000000, 0.18);
-        graphics.fillEllipse(px + 17, py + 31, 34, 10);
+        graphics.fillEllipse(px + 17, py + 31, seed === 3 ? 28 : 38, 10);
         graphics.fillStyle(0x6f3f1e, 1);
-        graphics.fillRect(px + 12, py + 13, 10, 20);
-        graphics.fillStyle(leafColor, 1);
-        graphics.fillEllipse(px + 16 + sway, py + 10, 29, 22);
-        graphics.fillStyle(weather === "seco" ? 0x88b65a : 0x3f9a49, 1);
-        graphics.fillEllipse(px + 7 + sway, py + 17, 27, 20);
-        graphics.fillEllipse(px + 25 + sway, py + 17, 27, 20);
-        graphics.fillStyle(0x23632f, weather === "seco" ? 0.55 : 0.9);
-        graphics.fillEllipse(px + 16 + sway, py + 3, 20, 14);
-        graphics.fillStyle(0x5bad52, 0.65);
-        graphics.fillEllipse(px + 23 + sway, py + 12, 12, 8);
+        graphics.fillRect(px + 12, py + 12 + heightBoost * 0.25, 10, 21 - heightBoost * 0.25);
+
+        if (seed === 3) {
+          graphics.fillStyle(weather === "seco" ? 0x738b49 : 0x2f6e45, 1);
+          graphics.fillTriangle(px + 16 + sway, py - 13, px + 2 + sway * 0.4, py + 16, px + 30 + sway * 0.4, py + 16);
+          graphics.fillStyle(weather === "seco" ? 0x8da75a : 0x3f8d52, 1);
+          graphics.fillTriangle(px + 16 + sway * 0.8, py - 2, px + 4, py + 24, px + 28, py + 24);
+        } else if (seed === 2) {
+          graphics.fillStyle(weather === "seco" ? 0xa5a65e : 0x3f9a49, 1);
+          graphics.fillEllipse(px + 16 + sway, py + 9, 34, 26);
+          graphics.fillStyle(0xd96b75, weather === "seco" ? 0.35 : 0.78);
+          graphics.fillCircle(px + 8 + sway * 0.7, py + 12, 3);
+          graphics.fillCircle(px + 23 + sway * 0.7, py + 17, 3);
+          graphics.fillStyle(weather === "seco" ? 0x8f9c55 : 0x2f7c3b, 0.9);
+          graphics.fillEllipse(px + 17 + sway * 0.6, py + 0, 22, 16);
+        } else if (seed === 1) {
+          graphics.fillStyle(weather === "seco" ? 0x88a75a : 0x4f9143, 1);
+          graphics.fillEllipse(px + 16 + sway, py + 8, 38, 24);
+          graphics.fillStyle(weather === "seco" ? 0x9ab867 : 0x5bae58, 0.95);
+          graphics.fillEllipse(px + 7 + sway * 0.6, py + 17, 26, 20);
+          graphics.fillEllipse(px + 25 + sway * 0.7, py + 17, 26, 20);
+        } else {
+          graphics.fillStyle(leafColor, 1);
+          graphics.fillEllipse(px + 16 + sway, py + 10, 29, 22);
+          graphics.fillStyle(weather === "seco" ? 0x88b65a : 0x3f9a49, 1);
+          graphics.fillEllipse(px + 7 + sway * 0.8, py + 17, 27, 20);
+          graphics.fillEllipse(px + 25 + sway * 0.7, py + 17, 27, 20);
+          graphics.fillStyle(0x23632f, weather === "seco" ? 0.55 : 0.9);
+          graphics.fillEllipse(px + 16 + sway, py + 3, 20, 14);
+        }
+
+        graphics.fillStyle(0x5bad52, weather === "seco" ? 0.28 : 0.55);
+        graphics.fillEllipse(px + 23 + sway * 0.8, py + 12, 12, 8);
       }
     }
   }
@@ -413,39 +436,47 @@ export class FarmMap {
 
   private grassTone(x: number, y: number, time: number, weather: Weather): number {
     const base = (x * 13 + y * 29) % 4;
-    const animated = Math.sin(time / 1400 + x * 0.4 + y * 0.2) > 0.65 ? 1 : 0;
+    const breeze = Math.sin(time / 4200 + x * 0.16 + y * 0.12) > 0.96 ? 1 : 0;
     const palette = weather === "seco"
       ? [0x82a85a, 0x789e52, 0x8ab163, 0x74a051]
       : weather === "nublado"
         ? [0x68a35b, 0x629a55, 0x6aa65d, 0x5b914f]
         : [0x70b85d, 0x69ae57, 0x78bf66, 0x63a950];
-    return palette[(base + animated) % palette.length];
+    return palette[(base + breeze) % palette.length];
   }
 
   private drawSmallDecorations(graphics: Phaser.GameObjects.Graphics, x: number, y: number): void {
-    const seed = (x * 71 + y * 43) % 31;
+    const seed = (x * 71 + y * 43) % 101;
     const px = x * this.tileSize;
     const py = y * this.tileSize;
 
-    if (seed === 3 || seed === 11 || seed === 21) {
-      graphics.fillStyle(0xfff0a2, 0.92);
-      graphics.fillRect(px + 9, py + 20, 3, 3);
-      graphics.fillStyle(0xd96b75, 0.9);
-      graphics.fillRect(px + 13, py + 17, 3, 3);
+    if ([3, 11, 21, 44, 68, 87].includes(seed)) {
+      const colors = [0xfff0a2, 0xd96b75, 0x8d5fb8, 0x5fa8d3];
+      const color = colors[seed % colors.length];
+      const ox = 5 + (seed * 3) % 20;
+      const oy = 8 + (seed * 7) % 17;
+      graphics.fillStyle(0x3f9a49, 0.82);
+      graphics.fillRect(px + ox, py + oy + 3, 2, 5);
+      graphics.fillStyle(color, 0.92);
+      graphics.fillCircle(px + ox + 1, py + oy + 2, 2 + (seed % 2));
+      if (seed % 3 === 0) {
+        graphics.fillStyle(0xfff7dc, 0.88);
+        graphics.fillCircle(px + ox + 5, py + oy + 4, 1.5);
+      }
     }
 
-    if (seed === 7 || seed === 19) {
+    if ([7, 19, 51, 79].includes(seed)) {
       graphics.fillStyle(0x7f8a7a, 0.85);
-      graphics.fillRect(px + 18, py + 22, 6, 4);
+      graphics.fillRoundedRect(px + 5 + (seed % 17), py + 16 + (seed % 9), 5 + (seed % 4), 4, 2);
       graphics.fillStyle(0xa8b29d, 0.6);
-      graphics.fillRect(px + 19, py + 22, 3, 1);
+      graphics.fillRect(px + 6 + (seed % 17), py + 17 + (seed % 9), 3, 1);
     }
 
-    if (seed === 23 || seed === 29) {
+    if ([23, 29, 37, 62, 94].includes(seed)) {
       graphics.fillStyle(0x3f8d42, 0.85);
-      graphics.fillRect(px + 8, py + 16, 16, 9);
+      graphics.fillEllipse(px + 10 + (seed % 14), py + 16 + (seed % 10), 13 + (seed % 7), 8 + (seed % 4));
       graphics.fillStyle(0x5bae58, 0.8);
-      graphics.fillRect(px + 11, py + 13, 10, 6);
+      graphics.fillEllipse(px + 13 + (seed % 12), py + 13 + (seed % 9), 8 + (seed % 5), 5);
     }
   }
 

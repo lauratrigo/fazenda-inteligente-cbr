@@ -86,7 +86,7 @@ A customização salva nome, cor da pele, cor do cabelo, cor da roupa, estilo de
 
 ## Menu Interno
 
-O botão "Menu" fica dentro do quadro do jogo, no canto superior direito da área jogável. Ele e a tecla `ESC` abrem um painel interno com dormir, som, salvar, resetar, tela cheia, controles e uma explicação compacta do CBR. A lateral principal fica mais limpa, focada no Assistente CBR, ferramentas e sementes.
+O botão "Menu" fica dentro do quadro do jogo, no canto superior direito da área jogável. Ele e a tecla `ESC` abrem um painel interno com dormir, som, salvar, resetar, tela cheia e controles. A explicação acadêmica do CBR fica logo abaixo do jogo para não duplicar informação dentro do menu. A lateral principal fica mais limpa, focada no Assistente CBR, ferramentas e sementes.
 
 ## Culturas
 
@@ -141,7 +141,7 @@ O clima aparece no céu, no mapa e nos efeitos:
 - nublado: nuvens passando e luz suave;
 - seco: tom amarelado, poeira e solo secando mais rápido.
 
-Ao dormir, o jogo faz uma transição de noite com lua e paleta mais fria antes de amanhecer. O fundo fora do canvas também muda com clima e noite.
+Ao dormir, o jogo faz uma transição de noite com lua e paleta mais fria antes de amanhecer. Durante a sessão, o ciclo visual de dia e noite também avança de forma gradual, com sol e lua visíveis na área do céu e brilho acompanhando o astro principal. O fundo fora do canvas também muda com clima e noite.
 
 O mapa foi ampliado e usa câmera seguindo o jogador. Árvores maiores balançam com o vento, folhas cruzam a tela, a casa possui detalhes, a cerca tem variações de madeira vertical/horizontal e cantos, há caminhos conectando casa, loja, canteiros, caixa de venda e lago.
 
@@ -172,7 +172,7 @@ O Assistente CBR é o espantalho inteligente. Ao pressionar `Q` ou clicar com o 
 - estágio da planta;
 - tipo da cultura.
 
-O sistema recupera o caso mais parecido, reutiliza a ação antiga, revisa a recomendação por regras fortes e aprende quando o jogador avança o dia. O painel compacto mostra similaridade, ação recomendada e ciclo CBR sem dominar a tela.
+O sistema recupera o caso mais parecido, reutiliza a ação antiga, revisa a recomendação por regras fortes e aprende quando o jogador avança o dia. Os casos aprendidos no navegador têm prioridade na consulta para que experiências recentes influenciem recomendações futuras. O painel compacto mostra similaridade, ação recomendada e ciclo CBR sem dominar a tela.
 
 O assistente também comenta mercado e pesca quando o jogador está perto da loja, caixa de venda ou lago. Ele pode avisar que uma cultura está valorizada, que vender muito derrubou preço, ou que chuva ajuda a pesca.
 
@@ -185,6 +185,8 @@ Exemplos de adaptação:
 - solo pobre com planta amarelada prioriza adubar;
 - planta pronta prioriza colher;
 - solo encharcado evita regar;
+- não recomenda plantar sem semente;
+- não recomenda colher antes da planta ficar pronta;
 - morango valoriza umidade média/alta.
 - tomate barato no mercado pode ser melhor vender depois;
 - clima chuvoso pode tornar a pesca uma boa alternativa.
@@ -268,6 +270,10 @@ Em caso de empate, o sistema prefere o caso com melhor resultado anterior.
 ## Persistência
 
 O LocalStorage salva progresso da fazenda, inventário, sementes por cultura, colheitas, peixes, moedas, preços de mercado, casos aprendidos, customização do personagem, ferramenta atual, semente selecionada, posição do jogador e preferência de som.
+
+## Licença
+
+Este projeto é distribuído sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE).
 
 ## Possíveis Melhorias Futuras
 

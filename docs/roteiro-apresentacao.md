@@ -10,6 +10,8 @@
 
 "A interface foi organizada para parecer um jogo web casual: há menu principal, customização do personagem, botão de menu dentro da área jogável, ícones, loja, lago, casa e mensagens curtas."
 
+"A explicação acadêmica do CBR fica abaixo do jogo para a apresentação, enquanto o menu interno guarda apenas ações práticas como salvar, dormir, som e controles."
+
 ## 3. O que o jogador faz
 
 "O jogador alterna entre culturas como cenoura, milho, tomate e morango. Para produzir, ele precisa preparar o solo, plantar, cuidar da umidade, controlar pragas, colher quando a planta estiver pronta e vender os itens na loja."
@@ -33,6 +35,8 @@
 ## 8. Como a base aprende
 
 "Depois que usamos uma ferramenta e dormimos, o jogo avalia o resultado. Se melhorou, piorou, colheu ou não teve efeito, essa experiência é salva no LocalStorage e passa a fazer parte da memória do assistente."
+
+"Na próxima consulta, os casos aprendidos pelo jogador têm prioridade na base. Isso mostra que a fazenda não está só repetindo exemplos prontos: ela acumula experiências durante a partida."
 
 "O assistente também aproveita contexto de mercado e pesca para dar dicas simples, como preço de cultura valorizado ou clima favorável para pescar, mas a demonstração principal do CBR continua sendo a análise dos canteiros."
 

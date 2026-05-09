@@ -18,16 +18,18 @@ export class WeatherVisualSystem {
     if (bucket === this.lastProgressBucket) return;
     this.lastProgressBucket = bucket;
 
-    const sunX = 12 + Math.sin(progress * Math.PI) * 76;
-    const sunY = 70 - Math.sin(progress * Math.PI) * 58;
-    const moonX = 88 - Math.sin(progress * Math.PI) * 68;
-    const moonY = progress > 0.5 ? 72 - Math.sin((progress - 0.5) * Math.PI) * 54 : 70;
+    const sunArc = Math.min(1, progress / 0.72);
+    const moonArc = progress < 0.62 ? 0 : Math.min(1, (progress - 0.62) / 0.38);
+    const sunX = 10 + sunArc * 78;
+    const sunY = 136 - Math.sin(sunArc * Math.PI) * 72;
+    const moonX = 88 - moonArc * 72;
+    const moonY = 132 - Math.sin(moonArc * Math.PI) * 64;
 
     document.body.style.setProperty("--sun-x", `${Math.round(sunX)}%`);
     document.body.style.setProperty("--sun-y", `${Math.round(sunY)}px`);
     document.body.style.setProperty("--moon-x", `${Math.round(moonX)}%`);
     document.body.style.setProperty("--moon-y", `${Math.round(moonY)}px`);
-    document.body.classList.toggle("is-auto-night", progress > 0.74 || progress < 0.08);
+    document.body.classList.toggle("is-auto-night", progress >= 0.72);
   }
 
   playNightCycle(): void {

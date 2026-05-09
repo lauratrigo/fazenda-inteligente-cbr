@@ -130,6 +130,7 @@ export class Player extends Phaser.GameObjects.Container {
     this.hat.setY((this.facing === "up" ? -25 : -24) - bob);
     this.face.forEach((part) => part.setY(-14 - bob));
     this.mouth.setY(-9 - bob);
+    this.updateBlink(time);
     this.shadow.setScale(this.moving ? 1.05 + Math.abs(stride) * 0.08 : 1, 1);
     this.redrawTool(Math.sin(swing * Math.PI));
   }
@@ -145,6 +146,11 @@ export class Player extends Phaser.GameObjects.Container {
   private redrawTool(swing: number): void {
     ToolVisualSystem.drawHeldTool(this.toolGraphics, this.currentTool, this.facing, swing);
     this.toolGraphics.setDepth(this.facing === "up" ? -1 : 1);
+  }
+
+  private updateBlink(time: number): void {
+    const blinking = this.facing !== "up" && time % 4300 > 4140;
+    this.face.forEach((part) => part.setScale(1, blinking ? 0.25 : 1));
   }
 
   private hairWidth(style: CharacterCustomization["style"] | undefined): number {

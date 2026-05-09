@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.7.0] - 2026-05-09
+### Corrigido
+- Ciclo visual de dia/noite ajustado para uma transição mais lenta e gradual.
+- Sol, lua e brilho do fundo reposicionados para ficarem mais visíveis na área do céu.
+- NPC da loja reposicionado atrás do balcão e com indicador de interação mais claro.
+- Balão visual bugado do NPC removido.
+- Placa da loja revisada para evitar textos "LOJA" sobrepostos.
+- Menu interno sem duplicação da explicação "Como o CBR funciona neste jogo".
+
+### Adicionado
+- Piscada sutil no personagem do jogador.
+- Piscada sutil no NPC vendedor.
+- Vitórias-régias com tamanhos, posições e movimento de boiar mais variados.
+- Mais variações visuais de grama, matinhos, flores e árvores.
+
+### Alterado
+- CBR passa a consultar casos aprendidos antes da base inicial, dando mais peso à memória recente do jogador.
+- Regras de segurança do CBR reforçadas para evitar recomendações impossíveis, como plantar sem semente, colher antes da hora ou regar solo encharcado.
+- Vento, lagoa, vegetação e árvores receberam ajustes para parecerem mais naturais e menos repetitivos.
+- README, documentação e capturas atualizados para refletir o estado atual do jogo.
+
 ## [2.6.0] - 2026-05-09
 ### Corrigido
 - Botão "Menu" reposicionado para dentro do quadro do jogo.

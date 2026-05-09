@@ -74,6 +74,8 @@ export class FarmScene extends Phaser.Scene {
   private customization!: CharacterCustomization;
   private lastContextHint = "";
   private lastFishingPhase = "";
+  private dayCycleStartedAt = 0;
+  private readonly dayCycleDurationMs = 180000;
 
   constructor() {
     super("FarmScene");
@@ -95,6 +97,7 @@ export class FarmScene extends Phaser.Scene {
     this.weatherVisual = new WeatherVisualSystem();
     this.pendingCases = saved?.pendingCases ?? [];
     this.crops = new CropSystem(this.map.plantingTiles, saved?.crops);
+    this.dayCycleStartedAt = this.time.now;
 
     this.mapGraphics = this.add.graphics().setDepth(0);
     this.cropGraphics = this.add.graphics().setDepth(2);
@@ -162,7 +165,7 @@ export class FarmScene extends Phaser.Scene {
     this.updateInteractionPrompt(time);
     this.updateFishingVisuals(time);
     this.effects.updateWeather(time, this.weather.weather);
-    this.weatherVisual.syncDayProgress((time % 90000) / 90000);
+    this.weatherVisual.syncDayProgress(((time - this.dayCycleStartedAt) % this.dayCycleDurationMs) / this.dayCycleDurationMs);
     this.effects.showTargetIndicator(this.getTargetPlotInfo()?.tile ?? null);
   }
 
@@ -260,10 +263,7 @@ export class FarmScene extends Phaser.Scene {
 
     this.time.delayedCall(450, () => {
       const analysis = this.cbr.analyze(currentCase);
-      if (analysis.recommendedAction === "plantar" && this.inventory.data.seedStock[this.inventory.selectedCrop] <= 0) {
-        analysis.recommendedAction = "esperar";
-        analysis.explanation += ` Eu não vou recomendar plantar agora porque você está sem sementes de ${cropTypes[this.inventory.selectedCrop].name}.`;
-      }
+      this.preventImpossibleCbrAction(analysis, target.plot);
       this.ui.showAnalysis(analysis);
       const marketInsight = this.marketInsightForCase(currentCase);
       if (marketInsight) this.ui.appendAssistantText(marketInsight);
@@ -636,7 +636,7 @@ export class FarmScene extends Phaser.Scene {
       label = "E";
       message = "Pressione E ou Espaço para entrar em casa.";
     } else if (this.map.isNearShop(currentTile) || this.map.isNearShop(facingTile)) {
-      tile = this.map.shopDoorTile;
+      tile = this.map.vendorTile;
       label = "E";
       message = "Pressione E ou Espaço para abrir a loja.";
     } else if (this.map.isNearWater(currentTile) || this.map.isNearWater(facingTile)) {
@@ -720,6 +720,26 @@ export class FarmScene extends Phaser.Scene {
     this.saveGame(false);
     this.ui.hidePause();
     this.scene.start("MenuScene");
+  }
+
+  private preventImpossibleCbrAction(analysis: ReturnType<CBRSystem["analyze"]>, plot: CropPlotState): void {
+    if (analysis.recommendedAction === "plantar" && (plot.stage !== "prepared" || this.inventory.data.seedStock[this.inventory.selectedCrop] <= 0)) {
+      analysis.recommendedAction = "esperar";
+      const cropName = cropTypes[this.inventory.selectedCrop].name;
+      analysis.explanation += plot.stage !== "prepared"
+        ? " Ajustei a recomendação porque este canteiro ainda não está pronto para receber uma nova semente."
+        : ` Ajustei a recomendação porque você está sem sementes de ${cropName}.`;
+    }
+
+    if (analysis.recommendedAction === "colher" && plot.stage !== "ready") {
+      analysis.recommendedAction = "esperar";
+      analysis.explanation += " Ajustei a recomendação porque a planta ainda não está pronta para colher.";
+    }
+
+    if (analysis.recommendedAction === "regar" && plot.soil === "encharcado") {
+      analysis.recommendedAction = "esperar";
+      analysis.explanation += " Ajustei a recomendação porque o solo já está encharcado.";
+    }
   }
 
   private serialize(): GameSaveState {

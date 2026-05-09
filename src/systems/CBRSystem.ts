@@ -29,7 +29,7 @@ export class CBRSystem {
   }
 
   getCaseBase(): CBRCase[] {
-    return [...initialCases, ...this.getLearnedCases()];
+    return [...this.getLearnedCases(), ...initialCases];
   }
 
   createCaseFromPlot(plot: CropPlotState, weather: Weather): CBRCurrentCase {
