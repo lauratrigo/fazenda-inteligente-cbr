@@ -15,7 +15,7 @@ export class DayNightSystem {
   }
 
   advanceDay(crops: CropSystem, weather: WeatherSystem, cbr: CBRSystem, pendingCases: PendingLearningCase[]): DaySummary {
-    const summary = crops.advanceDay(weather.weather);
+    const summary = crops.advanceDay(weather.weather, this.day);
     let lastResult = summary.lastResult;
 
     pendingCases.forEach((pending) => {

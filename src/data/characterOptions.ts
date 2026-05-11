@@ -1,7 +1,7 @@
 import type { CharacterCustomization } from "../types";
 
 export const defaultCustomization: CharacterCustomization = {
-  farmerName: "Fazendeiro CBR",
+  farmerName: "Morador do Vale",
   skinColor: "#f1b77a",
   hairColor: "#7a4a24",
   outfitColor: "#4d6fb3",

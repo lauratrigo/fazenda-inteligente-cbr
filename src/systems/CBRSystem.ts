@@ -159,7 +159,7 @@ export class CBRSystem {
 
   private buildExplanation(similarity: SimilarityResult, currentCase: CBRCurrentCase, reusedAction: CBRAction, recommendedAction: CBRAction, adaptations: string[]): string {
     const cropName = currentCase.tipoCultura === "nenhuma" ? "canteiro" : cropTypes[currentCase.tipoCultura].name;
-    let text = `Já vi um caso parecido com ${similarity.percentage}% de similaridade para ${cropName}. Minha recomendação é ${actionLabels[recommendedAction]}.`;
+    let text = `Já vi um causo parecido com ${similarity.percentage}% de similaridade para ${cropName}. Minha recomendação é ${actionLabels[recommendedAction]}.`;
 
     if (recommendedAction !== reusedAction) {
       text += ` Adaptei a experiência anterior, que indicava ${actionLabels[reusedAction]}.`;
@@ -167,6 +167,8 @@ export class CBRSystem {
 
     if (adaptations.length > 0) {
       text += ` Motivo: ${adaptations.join("; ")}.`;
+    } else if (currentCase.tipoCultura === "carrot") {
+      text += " Cenoura cresce rápido quando recebe água e solo equilibrado.";
     } else if (currentCase.tipoCultura === "corn") {
       text += " O milho gosta de sol, mas ainda precisa de umidade estável.";
     } else if (currentCase.tipoCultura === "strawberry") {

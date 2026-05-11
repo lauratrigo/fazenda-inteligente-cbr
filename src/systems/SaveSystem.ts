@@ -1,10 +1,12 @@
 import type { CBRCase, GameSaveState } from "../types";
 
-const saveKey = "fazendinha-cbr-save-vite";
-const casesKey = "fazendinha-cbr-cases-vite";
+const saveKey = "vale-dos-causos-save-vite";
+const casesKey = "vale-dos-causos-cases-vite";
+const legacySaveKey = "fazendinha-cbr-save-vite";
+const legacyCasesKey = "fazendinha-cbr-cases-vite";
 
-function readJson<T>(key: string, fallback: T): T {
-  const raw = localStorage.getItem(key);
+function readJson<T>(key: string, fallback: T, legacyKey?: string): T {
+  const raw = localStorage.getItem(key) ?? (legacyKey ? localStorage.getItem(legacyKey) : null);
 
   if (!raw) {
     return fallback;
@@ -27,11 +29,11 @@ export class SaveSystem {
   static readonly casesKey = casesKey;
 
   static hasGame(): boolean {
-    return localStorage.getItem(saveKey) !== null;
+    return localStorage.getItem(saveKey) !== null || localStorage.getItem(legacySaveKey) !== null;
   }
 
   static loadGame(): GameSaveState | null {
-    return readJson<GameSaveState | null>(saveKey, null);
+    return readJson<GameSaveState | null>(saveKey, null, legacySaveKey);
   }
 
   static saveGame(state: GameSaveState): void {
@@ -40,10 +42,11 @@ export class SaveSystem {
 
   static clearGame(): void {
     localStorage.removeItem(saveKey);
+    localStorage.removeItem(legacySaveKey);
   }
 
   static loadLearnedCases(): CBRCase[] {
-    const cases = readJson<CBRCase[]>(casesKey, []);
+    const cases = readJson<CBRCase[]>(casesKey, [], legacyCasesKey);
     return Array.isArray(cases) ? cases : [];
   }
 
@@ -54,5 +57,7 @@ export class SaveSystem {
   static clearAll(): void {
     localStorage.removeItem(saveKey);
     localStorage.removeItem(casesKey);
+    localStorage.removeItem(legacySaveKey);
+    localStorage.removeItem(legacyCasesKey);
   }
 }

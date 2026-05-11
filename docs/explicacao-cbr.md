@@ -8,7 +8,7 @@ A ideia central é: se o sistema já viu uma situação parecida antes, ele pode
 
 ## Como o jogo representa um caso
 
-Em Fazendinha CBR, cada caso representa uma situação agrícola de um canteiro. Um caso descreve:
+Em Vale dos Causos, cada caso representa uma situação agrícola de um canteiro. O nome do jogo brinca com a ideia de "causos" do campo e "casos" do Raciocínio Baseado em Casos. Um caso descreve:
 
 - clima;
 - tipo de solo;
@@ -76,7 +76,10 @@ A solução antiga nem sempre serve diretamente para o novo contexto. Por isso, 
 - canteiro já plantado: não recomendar plantar novamente.
 - sem semente disponível: não recomendar plantar;
 - planta ainda não pronta: não recomendar colher;
+- pragas inexistentes: evitar recomendar inseticida;
+- canteiro já adubado e saudável: evitar adubação desnecessária;
 - tomate com pragas médias ou altas: priorizar tratar pragas;
+- cenoura saudável: manter água e solo equilibrados para aproveitar o crescimento rápido;
 - morango com umidade adequada: manter ou reforçar cuidado com água.
 
 Essa adaptação corresponde ao Revise.

@@ -1,6 +1,8 @@
-# Fazendinha CBR
+# Vale dos Causos
 
-Fazendinha CBR é um jogo web 2D top-down de fazenda feito com Vite, TypeScript e Phaser 3. O jogador explora um mapa maior com câmera, cuida dos canteiros, compra sementes, vende colheitas, pesca no lago e recebe recomendações de um assistente agrícola baseado em Raciocínio Baseado em Casos.
+Vale dos Causos é um jogo web 2D top-down de fazenda feito com Vite, TypeScript e Phaser 3. O jogador explora um mapa maior com câmera, cuida dos canteiros, compra sementes, vende colheitas, pesca no lago e recebe recomendações de um assistente agrícola baseado em Raciocínio Baseado em Casos.
+
+O nome brinca com "causos" do campo e do interior, ao mesmo tempo em que remete aos "casos" usados pelo paradigma CBR. A proposta é transformar experiências anteriores da fazenda em causos úteis para resolver novos problemas.
 
 O visual usa arte original desenhada por código com Phaser/CSS. A direção é inspirada na sensação de jogos de fazenda e jogos web casuais, mas sem copiar sprites, sons, mapas ou assets protegidos.
 
@@ -20,8 +22,9 @@ https://soturine.github.io/fazenda-inteligente-cbr/
 
 ## Capturas Do Jogo
 
-As imagens abaixo mostram a versão atual da interface, com menu de jogo, fazenda jogável, loja, casa, pesca e painel CBR integrado ao gameplay.
+As imagens abaixo mostram a versão atual da interface, com abertura, menu de jogo, fazenda jogável, loja, casa, pesca e painel CBR integrado ao gameplay.
 
+![Abertura](docs/screenshots/intro.png)
 ![Menu principal](docs/screenshots/menu.png)
 ![Fazenda](docs/screenshots/fazenda.png)
 ![Loja](docs/screenshots/loja.png)
@@ -73,6 +76,8 @@ A casa é a forma principal de dormir e avançar o dia. Dormir salva o jogo, mud
 
 ## Menu E Customização
 
+Ao abrir o site, o jogo mostra uma abertura curta com o título "Vale dos Causos" descendo sobre uma pequena cena de fazenda. A animação pode ser pulada com clique, `Enter` ou `Espaço`, e depois o menu principal aparece normalmente.
+
 Antes de entrar na fazenda, o jogo mostra um menu principal com:
 
 - Jogar;
@@ -97,7 +102,7 @@ O jogo possui quatro culturas:
 - tomate: vende bem, mas é mais sensível a pragas;
 - morango: prefere clima ameno/chuvoso e vale mais quando pronto.
 
-Cada cultura tem preço de semente, preço base de venda, tempo de crescimento, resistência à seca, resistência a pragas, clima preferido e visual próprio nos estágios de crescimento.
+Cada cultura tem preço de semente, preço base de venda, tempo de crescimento, resistência à seca, resistência a pragas, clima preferido e visual próprio nos estágios de crescimento. A cenoura é a cultura rápida: com água e solo equilibrado, fica pronta em poucos dias, e o adubo acelera levemente o progresso.
 
 ## Loja E Economia Dinâmica
 
@@ -141,7 +146,7 @@ O clima aparece no céu, no mapa e nos efeitos:
 - nublado: nuvens passando e luz suave;
 - seco: tom amarelado, poeira e solo secando mais rápido.
 
-Ao dormir, o jogo faz uma transição de noite com lua e paleta mais fria antes de amanhecer. Durante a sessão, o ciclo visual de dia e noite também avança de forma gradual, com sol e lua visíveis na área do céu e brilho acompanhando o astro principal. O fundo fora do canvas também muda com clima e noite.
+Ao dormir, o jogo faz uma transição de noite com lua e paleta mais fria antes de amanhecer. Durante a sessão, o ciclo visual de dia e noite também avança de forma gradual: o sol nasce à esquerda, sobe, se põe à direita e dá lugar à lua, que percorre o mesmo arco durante a noite. O brilho do fundo acompanha o astro principal, e a paleta passa por manhã, tarde, noite e amanhecer. O fundo fora do canvas também muda com clima e noite.
 
 O mapa foi ampliado e usa câmera seguindo o jogador. Árvores maiores balançam com o vento, folhas cruzam a tela, a casa possui detalhes, a cerca tem variações de madeira vertical/horizontal e cantos, há caminhos conectando casa, loja, canteiros, caixa de venda e lago.
 
@@ -187,6 +192,8 @@ Exemplos de adaptação:
 - solo encharcado evita regar;
 - não recomenda plantar sem semente;
 - não recomenda colher antes da planta ficar pronta;
+- não recomenda inseticida quando não há pragas;
+- evita adubar de novo um canteiro já saudável e adubado;
 - morango valoriza umidade média/alta.
 - tomate barato no mercado pode ser melhor vender depois;
 - clima chuvoso pode tornar a pesca uma boa alternativa.
@@ -217,6 +224,7 @@ Em caso de empate, o sistema prefere o caso com melhor resultado anterior.
 │   ├── types.ts
 │   ├── scenes/
 │   │   ├── BootScene.ts
+│   │   ├── IntroScene.ts
 │   │   ├── MenuScene.ts
 │   │   └── FarmScene.ts
 │   ├── systems/

@@ -132,7 +132,7 @@ export class CropSystem {
     return { ok: false, action, message: "Ferramenta desconhecida." };
   }
 
-  advanceDay(weather: Weather): DaySummary {
+  advanceDay(weather: Weather, currentDay = 0): DaySummary {
     const summary: DaySummary = { grown: 0, problems: 0, retained: 0 };
 
     Object.values(this.plots).forEach((plot) => {
@@ -145,7 +145,7 @@ export class CropSystem {
         plot.pests = this.worsenPests(plot.pests);
       }
 
-      if (this.isCropStage(plot) && plot.age > 1 && Math.random() < 0.06) {
+      if (this.isCropStage(plot) && !this.isFertilized(plot, currentDay) && plot.age > 1 && Math.random() < 0.06) {
         plot.soil = "pobre";
       }
 
@@ -153,7 +153,7 @@ export class CropSystem {
       this.recoverIfCared(plot);
 
       if (this.canGrow(plot)) {
-        this.grow(plot);
+        this.grow(plot, currentDay);
         summary.grown += 1;
       }
 
@@ -218,6 +218,11 @@ export class CropSystem {
       plot.moisture = this.lowerMoisture(plot.moisture);
       if (plot.moisture === "baixa" && Math.random() < 0.28 * (1 - crop.droughtResistance) && plot.soil !== "pobre") plot.soil = "seco";
     }
+
+    if (plot.soil === "encharcado" && weather !== "chuvoso") {
+      if (plot.moisture === "alta" && weather === "nublado") plot.moisture = "media";
+      if (plot.moisture !== "alta") plot.soil = "normal";
+    }
   }
 
   private maybeCreateProblem(plot: CropPlotState): void {
@@ -250,9 +255,12 @@ export class CropSystem {
     return this.isCropStage(plot) && plot.stage !== "ready" && plot.stage !== "problem" && plot.moisture !== "baixa" && plot.soil !== "seco" && plot.soil !== "encharcado" && plot.soil !== "pobre" && plot.pests !== "alta" && plot.health === "saudavel";
   }
 
-  private grow(plot: CropPlotState): void {
-    plot.age += 1;
-    const growthDays = this.getCrop(plot.cropType).growthDays;
+  private grow(plot: CropPlotState, currentDay: number): void {
+    const fertilized = this.isFertilized(plot, currentDay);
+    const crop = this.getCrop(plot.cropType);
+    const cropBonus = plot.cropType === "carrot" ? 0.18 : 0;
+    plot.age += fertilized ? 1.25 + cropBonus : 1;
+    const growthDays = crop.growthDays;
     const progress = plot.age / growthDays;
 
     if (progress >= 1) {
@@ -303,5 +311,9 @@ export class CropSystem {
 
   private getCrop(cropType?: CropType) {
     return cropTypes[cropType ?? "carrot"];
+  }
+
+  private isFertilized(plot: CropPlotState, currentDay: number): boolean {
+    return typeof plot.fertilizedUntilDay === "number" && plot.fertilizedUntilDay >= currentDay;
   }
 }

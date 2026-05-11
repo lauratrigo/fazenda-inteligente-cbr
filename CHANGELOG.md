@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.8.0] - 2026-05-11
+### Corrigido
+- Campo de nome do personagem passa a aceitar letras usadas pelos atalhos do jogo, como A, W, S, D, E, Q, N e TAB, quando o foco está no formulário.
+- Solo encharcado agora drena em dias sem chuva, evitando canteiros travados por muitos dias.
+- Crescimento da cenoura ajustado para ficar pronta em poucos dias quando recebe água e solo equilibrado.
+- Regras do CBR reforçadas para evitar tratar pragas inexistentes e adubar canteiros já saudáveis e adubados.
+
+### Adicionado
+- Nome oficial "Vale dos Causos".
+- Animação de abertura com título, fazenda ao fundo, folhas e opção de pular com clique, Enter ou Espaço.
+- Trajetória contínua de sol e lua em arco, com nascer pela esquerda e pôr pela direita.
+- Melhorias visuais nas culturas prontas para colher, com formas mais distintas para cenoura, milho, tomate e morango.
+
+### Alterado
+- Identidade visual e textos principais atualizados para "Vale dos Causos".
+- Ciclo visual de céu e paleta ajustado para transições mais suaves entre dia, tarde, noite e amanhecer.
+- README, documentação e roteiro atualizados com o trocadilho causos/casos, novo nome e ajustes de crescimento/CBR.
+
 ## [2.7.0] - 2026-05-09
 ### Corrigido
 - Ciclo visual de dia/noite ajustado para uma transição mais lenta e gradual.
@@ -136,7 +154,7 @@
 ## [1.0.0] - 2026-05-07
 ### Adicionado
 - Estrutura inicial do projeto.
-- Jogo Fazenda Inteligente CBR.
+- Primeira versão acadêmica do projeto de fazenda com CBR.
 - Base inicial de casos.
 - Cálculo de similaridade.
 - Ciclo Retrieve, Reuse, Revise e Retain.

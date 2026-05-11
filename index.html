@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fazendinha CBR</title>
+    <title>Vale dos Causos</title>
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
@@ -15,13 +15,34 @@
       <span class="cloud cloud-c"></span>
     </div>
 
-    <section id="main-menu" class="main-menu" aria-label="Menu principal">
+    <section id="intro-screen" class="intro-screen" aria-label="Abertura de Vale dos Causos">
+      <div class="intro-landscape" aria-hidden="true">
+        <span class="intro-sun"></span>
+        <span class="intro-cloud intro-cloud-a"></span>
+        <span class="intro-cloud intro-cloud-b"></span>
+        <span class="intro-house"></span>
+        <span class="intro-field"></span>
+        <span class="intro-leaf intro-leaf-a"></span>
+        <span class="intro-leaf intro-leaf-b"></span>
+        <span class="intro-leaf intro-leaf-c"></span>
+      </div>
+      <div class="intro-title-card">
+        <span class="brand-badge">CBR</span>
+        <div>
+          <h1>Vale dos Causos</h1>
+          <p>Farming game com IA baseada em causos/casos</p>
+        </div>
+      </div>
+      <button id="intro-skip" class="intro-skip" type="button">Clique, Enter ou Espaço para pular</button>
+    </section>
+
+    <section id="main-menu" class="main-menu is-hidden" aria-label="Menu principal">
       <div class="menu-card">
         <div class="menu-title">
           <span class="brand-badge">CBR</span>
           <div>
-            <p>Fazendinha CBR</p>
-            <strong>Farming game com assistente inteligente</strong>
+            <p>Vale dos Causos</p>
+            <strong>Um jogo de fazenda com Raciocínio Baseado em Casos</strong>
           </div>
         </div>
         <div class="menu-actions">
@@ -33,7 +54,7 @@
         </div>
         <div class="custom-card">
           <h2>Seu personagem</h2>
-          <label>Nome <input id="custom-name" maxlength="20" value="Fazendeiro CBR" /></label>
+          <label>Nome <input id="custom-name" maxlength="24" value="Morador do Vale" /></label>
           <div class="custom-grid">
             <div class="color-field">
               <span>Pele</span>
@@ -115,8 +136,8 @@
         <div class="brand-block">
           <span class="brand-badge">CBR</span>
           <div>
-            <p>Fazendinha CBR</p>
-            <strong>Fazenda top-down com IA baseada em casos</strong>
+            <p>Vale dos Causos</p>
+            <strong>Fazenda top-down com IA baseada em causos/casos</strong>
           </div>
         </div>
         <div class="hud-grid">

@@ -50,6 +50,11 @@ export class PlayerSystem {
   update(deltaSeconds: number): void {
     if (!this.keys) return;
 
+    if (this.isTypingInEditableField()) {
+      this.player.moving = false;
+      return;
+    }
+
     let dx = 0;
     let dy = 0;
 
@@ -113,6 +118,8 @@ export class PlayerSystem {
   }
 
   private processActions(): void {
+    if (this.isTypingInEditableField()) return;
+
     if (Phaser.Input.Keyboard.JustDown(this.keys.interact) || Phaser.Input.Keyboard.JustDown(this.keys.space)) {
       this.actions.onUseTool();
     }
@@ -148,5 +155,11 @@ export class PlayerSystem {
         this.actions.onSelectTool(toolHotkeys[hotkey]);
       }
     });
+  }
+
+  private isTypingInEditableField(): boolean {
+    const active = document.activeElement;
+    if (!(active instanceof HTMLElement)) return false;
+    return active.isContentEditable || active.matches("input, textarea, select, [contenteditable='true']");
   }
 }

@@ -15,11 +15,12 @@ export type GameSound =
 
 type OscillatorKind = OscillatorType;
 
-const mutedKey = "fazendinha-cbr-muted";
+const mutedKey = "vale-dos-causos-muted";
+const legacyMutedKey = "fazendinha-cbr-muted";
 
 export class SoundSystem {
   private audioContext?: AudioContext;
-  private muted = localStorage.getItem(mutedKey) === "true";
+  private muted = (localStorage.getItem(mutedKey) ?? localStorage.getItem(legacyMutedKey)) === "true";
 
   get isMuted(): boolean {
     return this.muted;
@@ -28,6 +29,7 @@ export class SoundSystem {
   toggleMuted(): boolean {
     this.muted = !this.muted;
     localStorage.setItem(mutedKey, String(this.muted));
+    localStorage.removeItem(legacyMutedKey);
 
     if (!this.muted) {
       void this.resume();

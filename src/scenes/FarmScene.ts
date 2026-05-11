@@ -42,7 +42,7 @@ interface TargetPlotInfo {
 }
 
 type DebugWindow = Window & {
-  fazendinhaGame?: FarmScene;
+  valeDosCausosGame?: FarmScene;
 };
 
 export class FarmScene extends Phaser.Scene {
@@ -75,7 +75,7 @@ export class FarmScene extends Phaser.Scene {
   private lastContextHint = "";
   private lastFishingPhase = "";
   private dayCycleStartedAt = 0;
-  private readonly dayCycleDurationMs = 180000;
+  private readonly dayCycleDurationMs = 240000;
 
   constructor() {
     super("FarmScene");
@@ -147,7 +147,7 @@ export class FarmScene extends Phaser.Scene {
 
     this.input.mouse?.disableContextMenu();
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => this.handlePointerDown(pointer));
-    (window as DebugWindow).fazendinhaGame = this;
+    (window as DebugWindow).valeDosCausosGame = this;
   }
 
   override update(time: number, delta: number): void {
@@ -740,6 +740,18 @@ export class FarmScene extends Phaser.Scene {
       analysis.recommendedAction = "esperar";
       analysis.explanation += " Ajustei a recomendação porque o solo já está encharcado.";
     }
+
+    if (analysis.recommendedAction === "tratar_pragas" && plot.pests === "nenhuma") {
+      analysis.recommendedAction = "esperar";
+      analysis.explanation += " Ajustei a recomendação porque não há pragas neste canteiro.";
+    }
+
+    if (analysis.recommendedAction === "adubar" && plot.soil === "normal" && plot.health === "saudavel" && typeof plot.fertilizedUntilDay === "number" && plot.fertilizedUntilDay >= this.dayNight.currentDay) {
+      analysis.recommendedAction = "esperar";
+      analysis.explanation += " Ajustei a recomendação porque este canteiro já está adubado e saudável.";
+    }
+
+    analysis.explanation = analysis.explanation.replace(/Minha recomendação é [^.]+\./, `Minha recomendação é ${actionLabels[analysis.recommendedAction]}.`);
   }
 
   private serialize(): GameSaveState {

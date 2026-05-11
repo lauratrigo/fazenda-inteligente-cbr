@@ -10,6 +10,14 @@ function getElement<T extends HTMLElement>(id: string): T {
 }
 
 export class MenuScene extends Phaser.Scene {
+  private readonly editableKeyGuard = (event: KeyboardEvent): void => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (target.isContentEditable || target.matches("input, textarea, select, [contenteditable='true']")) {
+      event.stopPropagation();
+    }
+  };
+
   constructor() {
     super("MenuScene");
   }
@@ -20,6 +28,13 @@ export class MenuScene extends Phaser.Scene {
     menu.classList.remove("is-hidden");
     appShell.classList.add("is-menu-open");
     document.body.classList.remove("is-night", "is-auto-night");
+    document.title = "Vale dos Causos";
+    document.addEventListener("keydown", this.editableKeyGuard);
+    document.addEventListener("keyup", this.editableKeyGuard);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      document.removeEventListener("keydown", this.editableKeyGuard);
+      document.removeEventListener("keyup", this.editableKeyGuard);
+    });
 
     const name = getElement<HTMLInputElement>("custom-name");
     const skin = getElement<HTMLInputElement>("custom-skin");
@@ -65,7 +80,7 @@ export class MenuScene extends Phaser.Scene {
     };
 
     getElement<HTMLButtonElement>("menu-how").onclick = () => {
-      help.textContent = "Use WASD/setas para andar, E ou Espaço para interagir, clique esquerdo nos canteiros para usar ferramentas, clique direito consulta CBR, TAB troca sementes e equipa Semente.";
+      help.textContent = "Use WASD/setas para andar, E ou Espaço para interagir, clique esquerdo nos canteiros para usar ferramentas, clique direito consulta CBR, TAB troca sementes e equipa Semente dentro do jogo.";
       help.classList.toggle("is-hidden");
     };
 

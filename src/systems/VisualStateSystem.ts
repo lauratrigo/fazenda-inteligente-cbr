@@ -226,7 +226,7 @@ export class VisualStateSystem {
     }
 
     if (plot.cropType === "tomato" && stage >= 1) {
-      graphics.fillStyle(0xd94b3d, 1);
+      graphics.fillStyle(stage >= 2 ? 0xd94b3d : 0x6fbf55, 1);
       graphics.fillCircle(cx - 8 + sway, cy - 8, 3);
       graphics.fillCircle(cx + 9 + sway, cy - 4, 3);
     }
@@ -241,7 +241,8 @@ export class VisualStateSystem {
 
     if (plot.cropType === "carrot" && stage >= 2) {
       graphics.fillStyle(0xf28b38, 1);
-      graphics.fillTriangle(cx - 5 + sway, cy + 2, cx + 5 + sway, cy + 2, cx + sway, cy + 13);
+      graphics.fillTriangle(cx - 7 + sway, cy + 1, cx + 1 + sway, cy + 1, cx - 3 + sway, cy + 13);
+      graphics.fillTriangle(cx + 1 + sway, cy + 2, cx + 8 + sway, cy + 2, cx + 4 + sway, cy + 12);
     }
 
     if (plot.health === "com_manchas" || plot.pests === "media" || plot.pests === "alta") {
@@ -278,26 +279,53 @@ export class VisualStateSystem {
     graphics.fillCircle(cx, cy - 16, 15);
 
     if (plot.cropType === "carrot") {
+      graphics.fillStyle(0x3fa44c, 1);
+      graphics.fillEllipse(cx - 8, cy - 16, 13, 7);
+      graphics.fillEllipse(cx, cy - 20, 15, 7);
+      graphics.fillEllipse(cx + 8, cy - 16, 13, 7);
+      graphics.fillStyle(0x237a36, 1);
+      graphics.fillRect(cx - 2, cy - 17, 4, 15);
       graphics.fillStyle(0xf28b38, 1);
-      graphics.fillTriangle(cx - 9, cy - 4, cx - 2, cy - 4, cx - 6, cy + 12);
-      graphics.fillTriangle(cx + 2, cy - 5, cx + 9, cy - 5, cx + 5, cy + 12);
+      graphics.fillTriangle(cx - 11, cy - 2, cx - 2, cy - 3, cx - 7, cy + 13);
+      graphics.fillTriangle(cx + 1, cy - 3, cx + 11, cy - 2, cx + 6, cy + 13);
+      graphics.fillStyle(0xffb26a, 0.82);
+      graphics.fillRect(cx - 8, cy, 3, 2);
+      graphics.fillRect(cx + 4, cy - 1, 3, 2);
     } else if (plot.cropType === "tomato") {
+      graphics.lineStyle(2, 0x237a36, 1);
+      graphics.lineBetween(cx - 12, cy - 6, cx + 12, cy - 18);
+      graphics.lineBetween(cx - 12, cy - 18, cx + 11, cy - 8);
       graphics.fillStyle(0xd94b3d, 1);
-      graphics.fillCircle(cx - 8, cy - 12, 5);
-      graphics.fillCircle(cx + 8, cy - 10, 5);
+      graphics.fillCircle(cx - 10, cy - 11, 5);
+      graphics.fillCircle(cx + 9, cy - 9, 5);
       graphics.fillCircle(cx, cy - 18, 5);
+      graphics.fillStyle(0xff9b84, 0.72);
+      graphics.fillRect(cx - 12, cy - 13, 2, 2);
+      graphics.fillRect(cx + 7, cy - 11, 2, 2);
     } else if (plot.cropType === "strawberry") {
+      graphics.fillStyle(0x55a64c, 1);
+      graphics.fillEllipse(cx - 10, cy - 12, 12, 6);
+      graphics.fillEllipse(cx + 8, cy - 13, 12, 6);
+      graphics.fillEllipse(cx, cy - 16, 14, 7);
       graphics.fillStyle(0xe85b75, 1);
-      graphics.fillTriangle(cx - 10, cy - 18, cx - 2, cy - 18, cx - 6, cy - 7);
-      graphics.fillTriangle(cx + 2, cy - 17, cx + 10, cy - 17, cx + 6, cy - 6);
+      graphics.fillTriangle(cx - 12, cy - 14, cx - 3, cy - 14, cx - 7, cy - 3);
+      graphics.fillTriangle(cx + 2, cy - 15, cx + 12, cy - 15, cx + 7, cy - 3);
+      graphics.fillTriangle(cx - 3, cy - 21, cx + 5, cy - 21, cx + 1, cy - 10);
       graphics.fillStyle(0xfff7dc, 0.85);
-      graphics.fillRect(cx - 7, cy - 14, 1, 1);
-      graphics.fillRect(cx + 5, cy - 13, 1, 1);
+      graphics.fillRect(cx - 8, cy - 10, 1, 1);
+      graphics.fillRect(cx + 6, cy - 11, 1, 1);
+      graphics.fillRect(cx, cy - 17, 1, 1);
     } else {
+      graphics.fillStyle(0x2f8a43, 1);
+      graphics.fillEllipse(cx - 12, cy - 9, 15, 7);
+      graphics.fillEllipse(cx + 12, cy - 11, 15, 7);
       graphics.fillStyle(0xf4cc58, 1);
-      graphics.fillRect(cx - 10, cy - 17, 7, 18);
-      graphics.fillRect(cx + 3, cy - 17, 7, 18);
-      graphics.fillRect(cx - 3, cy - 22, 6, 18);
+      graphics.fillRect(cx - 11, cy - 20, 7, 20);
+      graphics.fillRect(cx + 4, cy - 18, 7, 18);
+      graphics.fillRect(cx - 3, cy - 25, 7, 21);
+      graphics.fillStyle(0xffec8a, 0.78);
+      graphics.fillRect(cx - 9, cy - 18, 2, 16);
+      graphics.fillRect(cx + 6, cy - 16, 2, 14);
     }
 
     graphics.fillStyle(0xfff7dc, 0.72);

@@ -1,7 +1,8 @@
 import { defaultCustomization } from "../data/characterOptions";
 import type { CharacterCustomization, CharacterHairStyle, CharacterOutfitStyle } from "../types";
 
-const customizationKey = "fazendinha-cbr-customization";
+const customizationKey = "vale-dos-causos-customization";
+const legacyCustomizationKey = "fazendinha-cbr-customization";
 
 function sanitizeColor(value: string | undefined, fallback: string): string {
   return typeof value === "string" && /^#[0-9a-fA-F]{6}$/.test(value) ? value : fallback;
@@ -9,7 +10,7 @@ function sanitizeColor(value: string | undefined, fallback: string): string {
 
 export class CharacterCustomizationSystem {
   static load(): CharacterCustomization {
-    const raw = localStorage.getItem(customizationKey);
+    const raw = localStorage.getItem(customizationKey) ?? localStorage.getItem(legacyCustomizationKey);
     if (!raw) return { ...defaultCustomization };
 
     try {
@@ -25,6 +26,7 @@ export class CharacterCustomizationSystem {
 
   static clear(): void {
     localStorage.removeItem(customizationKey);
+    localStorage.removeItem(legacyCustomizationKey);
   }
 
   static normalize(value?: Partial<CharacterCustomization>): CharacterCustomization {
@@ -32,7 +34,7 @@ export class CharacterCustomizationSystem {
     const legacyStyle = rawStyle === "B" ? "medio" : rawStyle === "C" ? "longo" : rawStyle;
 
     return {
-      farmerName: typeof value?.farmerName === "string" && value.farmerName.trim() ? value.farmerName.trim().slice(0, 20) : defaultCustomization.farmerName,
+      farmerName: typeof value?.farmerName === "string" && value.farmerName.trim() ? value.farmerName.trim().slice(0, 24) : defaultCustomization.farmerName,
       skinColor: sanitizeColor(value?.skinColor, defaultCustomization.skinColor),
       hairColor: sanitizeColor(value?.hairColor, defaultCustomization.hairColor),
       outfitColor: sanitizeColor(value?.outfitColor, defaultCustomization.outfitColor),
