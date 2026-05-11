@@ -241,8 +241,11 @@ export class VisualStateSystem {
 
     if (plot.cropType === "carrot" && stage >= 2) {
       graphics.fillStyle(0xf28b38, 1);
-      graphics.fillTriangle(cx - 7 + sway, cy + 1, cx + 1 + sway, cy + 1, cx - 3 + sway, cy + 13);
-      graphics.fillTriangle(cx + 1 + sway, cy + 2, cx + 8 + sway, cy + 2, cx + 4 + sway, cy + 12);
+      graphics.fillEllipse(cx - 4 + sway, cy + 5, 8, 5);
+      graphics.fillEllipse(cx + 5 + sway, cy + 5, 8, 5);
+      graphics.fillStyle(0xffb26a, 0.75);
+      graphics.fillRect(cx - 6 + sway, cy + 3, 3, 1);
+      graphics.fillRect(cx + 3 + sway, cy + 4, 3, 1);
     }
 
     if (plot.health === "com_manchas" || plot.pests === "media" || plot.pests === "alta") {
@@ -286,11 +289,11 @@ export class VisualStateSystem {
       graphics.fillStyle(0x237a36, 1);
       graphics.fillRect(cx - 2, cy - 17, 4, 15);
       graphics.fillStyle(0xf28b38, 1);
-      graphics.fillTriangle(cx - 11, cy - 2, cx - 2, cy - 3, cx - 7, cy + 13);
-      graphics.fillTriangle(cx + 1, cy - 3, cx + 11, cy - 2, cx + 6, cy + 13);
+      graphics.fillEllipse(cx - 6, cy + 5, 10, 6);
+      graphics.fillEllipse(cx + 6, cy + 5, 10, 6);
       graphics.fillStyle(0xffb26a, 0.82);
-      graphics.fillRect(cx - 8, cy, 3, 2);
-      graphics.fillRect(cx + 4, cy - 1, 3, 2);
+      graphics.fillRect(cx - 9, cy + 3, 4, 2);
+      graphics.fillRect(cx + 4, cy + 3, 4, 2);
     } else if (plot.cropType === "tomato") {
       graphics.lineStyle(2, 0x237a36, 1);
       graphics.lineBetween(cx - 12, cy - 6, cx + 12, cy - 18);

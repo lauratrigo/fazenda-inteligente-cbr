@@ -13,6 +13,7 @@ function isEditableTarget(target: EventTarget | null): boolean {
 
 export class IntroScene extends Phaser.Scene {
   private finished = false;
+  private canSkipAt = 0;
   private skipHandler?: (event: Event) => void;
 
   constructor() {
@@ -25,8 +26,11 @@ export class IntroScene extends Phaser.Scene {
     intro.classList.remove("is-hidden", "is-finished");
     menu.classList.add("is-hidden");
     document.title = "Vale dos Causos";
+    this.canSkipAt = this.time.now + 450;
 
     this.skipHandler = (event: Event) => {
+      if (this.time.now < this.canSkipAt) return;
+
       if (event instanceof KeyboardEvent) {
         if (isEditableTarget(event.target)) return;
         if (!["Enter", " ", "Spacebar", "Space"].includes(event.key)) return;
@@ -37,7 +41,7 @@ export class IntroScene extends Phaser.Scene {
 
     intro.addEventListener("click", this.skipHandler);
     document.addEventListener("keydown", this.skipHandler);
-    this.time.delayedCall(3600, () => this.finish());
+    this.time.delayedCall(6800, () => this.finish());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanup());
   }
 

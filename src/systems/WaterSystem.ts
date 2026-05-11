@@ -5,11 +5,13 @@ export class WaterSystem {
   static readonly center = { x: 32, y: 23 };
   static readonly radius = { x: 7.5, y: 4.4 };
   private static readonly lilies = [
-    { x: 27, y: 22, ox: 8, oy: 17, size: 0.95, phase: 0.2 },
-    { x: 29, y: 25, ox: 24, oy: 8, size: 0.68, phase: 1.4 },
-    { x: 31, y: 24, ox: 7, oy: 20, size: 1.22, phase: 2.8 },
-    { x: 33, y: 26, ox: 18, oy: 10, size: 0.82, phase: 4.1 },
+    { x: 26, y: 23, ox: 23, oy: 11, size: 1.18, phase: 0.2 },
+    { x: 28, y: 21, ox: 12, oy: 24, size: 0.62, phase: 1.1 },
+    { x: 29, y: 25, ox: 24, oy: 8, size: 0.78, phase: 1.4 },
+    { x: 31, y: 24, ox: 7, oy: 20, size: 1.32, phase: 2.8 },
+    { x: 33, y: 26, ox: 18, oy: 10, size: 0.9, phase: 4.1 },
     { x: 35, y: 22, ox: 23, oy: 18, size: 1.08, phase: 3.3 },
+    { x: 36, y: 25, ox: 8, oy: 7, size: 0.54, phase: 5.8 },
     { x: 37, y: 23, ox: 9, oy: 13, size: 0.72, phase: 5.2 },
     { x: 32, y: 27, ox: 12, oy: 18, size: 0.58, phase: 2.1 },
   ];
@@ -50,8 +52,9 @@ export class WaterSystem {
   static drawWaterTile(graphics: Phaser.GameObjects.Graphics, x: number, y: number, tileSize: number, time: number, weather: Weather): void {
     const px = x * tileSize;
     const py = y * tileSize;
-    const pulse = Math.sin(time / 720 + x * 0.7 + y * 0.3) * 0.07;
-    const wave = Math.sin(time / 520 + x * 0.9 + y * 0.25) * 3;
+    const wind = weather === "chuvoso" ? 1.75 : weather === "nublado" ? 1.18 : weather === "seco" ? 0.82 : 1;
+    const pulse = Math.sin(time / 720 + x * 0.7 + y * 0.3) * 0.07 * wind;
+    const wave = Math.sin(time / (weather === "chuvoso" ? 360 : 520) + x * 0.9 + y * 0.25) * 3 * wind;
     const color = weather === "chuvoso" ? 0x4a8db2 : weather === "seco" ? 0x4f9fc2 : 0x5fa8d3;
 
     graphics.fillStyle(0x2f6e8d, 1);
@@ -73,15 +76,16 @@ export class WaterSystem {
       graphics.fillEllipse(px + 14 + wave, py + 17, 22, 6);
     }
 
-    this.drawLilies(graphics, x, y, tileSize, time);
+    this.drawLilies(graphics, x, y, tileSize, time, weather);
   }
 
-  private static drawLilies(graphics: Phaser.GameObjects.Graphics, x: number, y: number, tileSize: number, time: number): void {
+  private static drawLilies(graphics: Phaser.GameObjects.Graphics, x: number, y: number, tileSize: number, time: number, weather: Weather): void {
     const px = x * tileSize;
     const py = y * tileSize;
     this.lilies.filter((lily) => lily.x === x && lily.y === y).forEach((lily) => {
-      const driftX = Math.sin(time / 1050 + lily.phase) * 2.1;
-      const driftY = Math.cos(time / 1320 + lily.phase) * 1.2;
+      const wind = weather === "chuvoso" ? 1.9 : weather === "nublado" ? 1.28 : 1;
+      const driftX = Math.sin(time / 1050 + lily.phase) * 2.1 * wind;
+      const driftY = Math.cos(time / 1320 + lily.phase) * 1.2 * wind;
       const cx = px + lily.ox + driftX;
       const cy = py + lily.oy + driftY;
       graphics.fillStyle(0x8fd460, 0.82);

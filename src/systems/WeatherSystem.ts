@@ -18,9 +18,9 @@ export class WeatherSystem {
   rollNextWeather(): Weather {
     const roll = Math.random();
 
-    if (roll < 0.32) return "ensolarado";
+    if (roll < 0.38) return "ensolarado";
     if (roll < 0.56) return "chuvoso";
-    if (roll < 0.78) return "nublado";
+    if (roll < 0.8) return "nublado";
     return "seco";
   }
 

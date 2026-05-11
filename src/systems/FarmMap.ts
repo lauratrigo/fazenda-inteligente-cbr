@@ -153,7 +153,7 @@ export class FarmMap {
       graphics.fillStyle(this.grassTone(x, y, time, weather), 1);
       graphics.fillRect(px, py, this.tileSize, this.tileSize);
       this.drawGrassDetails(graphics, x, y, time, weather);
-      this.drawSmallDecorations(graphics, x, y);
+      this.drawSmallDecorations(graphics, x, y, time, weather);
     }
 
     if (type === "path") {
@@ -236,7 +236,7 @@ export class FarmMap {
 
   private drawGrassDetails(graphics: Phaser.GameObjects.Graphics, x: number, y: number, time: number, weather: Weather): void {
     const seed = (x * 37 + y * 19) % 97;
-    const wind = weather === "chuvoso" || weather === "nublado" ? 2.1 : weather === "seco" ? 1.35 : 0.8;
+    const wind = weather === "chuvoso" ? 3.4 : weather === "nublado" ? 2.1 : weather === "seco" ? 1.1 : 0.75;
     const px = x * this.tileSize;
     const py = y * this.tileSize;
     const clumpCount = seed % 3 === 0 ? 3 : seed % 4 === 0 ? 2 : 1;
@@ -362,7 +362,7 @@ export class FarmMap {
   }
 
   private drawTrees(graphics: Phaser.GameObjects.Graphics, time: number, weather: Weather): void {
-    const wind = weather === "chuvoso" || weather === "nublado" ? 3.2 : weather === "seco" ? 2.2 : 1.4;
+    const wind = weather === "chuvoso" ? 5 : weather === "nublado" ? 3 : weather === "seco" ? 1.8 : 1.15;
     const leafColor = weather === "seco" ? 0x6f9d48 : 0x2f7c3b;
 
     for (let y = 0; y < this.height; y += 1) {
@@ -436,19 +436,20 @@ export class FarmMap {
 
   private grassTone(x: number, y: number, time: number, weather: Weather): number {
     const base = (x * 13 + y * 29) % 4;
-    const breeze = Math.sin(time / 4200 + x * 0.16 + y * 0.12) > 0.96 ? 1 : 0;
     const palette = weather === "seco"
       ? [0x82a85a, 0x789e52, 0x8ab163, 0x74a051]
       : weather === "nublado"
         ? [0x68a35b, 0x629a55, 0x6aa65d, 0x5b914f]
         : [0x70b85d, 0x69ae57, 0x78bf66, 0x63a950];
-    return palette[(base + breeze) % palette.length];
+    return palette[base % palette.length];
   }
 
-  private drawSmallDecorations(graphics: Phaser.GameObjects.Graphics, x: number, y: number): void {
+  private drawSmallDecorations(graphics: Phaser.GameObjects.Graphics, x: number, y: number, time: number, weather: Weather): void {
     const seed = (x * 71 + y * 43) % 101;
     const px = x * this.tileSize;
     const py = y * this.tileSize;
+    const wind = weather === "chuvoso" ? 2.2 : weather === "nublado" ? 1.4 : weather === "seco" ? 0.8 : 0.55;
+    const sway = Math.sin(time / (760 + seed * 4) + seed) * wind;
 
     if ([3, 11, 21, 44, 68, 87].includes(seed)) {
       const colors = [0xfff0a2, 0xd96b75, 0x8d5fb8, 0x5fa8d3];
@@ -456,12 +457,12 @@ export class FarmMap {
       const ox = 5 + (seed * 3) % 20;
       const oy = 8 + (seed * 7) % 17;
       graphics.fillStyle(0x3f9a49, 0.82);
-      graphics.fillRect(px + ox, py + oy + 3, 2, 5);
+      graphics.fillRect(px + ox + sway * 0.35, py + oy + 3, 2, 5);
       graphics.fillStyle(color, 0.92);
-      graphics.fillCircle(px + ox + 1, py + oy + 2, 2 + (seed % 2));
+      graphics.fillCircle(px + ox + 1 + sway, py + oy + 2, 2 + (seed % 2));
       if (seed % 3 === 0) {
         graphics.fillStyle(0xfff7dc, 0.88);
-        graphics.fillCircle(px + ox + 5, py + oy + 4, 1.5);
+        graphics.fillCircle(px + ox + 5 - sway * 0.6, py + oy + 4, 1.5);
       }
     }
 
@@ -474,9 +475,9 @@ export class FarmMap {
 
     if ([23, 29, 37, 62, 94].includes(seed)) {
       graphics.fillStyle(0x3f8d42, 0.85);
-      graphics.fillEllipse(px + 10 + (seed % 14), py + 16 + (seed % 10), 13 + (seed % 7), 8 + (seed % 4));
+      graphics.fillEllipse(px + 10 + (seed % 14) + sway * 0.35, py + 16 + (seed % 10), 13 + (seed % 7), 8 + (seed % 4));
       graphics.fillStyle(0x5bae58, 0.8);
-      graphics.fillEllipse(px + 13 + (seed % 12), py + 13 + (seed % 9), 8 + (seed % 5), 5);
+      graphics.fillEllipse(px + 13 + (seed % 12) + sway * 0.55, py + 13 + (seed % 9), 8 + (seed % 5), 5);
     }
   }
 

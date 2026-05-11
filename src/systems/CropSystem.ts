@@ -165,6 +165,15 @@ export class CropSystem {
     return summary;
   }
 
+  applyRainMoisture(): void {
+    Object.values(this.plots).forEach((plot) => {
+      if (plot.stage === "empty") return;
+      plot.moisture = "alta";
+      plot.daysDry = 0;
+      if (plot.soil === "seco") plot.soil = "normal";
+    });
+  }
+
   evaluateResult(beforePlot: CropPlotState, afterPlot: CropPlotState, immediateResult?: CBRResult): CBRResult {
     if (immediateResult === "colheu") return "colheu";
 
@@ -205,6 +214,7 @@ export class CropSystem {
     if (weather === "chuvoso") {
       if (plot.moisture === "alta" && plot.soil !== "pobre") plot.soil = "encharcado";
       plot.moisture = "alta";
+      if (plot.soil === "seco") plot.soil = "normal";
       plot.daysDry = 0;
     }
 

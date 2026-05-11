@@ -42,9 +42,16 @@ export class WeatherVisualSystem {
     window.setTimeout(() => document.body.classList.remove("is-night"), 1300);
   }
 
+  resetToMorning(weather: Weather): void {
+    document.body.classList.remove("is-night", "is-auto-night");
+    this.current = undefined;
+    this.sync(weather);
+    this.syncDayProgress(0.08);
+  }
+
   private weatherOpacity(kind: "sun" | "moon"): number {
-    if (this.current === "chuvoso") return kind === "sun" ? 0.16 : 0.42;
-    if (this.current === "nublado") return kind === "sun" ? 0.28 : 0.58;
+    if (this.current === "chuvoso") return kind === "sun" ? 0.14 : 0.28;
+    if (this.current === "nublado") return kind === "sun" ? 0.24 : 0.44;
     if (this.current === "seco") return kind === "sun" ? 1 : 0.72;
     return kind === "sun" ? 0.94 : 0.88;
   }
@@ -56,11 +63,19 @@ export class WeatherVisualSystem {
     const horizon = 1 - height;
 
     if (isNight) {
+      const nightWeather = weather === "chuvoso"
+        ? ["#071323", "#142437", "#1b332e", "rgba(145, 179, 222, 0.24)"]
+        : weather === "nublado"
+          ? ["#0d1a2b", "#1d3142", "#213d34", "rgba(196, 215, 232, 0.3)"]
+          : weather === "seco"
+            ? ["#141830", "#332c3f", "#3d4630", "rgba(244, 204, 88, 0.24)"]
+            : ["#08162c", "#172b47", "#1d3a32", "rgba(238, 248, 255, 0.38)"];
+
       return {
-        top: this.blend("#142740", "#213e61", height * 0.55),
-        mid: this.blend("#254057", "#4b6479", horizon * 0.38),
-        ground: this.blend("#315b49", "#4f7f55", horizon * 0.22),
-        glow: "rgba(238, 248, 255, 0.44)",
+        top: this.blend(nightWeather[0], "#1f3554", height * 0.28),
+        mid: this.blend(nightWeather[1], "#2c435a", height * 0.2),
+        ground: this.blend(nightWeather[2], "#335444", height * 0.16),
+        glow: nightWeather[3],
       };
     }
 

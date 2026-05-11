@@ -114,8 +114,10 @@ export class Player extends Phaser.GameObjects.Container {
   animate(time: number): void {
     const stride = Math.sin(time / 90);
     const bob = this.moving ? Math.abs(stride) * 1.6 : Math.sin(time / 620) * 0.35;
+    const idleScale = this.moving ? 1 : 1 + Math.sin(time / 880) * 0.012;
     const swing = Math.max(0, (this.swingUntil - time) / 360);
 
+    this.setScale(1, idleScale);
     this.leftFoot.setY(17 + (this.moving ? stride * 2 : 0));
     this.rightFoot.setY(17 - (this.moving ? stride * 2 : 0));
     this.lowerOutfit.setY(15 - bob * 0.55);
@@ -133,6 +135,25 @@ export class Player extends Phaser.GameObjects.Container {
     this.updateBlink(time);
     this.shadow.setScale(this.moving ? 1.05 + Math.abs(stride) * 0.08 : 1, 1);
     this.redrawTool(Math.sin(swing * Math.PI));
+  }
+
+  getFishingRodTip(): { x: number; y: number } {
+    const swing = Math.max(0, (this.swingUntil - this.scene.time.now) / 360);
+    const swingOffset = Math.sin(swing * Math.PI) * 5;
+
+    if (this.facing === "left") {
+      return { x: this.x - 32, y: this.y - 13 - swingOffset };
+    }
+
+    if (this.facing === "right") {
+      return { x: this.x + 32, y: this.y - 13 - swingOffset };
+    }
+
+    if (this.facing === "up") {
+      return { x: this.x + 15, y: this.y - 15 - swingOffset };
+    }
+
+    return { x: this.x + 32, y: this.y - 13 - swingOffset };
   }
 
   serialize(): PlayerSaveState {

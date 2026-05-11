@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.9.0] - 2026-05-11
+### Corrigido
+- Introdução ajustada para não aceitar pulos acidentais no carregamento inicial e manter o aviso de pular centralizado.
+- Chuva agora molha os canteiros automaticamente e conta como rega natural no avanço do dia.
+- Linha de pesca reposicionada para sair da ponta da vara, não do corpo do personagem.
+- Fundo, clima e horário são atualizados corretamente ao dormir e iniciar um novo dia.
+- Cenoura pronta para colher agora mostra folhas e apenas uma pequena parte laranja acima do solo.
+
+### Adicionado
+- Abertura com placa de madeira, folhas, cerca e casinha mais integrada ao cenário.
+- Screenshot de pesca atualizado e novo screenshot com todas as culturas prontas para colher.
+- Idle animation sutil no personagem parado.
+- Mais variação de nuvens por clima e vento mais forte em dias chuvosos.
+
+### Alterado
+- Paleta noturna escurecida e combinada com chuva, nublado, seco e ensolarado.
+- Lagoa, vitórias-régias, grama, flores, árvores e vento receberam polimento de movimento.
+- README e documentação atualizados com chuva como rega natural, ciclo visual e novos screenshots.
+
 ## [2.8.0] - 2026-05-11
 ### Corrigido
 - Campo de nome do personagem passa a aceitar letras usadas pelos atalhos do jogo, como A, W, S, D, E, Q, N e TAB, quando o foco está no formulário.

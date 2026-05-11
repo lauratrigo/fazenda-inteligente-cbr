@@ -88,6 +88,8 @@ Essa adaptação corresponde ao Revise.
 
 Quando o jogador usa uma ferramenta em um canteiro, o jogo guarda o caso atual e a ação aplicada. Ao avançar o dia, o `DayNightSystem` atualiza a plantação, e o `CropSystem` avalia se a ação melhorou, piorou, gerou colheita ou não teve efeito.
 
+O clima também entra nessa avaliação. Em dia chuvoso, a chuva funciona como rega natural, aumentando a umidade dos canteiros e podendo ajudar plantas que estavam com pouca água. Em clima seco, o solo seca mais rápido. Isso faz com que o caso aprendido reflita tanto a ação do jogador quanto o contexto climático do dia.
+
 O `CBRSystem` salva a nova experiência no LocalStorage. Essa etapa corresponde ao Retain.
 
 Na próxima análise, essa experiência salva volta para a base de casos. Assim, o jogo demonstra aprendizado incremental simples: ele não treina um modelo estatístico, mas aumenta sua memória de situações resolvidas.

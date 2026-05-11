@@ -30,7 +30,10 @@ export class EffectSystem {
     };
 
     const overlay = overlays[weather];
-    this.weatherOverlay.setFillStyle(overlay.color, overlay.alpha);
+    const isNight = document.body.classList.contains("is-auto-night") || document.body.classList.contains("is-night");
+    const nightColor = weather === "chuvoso" ? 0x0c1a2c : weather === "nublado" ? 0x112235 : 0x0b1830;
+    const nightAlpha = weather === "chuvoso" ? 0.32 : weather === "nublado" ? 0.28 : 0.24;
+    this.weatherOverlay.setFillStyle(isNight ? nightColor : overlay.color, Math.min(0.48, overlay.alpha + (isNight ? nightAlpha : 0)));
 
     if (time - this.lastWeatherParticle < (weather === "chuvoso" ? 52 : 170)) {
       return;
@@ -67,18 +70,18 @@ export class EffectSystem {
     }
 
     if (weather === "ensolarado" || weather === "nublado" || weather === "chuvoso") {
-      const chance = weather === "ensolarado" ? 0.18 : weather === "nublado" ? 0.34 : 0.28;
+      const chance = weather === "ensolarado" ? 0.18 : weather === "nublado" ? 0.34 : 0.58;
       if (Math.random() < chance) {
         const leaf = this.scene.add.rectangle(Phaser.Math.Between(-20, this.width), Phaser.Math.Between(40, this.height - 80), 7, 3, weather === "chuvoso" ? 0x4f9143 : 0x8fd460, 0.36)
           .setDepth(depth.weather)
           .setAngle(Phaser.Math.Between(-28, 28));
         this.scene.tweens.add({
           targets: leaf,
-          x: leaf.x + Phaser.Math.Between(48, 118),
-          y: leaf.y + Phaser.Math.Between(-14, 18),
-          angle: leaf.angle + Phaser.Math.Between(90, 210),
+          x: leaf.x + Phaser.Math.Between(weather === "chuvoso" ? 120 : 48, weather === "chuvoso" ? 230 : 118),
+          y: leaf.y + Phaser.Math.Between(weather === "chuvoso" ? -26 : -14, weather === "chuvoso" ? 30 : 18),
+          angle: leaf.angle + Phaser.Math.Between(weather === "chuvoso" ? 150 : 90, weather === "chuvoso" ? 300 : 210),
           alpha: 0,
-          duration: Phaser.Math.Between(1100, 1900),
+          duration: Phaser.Math.Between(weather === "chuvoso" ? 780 : 1100, weather === "chuvoso" ? 1450 : 1900),
           ease: "Sine.easeInOut",
           onComplete: () => leaf.destroy(),
         });

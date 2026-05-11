@@ -16,6 +16,8 @@
 
 "O jogador alterna entre culturas como cenoura, milho, tomate e morango. Para produzir, ele precisa preparar o solo, plantar, cuidar da umidade, controlar pragas, colher quando a planta estiver pronta e vender os itens na loja."
 
+"O clima afeta o gameplay: chuva molha os canteiros naturalmente, seca acelera a perda de umidade, e o ciclo de céu mostra sol, lua, nuvens e paleta noturna para reforçar a passagem do tempo."
+
 ## 4. Onde está a IA
 
 "A IA aparece como o Assistente CBR, um espantalho inteligente. Ela não é a tela principal. Ela observa o estado do canteiro e sugere uma ação quando o jogador pressiona Q."

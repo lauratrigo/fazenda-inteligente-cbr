@@ -22,15 +22,23 @@ https://soturine.github.io/fazenda-inteligente-cbr/
 
 ## Capturas Do Jogo
 
-As imagens abaixo mostram a versão atual da interface, com abertura, menu de jogo, fazenda jogável, loja, casa, pesca e painel CBR integrado ao gameplay.
+As imagens abaixo mostram a versão atual da interface, com abertura, menu de jogo, fazenda jogável, loja, casa, pesca, culturas prontas e painel CBR integrado ao gameplay.
 
-![Abertura](docs/screenshots/intro.png)
-![Menu principal](docs/screenshots/menu.png)
-![Fazenda](docs/screenshots/fazenda.png)
-![Loja](docs/screenshots/loja.png)
-![Casa](docs/screenshots/casa.png)
-![Pesca](docs/screenshots/pesca.png)
-![CBR analisando um canteiro](docs/screenshots/cbr.png)
+| Abertura | Menu principal |
+|---|---|
+| ![Abertura](docs/screenshots/intro.png) | ![Menu principal](docs/screenshots/menu.png) |
+
+| Fazenda | Culturas prontas |
+|---|---|
+| ![Fazenda](docs/screenshots/fazenda.png) | ![Culturas prontas para colher](docs/screenshots/culturas-prontas.png) |
+
+| Loja | Casa |
+|---|---|
+| ![Loja](docs/screenshots/loja.png) | ![Casa](docs/screenshots/casa.png) |
+
+| Pesca | CBR |
+|---|---|
+| ![Pesca](docs/screenshots/pesca.png) | ![CBR analisando um canteiro](docs/screenshots/cbr.png) |
 
 ## Como Executar Localmente
 
@@ -142,11 +150,11 @@ O clima influencia a chance de pesca, e os peixes podem ser vendidos na loja por
 O clima aparece no céu, no mapa e nos efeitos:
 
 - ensolarado: céu azul, brilho quente e sol;
-- chuvoso: gotas animadas, tom frio e lago mais ativo;
-- nublado: nuvens passando e luz suave;
-- seco: tom amarelado, poeira e solo secando mais rápido.
+- chuvoso: gotas animadas, muitas nuvens, vento mais forte, lago mais ativo e solo molhado naturalmente;
+- nublado: bastante nuvens passando e luz suave;
+- seco: tom amarelado, poucas nuvens, poeira e solo secando mais rápido.
 
-Ao dormir, o jogo faz uma transição de noite com lua e paleta mais fria antes de amanhecer. Durante a sessão, o ciclo visual de dia e noite também avança de forma gradual: o sol nasce à esquerda, sobe, se põe à direita e dá lugar à lua, que percorre o mesmo arco durante a noite. O brilho do fundo acompanha o astro principal, e a paleta passa por manhã, tarde, noite e amanhecer. O fundo fora do canvas também muda com clima e noite.
+Ao chover, a chuva conta como rega natural: canteiros preparados ou plantados ficam com umidade alta, o solo seco volta ao estado normal e o crescimento passa a considerar essa água do dia. Ao dormir, o jogo faz uma transição de noite com lua e paleta mais fria antes de amanhecer. Durante a sessão, o ciclo visual de dia e noite também avança de forma gradual: o sol nasce à esquerda, sobe, se põe à direita e dá lugar à lua, que percorre o mesmo arco durante a noite. O brilho do fundo acompanha o astro principal, e a paleta passa por manhã, tarde, noite e amanhecer. O fundo fora do canvas também muda com clima e noite, misturando chuva, nuvens ou seca com a iluminação do horário.
 
 O mapa foi ampliado e usa câmera seguindo o jogador. Árvores maiores balançam com o vento, folhas cruzam a tela, a casa possui detalhes, a cerca tem variações de madeira vertical/horizontal e cantos, há caminhos conectando casa, loja, canteiros, caixa de venda e lago.
 

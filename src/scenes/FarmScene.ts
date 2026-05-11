@@ -97,6 +97,7 @@ export class FarmScene extends Phaser.Scene {
     this.weatherVisual = new WeatherVisualSystem();
     this.pendingCases = saved?.pendingCases ?? [];
     this.crops = new CropSystem(this.map.plantingTiles, saved?.crops);
+    if (this.weather.weather === "chuvoso") this.crops.applyRainMoisture();
     this.dayCycleStartedAt = this.time.now;
 
     this.mapGraphics = this.add.graphics().setDepth(0);
@@ -278,9 +279,12 @@ export class FarmScene extends Phaser.Scene {
     const summary = this.dayNight.advanceDay(this.crops, this.weather, this.cbr, this.pendingCases);
     this.pendingCases = [];
     this.economy.advanceDay(this.dayNight.currentDay, this.weather.weather);
+    this.dayCycleStartedAt = this.time.now - this.dayCycleDurationMs * 0.08;
     this.renderCrops(this.lastRenderTime);
     this.saveGame(false);
     this.syncUI();
+    this.weatherVisual.resetToMorning(this.weather.weather);
+    this.map.render(this.mapGraphics, this.lastRenderTime, this.weather.weather);
 
     let message = `Dia ${this.dayNight.currentDay}: clima ${weatherLabels[this.weather.weather]}. ${summary.grown} planta(s) cresceram.`;
     if (summary.problems > 0) {
@@ -377,7 +381,7 @@ export class FarmScene extends Phaser.Scene {
     const outcome = this.fishing.use(this.weather.weather, this.lastRenderTime, fishingTile);
 
     if (outcome.phase === "casting") {
-      this.effects.playFishingCastFromPlayer({ x: this.player.x, y: this.player.y - 6 }, fishingTile, false);
+      this.effects.playFishingCastFromPlayer(this.player.getFishingRodTip(), fishingTile, false);
       this.audio.play("fish");
     } else if (outcome.phase === "hooked" || outcome.phase === "waiting" || outcome.phase === "approaching") {
       this.audio.play("click");
@@ -486,7 +490,7 @@ export class FarmScene extends Phaser.Scene {
   private sleepInHouse(): void {
     this.ui.hideHouse();
     this.weatherVisual.playNightCycle();
-    this.nextDay();
+    this.time.delayedCall(760, () => this.nextDay());
   }
 
   private handlePointerDown(pointer: Phaser.Input.Pointer): void {
