@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.10.0] - 2026-05-11
+### Corrigido
+- Ciclo natural de dia/noite agora avança o dia de verdade ao chegar ao novo amanhecer.
+- Avanço manual ao dormir foi protegido contra avanço duplo.
+- Menu inicial ajustado para telas menores e alturas baixas, com limites por `dvh`, `vw` e rolagem interna.
+
+### Adicionado
+- Constante clara para duração do ciclo visual, agora configurada para cerca de 7 minutos.
+- Modal próprio da Caixa de Venda, exibindo apenas venda de colheitas e peixes.
+- Placa de estatísticas das plantas perto da Loja da Vila.
+- Painel "Estatísticas das Plantas" usando os dados reais de `cropTypes.ts`.
+
+### Alterado
+- Transições de amanhecer, entardecer e noite ficaram mais suaves no `WeatherVisualSystem`.
+- Loja da Vila continua com compra e venda, enquanto a Caixa de Venda ficou dedicada a entregas.
+- Textos contextuais da loja, caixa de venda e placa de culturas foram atualizados.
+- README e documentação atualizados com avanço natural do dia, caixa de venda separada e guia de culturas.
+
 ## [2.9.0] - 2026-05-11
 ### Corrigido
 - Introdução ajustada para não aceitar pulos acidentais no carregamento inicial e manter o aviso de pular centralizado.

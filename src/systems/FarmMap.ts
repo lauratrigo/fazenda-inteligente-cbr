@@ -16,6 +16,7 @@ export class FarmMap {
   readonly sellBoxTile = { x: 9, y: 9 };
   readonly tutorialSignTile = { x: 11, y: 11 };
   readonly shopSignTile = { x: 28, y: 11 };
+  readonly cropStatsSignTile = { x: 27, y: 8 };
   readonly lakeSignTile = { x: 25, y: 21 };
   readonly plantingTiles: Vector2Like[] = [];
 
@@ -93,8 +94,9 @@ export class FarmMap {
     return Math.abs(tile.x - this.sellBoxTile.x) <= 1 && Math.abs(tile.y - this.sellBoxTile.y) <= 1;
   }
 
-  getSignKind(tile: Vector2Like): "tutorial" | "shop" | "lake" | null {
+  getSignKind(tile: Vector2Like): "tutorial" | "shop" | "stats" | "lake" | null {
     if (Math.abs(tile.x - this.tutorialSignTile.x) <= 1 && Math.abs(tile.y - this.tutorialSignTile.y) <= 1) return "tutorial";
+    if (Math.abs(tile.x - this.cropStatsSignTile.x) <= 1 && Math.abs(tile.y - this.cropStatsSignTile.y) <= 1) return "stats";
     if (Math.abs(tile.x - this.shopSignTile.x) <= 1 && Math.abs(tile.y - this.shopSignTile.y) <= 1) return "shop";
     if (Math.abs(tile.x - this.lakeSignTile.x) <= 1 && Math.abs(tile.y - this.lakeSignTile.y) <= 1) return "lake";
     return null;
@@ -416,6 +418,7 @@ export class FarmMap {
   private drawSignposts(graphics: Phaser.GameObjects.Graphics): void {
     const signs = [
       { x: 11, y: 11, w: 32, label: 0x4f3520 },
+      { x: 27, y: 8, w: 38, label: 0x3f8d52 },
       { x: 28, y: 11, w: 48, label: 0x623819 },
       { x: 25, y: 21, w: 42, label: 0x2f6e8d },
     ];

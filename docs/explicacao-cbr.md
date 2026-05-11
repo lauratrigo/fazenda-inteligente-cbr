@@ -86,7 +86,7 @@ Essa adaptação corresponde ao Revise.
 
 ## Como salva novas experiências
 
-Quando o jogador usa uma ferramenta em um canteiro, o jogo guarda o caso atual e a ação aplicada. Ao avançar o dia, o `DayNightSystem` atualiza a plantação, e o `CropSystem` avalia se a ação melhorou, piorou, gerou colheita ou não teve efeito.
+Quando o jogador usa uma ferramenta em um canteiro, o jogo guarda o caso atual e a ação aplicada. Ao avançar o dia, o `DayNightSystem` atualiza a plantação, e o `CropSystem` avalia se a ação melhorou, piorou, gerou colheita ou não teve efeito. O avanço pode acontecer ao dormir na casa ou naturalmente quando o ciclo visual de dia/noite completa uma volta e chega ao próximo amanhecer.
 
 O clima também entra nessa avaliação. Em dia chuvoso, a chuva funciona como rega natural, aumentando a umidade dos canteiros e podendo ajudar plantas que estavam com pouca água. Em clima seco, o solo seca mais rápido. Isso faz com que o caso aprendido reflita tanto a ação do jogador quanto o contexto climático do dia.
 

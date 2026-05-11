@@ -42,6 +42,14 @@ interface UIElements {
   shopHarvests: HTMLElement;
   shopFish: HTMLElement;
   marketEvent: HTMLElement;
+  sellBoxModal: HTMLElement;
+  sellBoxClose: HTMLButtonElement;
+  sellBoxHarvests: HTMLElement;
+  sellBoxFish: HTMLElement;
+  sellBoxEvent: HTMLElement;
+  cropGuideModal: HTMLElement;
+  cropGuideClose: HTMLButtonElement;
+  cropGuideList: HTMLElement;
   houseModal: HTMLElement;
   houseClose: HTMLButtonElement;
   houseSleep: HTMLButtonElement;
@@ -134,6 +142,14 @@ export class UISystem {
       shopHarvests: getElement("shop-harvests"),
       shopFish: getElement("shop-fish"),
       marketEvent: getElement("market-event"),
+      sellBoxModal: getElement("sellbox-modal"),
+      sellBoxClose: getElement<HTMLButtonElement>("sellbox-close"),
+      sellBoxHarvests: getElement("sellbox-harvests"),
+      sellBoxFish: getElement("sellbox-fish"),
+      sellBoxEvent: getElement("sellbox-event"),
+      cropGuideModal: getElement("crop-guide-modal"),
+      cropGuideClose: getElement<HTMLButtonElement>("crop-guide-close"),
+      cropGuideList: getElement("crop-guide-list"),
       houseModal: getElement("house-modal"),
       houseClose: getElement<HTMLButtonElement>("house-close"),
       houseSleep: getElement<HTMLButtonElement>("house-sleep"),
@@ -151,6 +167,8 @@ export class UISystem {
     this.elements.resetButton.addEventListener("click", actions.onReset);
     this.elements.muteButton.addEventListener("click", actions.onToggleMute);
     this.elements.shopClose.addEventListener("click", () => this.hideShop());
+    this.elements.sellBoxClose.addEventListener("click", () => this.hideSellBox());
+    this.elements.cropGuideClose.addEventListener("click", () => this.hideCropGuide());
     this.elements.houseClose.addEventListener("click", () => this.hideHouse());
     this.elements.houseSleep.addEventListener("click", actions.onSleep);
     this.elements.pauseClose.addEventListener("click", () => this.hidePause());
@@ -192,7 +210,10 @@ export class UISystem {
     });
 
     this.renderSeedButtons(inventory);
-    if (economy) this.renderShop(inventory, economy);
+    if (economy) {
+      this.renderShop(inventory, economy);
+      this.renderSellBox(inventory, economy);
+    }
   }
 
   syncSound(muted: boolean): void {
@@ -208,12 +229,32 @@ export class UISystem {
   }
 
   showShop(): void {
+    this.hideSellBox();
     this.elements.shopModal.classList.remove("is-hidden");
     if (this.latestInventory && this.latestEconomy) this.renderShop(this.latestInventory, this.latestEconomy);
   }
 
   hideShop(): void {
     this.elements.shopModal.classList.add("is-hidden");
+  }
+
+  showSellBox(): void {
+    this.hideShop();
+    this.elements.sellBoxModal.classList.remove("is-hidden");
+    if (this.latestInventory && this.latestEconomy) this.renderSellBox(this.latestInventory, this.latestEconomy);
+  }
+
+  hideSellBox(): void {
+    this.elements.sellBoxModal.classList.add("is-hidden");
+  }
+
+  showCropGuide(): void {
+    this.renderCropGuide();
+    this.elements.cropGuideModal.classList.remove("is-hidden");
+  }
+
+  hideCropGuide(): void {
+    this.elements.cropGuideModal.classList.add("is-hidden");
   }
 
   showHouse(): void {
@@ -227,6 +268,16 @@ export class UISystem {
   togglePause(): void {
     if (!this.elements.shopModal.classList.contains("is-hidden")) {
       this.hideShop();
+      return;
+    }
+
+    if (!this.elements.sellBoxModal.classList.contains("is-hidden")) {
+      this.hideSellBox();
+      return;
+    }
+
+    if (!this.elements.cropGuideModal.classList.contains("is-hidden")) {
+      this.hideCropGuide();
       return;
     }
 
@@ -360,6 +411,61 @@ export class UISystem {
       fishButton.addEventListener("click", () => this.actions.onSellFish(id));
       this.elements.shopFish.appendChild(fishButton);
     });
+  }
+
+  private renderSellBox(inventory: InventoryState, economy: EconomyState): void {
+    this.elements.sellBoxEvent.textContent = `${economy.eventText} A caixa aceita apenas vendas.`;
+    this.elements.sellBoxHarvests.innerHTML = "";
+    this.elements.sellBoxFish.innerHTML = "";
+
+    cropTypeOrder.forEach((id) => {
+      this.elements.sellBoxHarvests.appendChild(this.createCropSaleButton(id, inventory, economy));
+    });
+
+    fishTypeOrder.forEach((id) => {
+      this.elements.sellBoxFish.appendChild(this.createFishSaleButton(id, inventory, economy));
+    });
+  }
+
+  private renderCropGuide(): void {
+    this.elements.cropGuideList.innerHTML = "";
+
+    cropTypeOrder.forEach((id) => {
+      const crop = cropTypes[id];
+      const card = document.createElement("article");
+      card.className = "crop-guide-item";
+      card.innerHTML = `
+        <header>${IconSystem.svg(id, "shop-svg-icon")}<strong>${crop.name}</strong></header>
+        <dl>
+          <div><dt>Semente</dt><dd>${crop.seedPrice} moedas</dd></div>
+          <div><dt>Venda base</dt><dd>${crop.sellPrice} moedas</dd></div>
+          <div><dt>Crescimento</dt><dd>${crop.growthDays} dias</dd></div>
+          <div><dt>Seca</dt><dd>${Math.round(crop.droughtResistance * 100)}%</dd></div>
+          <div><dt>Pragas</dt><dd>${Math.round(crop.pestResistance * 100)}%</dd></div>
+          <div><dt>Clima</dt><dd>${crop.preferredWeather.map((weather) => weatherLabels[weather]).join(", ")}</dd></div>
+        </dl>
+        <p>${crop.description}</p>
+      `;
+      this.elements.cropGuideList.appendChild(card);
+    });
+  }
+
+  private createCropSaleButton(id: CropType, inventory: InventoryState, economy: EconomyState): HTMLButtonElement {
+    const crop = cropTypes[id];
+    const cropButton = document.createElement("button");
+    cropButton.type = "button";
+    cropButton.innerHTML = `<strong>${IconSystem.svg(id, "shop-svg-icon")} ${crop.name}</strong><span>${inventory.harvestStock[id]} un. · ${economy.prices[id]} moedas <b class="trend-${economy.trends[id]}">${trendSymbol(economy.trends[id])}</b></span>`;
+    cropButton.addEventListener("click", () => this.actions.onSellCrop(id));
+    return cropButton;
+  }
+
+  private createFishSaleButton(id: FishTypeId, inventory: InventoryState, economy: EconomyState): HTMLButtonElement {
+    const fish = fishTypes[id];
+    const fishButton = document.createElement("button");
+    fishButton.type = "button";
+    fishButton.innerHTML = `<strong>${IconSystem.svg(id, "shop-svg-icon")} ${fish.name}</strong><span>${inventory.fishStock[id]} un. · ${economy.prices[id]} moedas <b class="trend-${economy.trends[id]}">${trendSymbol(economy.trends[id])}</b></span>`;
+    fishButton.addEventListener("click", () => this.actions.onSellFish(id));
+    return fishButton;
   }
 
   private hideMessage(immediate = false): void {

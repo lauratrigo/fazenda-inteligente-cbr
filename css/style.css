@@ -272,8 +272,9 @@ body.is-night .cloud {
   z-index: 20;
   display: grid;
   place-items: center;
-  padding: 22px;
+  padding: clamp(10px, 2.4dvh, 22px);
   background: linear-gradient(180deg, rgba(36, 51, 38, 0.28), rgba(36, 51, 38, 0.18));
+  overflow: auto;
 }
 
 .main-menu.is-hidden {
@@ -571,11 +572,13 @@ body.is-night .cloud {
 }
 
 .menu-card {
-  width: min(100%, 880px);
+  width: min(100%, 880px, calc(100vw - 28px));
+  max-height: min(92dvh, 760px);
+  overflow: auto;
   display: grid;
   grid-template-columns: minmax(240px, 1fr) minmax(260px, 340px);
-  gap: 18px;
-  padding: clamp(18px, 4vw, 30px);
+  gap: clamp(12px, 2.2dvh, 18px);
+  padding: clamp(14px, 3dvh, 30px);
   border: 5px solid #623819;
   border-radius: 14px;
   background:
@@ -599,7 +602,7 @@ body.is-night .cloud {
 
 .menu-title p {
   color: var(--soil-dark);
-  font-size: clamp(2rem, 6vw, 4rem);
+  font-size: clamp(1.8rem, 5.5vw, 4rem);
   font-weight: 900;
   letter-spacing: 0;
   line-height: 0.95;
@@ -609,7 +612,7 @@ body.is-night .cloud {
   display: block;
   margin-top: 8px;
   color: var(--muted);
-  font-size: 1rem;
+  font-size: clamp(0.86rem, 1.8vw, 1rem);
 }
 
 .menu-actions {
@@ -621,7 +624,7 @@ body.is-night .cloud {
 .menu-actions button,
 .custom-card button,
 .game-modal button {
-  min-height: 48px;
+  min-height: clamp(42px, 6dvh, 48px);
   border: 3px solid rgba(36, 51, 38, 0.22);
   border-radius: var(--radius);
   background: #fffef8;
@@ -632,8 +635,8 @@ body.is-night .cloud {
 
 .custom-card {
   display: grid;
-  gap: 11px;
-  padding: 15px;
+  gap: clamp(8px, 1.5dvh, 11px);
+  padding: clamp(11px, 2dvh, 15px);
   border: 2px solid rgba(98, 56, 25, 0.22);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.54);
@@ -657,7 +660,7 @@ body.is-night .cloud {
 
 .custom-card input:not([type="hidden"]),
 .custom-card select {
-  min-height: 38px;
+  min-height: clamp(34px, 5dvh, 38px);
   border: 2px solid rgba(36, 51, 38, 0.18);
   border-radius: 6px;
   background: #fffef8;
@@ -696,7 +699,7 @@ body.is-night .cloud {
 .custom-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: clamp(6px, 1.3dvh, 8px);
 }
 
 .custom-preview {
@@ -1411,6 +1414,67 @@ body.is-night .cloud {
   font-size: 0.86rem;
 }
 
+.crop-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.crop-guide-item {
+  display: grid;
+  gap: 9px;
+  padding: 12px;
+  border: 3px solid rgba(98, 56, 25, 0.16);
+  border-radius: 10px;
+  background: rgba(255, 254, 248, 0.72);
+  box-shadow: inset 0 -5px rgba(98, 56, 25, 0.06);
+}
+
+.crop-guide-item header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--soil-dark);
+  font-size: 1.05rem;
+  font-weight: 900;
+  text-transform: capitalize;
+}
+
+.crop-guide-item dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+}
+
+.crop-guide-item dl div {
+  padding: 7px;
+  border-radius: 8px;
+  background: rgba(216, 232, 187, 0.72);
+}
+
+.crop-guide-item dt,
+.crop-guide-item dd {
+  margin: 0;
+}
+
+.crop-guide-item dt {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.crop-guide-item dd {
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.crop-guide-item p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
 .trend-up {
   color: #2f8d3d;
 }
@@ -1636,6 +1700,45 @@ body.is-night .cloud {
   }
 
   .menu-card {
+    grid-template-columns: 1fr;
+  }
+
+  .crop-guide-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-height: 780px) {
+  .menu-card {
+    grid-template-columns: minmax(220px, 0.9fr) minmax(250px, 1fr);
+  }
+
+  .menu-title p {
+    font-size: clamp(1.7rem, 5dvh, 3rem);
+  }
+
+  .custom-preview {
+    width: 76px;
+    height: 82px;
+  }
+
+  .custom-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px), (max-height: 650px) {
+  .main-menu {
+    align-items: start;
+  }
+
+  .menu-card {
+    grid-template-columns: 1fr;
+    max-height: calc(100dvh - 20px);
+  }
+
+  .custom-grid,
+  .crop-guide-item dl {
     grid-template-columns: 1fr;
   }
 }

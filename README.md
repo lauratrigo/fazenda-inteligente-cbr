@@ -69,7 +69,7 @@ base: "/fazenda-inteligente-cbr/"
 - `WASD` ou `setas`: mover o personagem.
 - `1` a `7`: trocar ferramenta.
 - `TAB`: trocar tipo de semente e equipar automaticamente a ferramenta Semente.
-- `E` ou `Espaço`: usar ferramenta ou interagir com casa/loja/lago.
+- `E` ou `Espaço`: usar ferramenta ou interagir com casa, loja, caixa de venda, lago e placas.
 - Clique esquerdo no canteiro: usar a ferramenta atual.
 - Clique direito no canteiro: pedir análise CBR daquele canteiro.
 - `Q`: consultar o Assistente CBR.
@@ -80,7 +80,7 @@ base: "/fazenda-inteligente-cbr/"
 
 O jogador começa com sementes iniciais, moedas e uma fazenda com casa, loja, lago, árvores, cercas, espantalho CBR e canteiros. É possível preparar solo, plantar, regar, adubar, tratar pragas, colher, pescar e vender itens.
 
-A casa é a forma principal de dormir e avançar o dia. Dormir salva o jogo, muda o clima, atualiza a economia e faz as plantações crescerem ou piorarem conforme cuidado, solo, umidade e pragas.
+A casa é a forma manual de dormir e avançar o dia. Dormir salva o jogo, muda o clima, atualiza a economia e faz as plantações crescerem ou piorarem conforme cuidado, solo, umidade e pragas. Se o jogador não dormir, o ciclo natural de céu também avança o dia ao completar uma volta: o contador aumenta, o clima muda, a economia é atualizada e os casos pendentes do CBR são retidos.
 
 ## Menu E Customização
 
@@ -114,7 +114,11 @@ Cada cultura tem preço de semente, preço base de venda, tempo de crescimento, 
 
 ## Loja E Economia Dinâmica
 
-A loja da vila fica no mapa, tem placa visual e NPC vendedor. Ela abre com `E`, `Espaço` ou clique perto da banca. A caixa perto da casa é identificada como caixa de venda e também leva o jogador ao fluxo de venda.
+A Loja da Vila fica no mapa, tem placa visual e NPC vendedor. Ela abre com `E`, `Espaço` ou clique perto da banca. A loja permite comprar sementes e vender colheitas ou peixes.
+
+A caixa perto da casa é a Caixa de Venda. Ela tem uma interface própria e mostra apenas as opções de venda, sem a seção de compra de sementes. Assim, a função de cada ponto do mapa fica mais clara: loja para comprar e vender, caixa para entregar itens rapidamente.
+
+Perto da loja também existe uma placa de "Culturas". Ao interagir, ela abre o guia de culturas com dados reais do jogo: preço da semente, preço base de venda, dias de crescimento, resistências, clima preferido e descrição.
 
 - comprar sementes;
 - vender colheitas;
@@ -154,7 +158,7 @@ O clima aparece no céu, no mapa e nos efeitos:
 - nublado: bastante nuvens passando e luz suave;
 - seco: tom amarelado, poucas nuvens, poeira e solo secando mais rápido.
 
-Ao chover, a chuva conta como rega natural: canteiros preparados ou plantados ficam com umidade alta, o solo seco volta ao estado normal e o crescimento passa a considerar essa água do dia. Ao dormir, o jogo faz uma transição de noite com lua e paleta mais fria antes de amanhecer. Durante a sessão, o ciclo visual de dia e noite também avança de forma gradual: o sol nasce à esquerda, sobe, se põe à direita e dá lugar à lua, que percorre o mesmo arco durante a noite. O brilho do fundo acompanha o astro principal, e a paleta passa por manhã, tarde, noite e amanhecer. O fundo fora do canvas também muda com clima e noite, misturando chuva, nuvens ou seca com a iluminação do horário.
+Ao chover, a chuva conta como rega natural: canteiros preparados ou plantados ficam com umidade alta, o solo seco volta ao estado normal e o crescimento passa a considerar essa água do dia. Ao dormir, o jogo faz uma transição de noite com lua e paleta mais fria antes de amanhecer. Durante a sessão, o ciclo visual de dia e noite também avança de forma gradual em um ciclo mais longo, com cerca de 7 minutos: o sol nasce à esquerda, sobe, se põe à direita e dá lugar à lua, que percorre o mesmo arco durante a noite. Quando esse ciclo natural chega a um novo amanhecer, o jogo avança o dia de verdade. O brilho do fundo acompanha o astro principal, e a paleta passa suavemente por amanhecer, dia, entardecer, noite e madrugada. O fundo fora do canvas também muda com clima e noite, misturando chuva, nuvens ou seca com a iluminação do horário.
 
 O mapa foi ampliado e usa câmera seguindo o jogador. Árvores maiores balançam com o vento, folhas cruzam a tela, a casa possui detalhes, a cerca tem variações de madeira vertical/horizontal e cantos, há caminhos conectando casa, loja, canteiros, caixa de venda e lago.
 
@@ -185,7 +189,7 @@ O Assistente CBR é o espantalho inteligente. Ao pressionar `Q` ou clicar com o 
 - estágio da planta;
 - tipo da cultura.
 
-O sistema recupera o caso mais parecido, reutiliza a ação antiga, revisa a recomendação por regras fortes e aprende quando o jogador avança o dia. Os casos aprendidos no navegador têm prioridade na consulta para que experiências recentes influenciem recomendações futuras. O painel compacto mostra similaridade, ação recomendada e ciclo CBR sem dominar a tela.
+O sistema recupera o caso mais parecido, reutiliza a ação antiga, revisa a recomendação por regras fortes e aprende quando o jogador avança o dia, seja dormindo ou pelo amanhecer natural do ciclo visual. Os casos aprendidos no navegador têm prioridade na consulta para que experiências recentes influenciem recomendações futuras. O painel compacto mostra similaridade, ação recomendada e ciclo CBR sem dominar a tela.
 
 O assistente também comenta mercado e pesca quando o jogador está perto da loja, caixa de venda ou lago. Ele pode avisar que uma cultura está valorizada, que vender muito derrubou preço, ou que chuva ajuda a pesca.
 
@@ -296,6 +300,6 @@ Este projeto é distribuído sob a licença MIT. Consulte o arquivo [LICENSE](LI
 - Criar missões semanais e NPCs com diálogos.
 - Adicionar upgrades de ferramentas.
 - Criar música ambiente autoral.
-- Adicionar baú, calendário e caixa de venda mais completa.
+- Adicionar baú, calendário e entregas por encomenda.
 - Melhorar a pesca com minigame de precisão.
 - Exportar e importar a base de casos aprendidos.

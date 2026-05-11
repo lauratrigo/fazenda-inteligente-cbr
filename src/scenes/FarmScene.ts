@@ -41,6 +41,11 @@ interface TargetPlotInfo {
   plot: CropPlotState;
 }
 
+const DAY_CYCLE_DURATION_MS = 7 * 60 * 1000;
+const MORNING_PROGRESS = 0.08;
+
+type DayAdvanceSource = "sleep" | "shortcut" | "natural";
+
 type DebugWindow = Window & {
   valeDosCausosGame?: FarmScene;
 };
@@ -75,7 +80,9 @@ export class FarmScene extends Phaser.Scene {
   private lastContextHint = "";
   private lastFishingPhase = "";
   private dayCycleStartedAt = 0;
-  private readonly dayCycleDurationMs = 240000;
+  private lastDayCycleProgress = 0;
+  private dayAdvanceInProgress = false;
+  private readonly dayCycleDurationMs = DAY_CYCLE_DURATION_MS;
 
   constructor() {
     super("FarmScene");
@@ -99,6 +106,7 @@ export class FarmScene extends Phaser.Scene {
     this.crops = new CropSystem(this.map.plantingTiles, saved?.crops);
     if (this.weather.weather === "chuvoso") this.crops.applyRainMoisture();
     this.dayCycleStartedAt = this.time.now;
+    this.lastDayCycleProgress = 0;
 
     this.mapGraphics = this.add.graphics().setDepth(0);
     this.cropGraphics = this.add.graphics().setDepth(2);
@@ -166,7 +174,7 @@ export class FarmScene extends Phaser.Scene {
     this.updateInteractionPrompt(time);
     this.updateFishingVisuals(time);
     this.effects.updateWeather(time, this.weather.weather);
-    this.weatherVisual.syncDayProgress(((time - this.dayCycleStartedAt) % this.dayCycleDurationMs) / this.dayCycleDurationMs);
+    this.updateDayCycle(time);
     this.effects.showTargetIndicator(this.getTargetPlotInfo()?.tile ?? null);
   }
 
@@ -209,7 +217,13 @@ export class FarmScene extends Phaser.Scene {
       return;
     }
 
-    if (this.map.isNearShop(currentTile) || this.map.isNearShop(facingTile) || this.map.isNearSellBox(currentTile)) {
+    if (this.map.isNearSellBox(currentTile) || this.map.isNearSellBox(facingTile)) {
+      this.ui.showSellBox();
+      this.audio.play("click");
+      return;
+    }
+
+    if (this.map.isNearShop(currentTile) || this.map.isNearShop(facingTile)) {
       this.ui.showShop();
       this.audio.play("click");
       return;
@@ -274,19 +288,28 @@ export class FarmScene extends Phaser.Scene {
   }
 
   nextDay(): void {
+    this.advanceDay("shortcut");
+  }
+
+  private advanceDay(source: DayAdvanceSource): void {
+    if (this.dayAdvanceInProgress && source !== "sleep") return;
+    this.dayAdvanceInProgress = true;
     this.effects.playDayTransition();
     this.audio.play("nextDay");
     const summary = this.dayNight.advanceDay(this.crops, this.weather, this.cbr, this.pendingCases);
     this.pendingCases = [];
     this.economy.advanceDay(this.dayNight.currentDay, this.weather.weather);
-    this.dayCycleStartedAt = this.time.now - this.dayCycleDurationMs * 0.08;
+    this.dayCycleStartedAt = this.time.now - this.dayCycleDurationMs * MORNING_PROGRESS;
+    this.lastDayCycleProgress = MORNING_PROGRESS;
     this.renderCrops(this.lastRenderTime);
     this.saveGame(false);
     this.syncUI();
     this.weatherVisual.resetToMorning(this.weather.weather);
     this.map.render(this.mapGraphics, this.lastRenderTime, this.weather.weather);
 
-    let message = `Dia ${this.dayNight.currentDay}: clima ${weatherLabels[this.weather.weather]}. ${summary.grown} planta(s) cresceram.`;
+    let message = source === "natural"
+      ? `Amanheceu! Dia ${this.dayNight.currentDay}: clima ${weatherLabels[this.weather.weather]}. ${summary.grown} planta(s) cresceram.`
+      : `Dia ${this.dayNight.currentDay}: clima ${weatherLabels[this.weather.weather]}. ${summary.grown} planta(s) cresceram.`;
     if (summary.problems > 0) {
       message += ` ${summary.problems} canteiro(s) precisam de cuidado.`;
     }
@@ -298,6 +321,10 @@ export class FarmScene extends Phaser.Scene {
       this.effects.playRetainGlow(this.map.assistantTile);
       this.ui.showMessage(`Nova experiência salva na memória CBR: resultado ${resultLabels[summary.lastResult]}.`, { duration: 8000, type: "cbr" });
     }
+
+    this.time.delayedCall(650, () => {
+      this.dayAdvanceInProgress = false;
+    });
   }
 
   saveGame(notify: boolean): void {
@@ -411,6 +438,24 @@ export class FarmScene extends Phaser.Scene {
     this.audio.play("cbr");
   }
 
+  private updateDayCycle(time: number): void {
+    if (this.dayAdvanceInProgress) return;
+
+    const progress = this.getDayCycleProgress(time);
+    if (this.lastDayCycleProgress > 0.92 && progress < 0.08) {
+      this.advanceDay("natural");
+      return;
+    }
+
+    this.weatherVisual.syncDayProgress(progress);
+    this.lastDayCycleProgress = progress;
+  }
+
+  private getDayCycleProgress(time: number): number {
+    const elapsed = ((time - this.dayCycleStartedAt) % this.dayCycleDurationMs + this.dayCycleDurationMs) % this.dayCycleDurationMs;
+    return elapsed / this.dayCycleDurationMs;
+  }
+
   private showMarketCbrTip(): void {
     const cropIds = Object.keys(cropTypes) as CropType[];
     const best = cropIds
@@ -443,7 +488,13 @@ export class FarmScene extends Phaser.Scene {
     return "";
   }
 
-  private showSignTip(kind: "tutorial" | "shop" | "lake"): void {
+  private showSignTip(kind: "tutorial" | "shop" | "stats" | "lake"): void {
+    if (kind === "stats") {
+      this.ui.showCropGuide();
+      this.audio.play("click");
+      return;
+    }
+
     const text = kind === "tutorial"
       ? "Placa: E/Espaço interage, clique esquerdo usa ferramenta no canteiro, clique direito consulta CBR e TAB troca sementes."
       : kind === "shop"
@@ -488,9 +539,11 @@ export class FarmScene extends Phaser.Scene {
   }
 
   private sleepInHouse(): void {
+    if (this.dayAdvanceInProgress) return;
+    this.dayAdvanceInProgress = true;
     this.ui.hideHouse();
     this.weatherVisual.playNightCycle();
-    this.time.delayedCall(760, () => this.nextDay());
+    this.time.delayedCall(760, () => this.advanceDay("sleep"));
   }
 
   private handlePointerDown(pointer: Phaser.Input.Pointer): void {
@@ -509,7 +562,13 @@ export class FarmScene extends Phaser.Scene {
       return;
     }
 
-    if ((this.map.isNearShop(tile) || this.map.isNearSellBox(tile)) && this.pointerSystem.isInRange(currentTile, tile, 5)) {
+    if (this.map.isNearSellBox(tile) && this.pointerSystem.isInRange(currentTile, tile, 5)) {
+      this.ui.showSellBox();
+      this.audio.play("click");
+      return;
+    }
+
+    if (this.map.isNearShop(tile) && this.pointerSystem.isInRange(currentTile, tile, 5)) {
       this.ui.showShop();
       this.audio.play("click");
       return;
@@ -623,6 +682,7 @@ export class FarmScene extends Phaser.Scene {
 
     addLabel({ x: 31, y: 7 }, "LOJA");
     addLabel({ x: 9, y: 9 }, "Caixa de venda", "#4f3520");
+    addLabel(this.map.cropStatsSignTile, "Culturas", "#3f8d52");
     addLabel(this.map.tutorialSignTile, "?");
     addLabel(this.map.lakeSignTile, "Pesca", "#2f6e8d");
   }
@@ -639,18 +699,30 @@ export class FarmScene extends Phaser.Scene {
       tile = this.map.houseDoorTile;
       label = "E";
       message = "Pressione E ou Espaço para entrar em casa.";
+    } else if (this.map.isNearSellBox(currentTile) || this.map.isNearSellBox(facingTile)) {
+      tile = this.map.sellBoxTile;
+      label = "E";
+      message = "Pressione E ou Espaço para vender itens na caixa.";
     } else if (this.map.isNearShop(currentTile) || this.map.isNearShop(facingTile)) {
       tile = this.map.vendorTile;
       label = "E";
-      message = "Pressione E ou Espaço para abrir a loja.";
+      message = "Pressione E ou Espaço para abrir a Loja da Vila.";
     } else if (this.map.isNearWater(currentTile) || this.map.isNearWater(facingTile)) {
       tile = WaterSystem.nearestWaterTile(currentTile);
       label = this.inventory.currentTool === "fishingRod" ? "E" : "7";
       message = this.inventory.currentTool === "fishingRod" ? "Pressione E ou Espaço para lançar a vara." : "Equipe a vara de pesca para pescar aqui.";
     } else if (signKind) {
-      tile = signKind === "tutorial" ? this.map.tutorialSignTile : signKind === "shop" ? this.map.shopSignTile : this.map.lakeSignTile;
+      tile = signKind === "tutorial"
+        ? this.map.tutorialSignTile
+        : signKind === "shop"
+          ? this.map.shopSignTile
+          : signKind === "stats"
+            ? this.map.cropStatsSignTile
+            : this.map.lakeSignTile;
       label = "?";
-      message = "Pressione E ou Espaço para ler a placa.";
+      message = signKind === "stats"
+        ? "Pressione E ou Espaço para ver estatísticas das plantas."
+        : "Pressione E ou Espaço para ler a placa.";
     } else if (Math.abs(currentTile.x - this.map.assistantTile.x) <= 2 && Math.abs(currentTile.y - this.map.assistantTile.y) <= 2) {
       tile = this.map.assistantTile;
       label = "Q";

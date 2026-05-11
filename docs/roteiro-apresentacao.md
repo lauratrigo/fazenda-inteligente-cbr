@@ -16,7 +16,9 @@
 
 "O jogador alterna entre culturas como cenoura, milho, tomate e morango. Para produzir, ele precisa preparar o solo, plantar, cuidar da umidade, controlar pragas, colher quando a planta estiver pronta e vender os itens na loja."
 
-"O clima afeta o gameplay: chuva molha os canteiros naturalmente, seca acelera a perda de umidade, e o ciclo de céu mostra sol, lua, nuvens e paleta noturna para reforçar a passagem do tempo."
+"O clima afeta o gameplay: chuva molha os canteiros naturalmente, seca acelera a perda de umidade, e o ciclo de céu mostra sol, lua, nuvens e paleta noturna para reforçar a passagem do tempo. Se o jogador não dormir, o amanhecer natural também avança o dia, muda o clima, atualiza economia e processa o crescimento."
+
+"A Loja da Vila permite comprar sementes e vender itens. A Caixa de Venda, perto da casa, tem uma interface separada apenas para venda. Ao lado da loja há uma placa de Culturas com estatísticas puxadas dos dados do próprio jogo."
 
 ## 4. Onde está a IA
 
@@ -36,7 +38,7 @@
 
 ## 8. Como a base aprende
 
-"Depois que usamos uma ferramenta e dormimos, o jogo avalia o resultado. Se melhorou, piorou, colheu ou não teve efeito, essa experiência é salva no LocalStorage e passa a fazer parte da memória do assistente."
+"Depois que usamos uma ferramenta e o dia avança, seja dormindo ou pelo ciclo natural, o jogo avalia o resultado. Se melhorou, piorou, colheu ou não teve efeito, essa experiência é salva no LocalStorage e passa a fazer parte da memória do assistente."
 
 "Na próxima consulta, os casos aprendidos pelo jogador têm prioridade na base. Isso mostra que a fazenda não está só repetindo exemplos prontos: ela acumula experiências durante a partida."
 
