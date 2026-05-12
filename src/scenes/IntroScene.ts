@@ -25,7 +25,7 @@ export class IntroScene extends Phaser.Scene {
     const menu = getElement("main-menu");
     intro.classList.remove("is-hidden", "is-finished");
     menu.classList.add("is-hidden");
-    document.title = "Vale dos Causos";
+    document.title = "Vale dos Casos";
     this.canSkipAt = this.time.now + 450;
 
     this.skipHandler = (event: Event) => {

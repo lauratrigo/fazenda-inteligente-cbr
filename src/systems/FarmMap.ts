@@ -40,6 +40,7 @@ export class FarmMap {
         if (this.isHouseArea(x, y)) type = "house";
         if (this.isShopArea(x, y)) type = "shop";
         if (this.isPathTile(x, y)) type = "path";
+        if (this.isBridgeTile(x, y)) type = "bridge";
         if (x >= 13 && x <= 22 && y >= 12 && y <= 19) {
           type = "plot";
           this.plantingTiles.push({ x, y });
@@ -167,6 +168,29 @@ export class FarmMap {
       graphics.fillStyle(0xf0c17b, 0.22);
       graphics.fillRect(px + 5, py + 6, 5, 2);
       graphics.fillRect(px + 22, py + 18, 4, 2);
+    }
+
+    if (type === "bridge") {
+      if (WaterSystem.isLakeTile(x, y)) {
+        WaterSystem.drawWaterTile(graphics, x, y, this.tileSize, time, weather);
+      } else {
+        graphics.fillStyle((x + y) % 2 === 0 ? 0xc99a5a : 0xb9874f, 1);
+        graphics.fillRect(px, py, this.tileSize, this.tileSize);
+      }
+
+      graphics.fillStyle(0x000000, 0.16);
+      graphics.fillRect(px + 1, py + 20, this.tileSize - 2, 5);
+      graphics.fillStyle(0x8d5627, 1);
+      graphics.fillRect(px + 1, py + 8, this.tileSize - 2, 7);
+      graphics.fillRect(px + 1, py + 21, this.tileSize - 2, 7);
+      graphics.fillStyle(0xb9874f, 1);
+      graphics.fillRect(px + 3, py + 9, this.tileSize - 6, 3);
+      graphics.fillRect(px + 3, py + 22, this.tileSize - 6, 3);
+      graphics.fillStyle(0x623819, 0.42);
+      graphics.fillRect(px + 8, py + 5, 4, this.tileSize - 7);
+      graphics.fillRect(px + 21, py + 5, 4, this.tileSize - 7);
+      graphics.fillStyle(0xffdf92, 0.32);
+      graphics.fillRect(px + 5, py + 11, 8, 2);
     }
 
     if (type === "plot") {
@@ -514,5 +538,10 @@ export class FarmMap {
       || (x >= 9 && x <= 12 && y === 8)
       || (x === 9 && y >= 8 && y <= 11)
       || (x >= 25 && x <= 28 && y === 11);
+  }
+
+  private isBridgeTile(x: number, y: number): boolean {
+    return (x === 32 && y >= 20 && y <= 27)
+      || (y === 22 && x >= 25 && x <= 39);
   }
 }

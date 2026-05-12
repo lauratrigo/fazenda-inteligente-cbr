@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.11.0] - 2026-05-12
+### Corrigido
+- Nome definitivo atualizado para "Vale dos Casos" em interface, documentação e metadados.
+- Menu inicial recebeu orientações básicas visíveis e ajustes para não cortar o preview do personagem.
+- Ponte/passarela do lago agora usa tile caminhável próprio, mantendo água bloqueada.
+- Canteiros próximos ao espantalho priorizam a ferramenta ou clique no canteiro antes da interação com o assistente.
+- Modais de loja e caixa de venda preservam a posição de rolagem ao vender itens.
+- Crescimento das plantas rebalanceado para reduzir atrasos exagerados por clima, solo encharcado e eventos aleatórios.
+- Texto da ferramenta "Inseticida" revisado para não estourar o botão.
+
+### Alterado
+- Chaves novas do LocalStorage usam `vale-dos-casos-*`, mantendo leitura e migração dos saves antigos.
+- CBR revisado para usar linguagem de "caso" e evitar salvar experiências idênticas repetidas.
+- README e documentação atualizados para o nome definitivo e as correções de gameplay.
+
 ## [2.10.0] - 2026-05-11
 ### Corrigido
 - Ciclo natural de dia/noite agora avança o dia de verdade ao chegar ao novo amanhecer.
@@ -45,15 +60,15 @@
 - Regras do CBR reforçadas para evitar tratar pragas inexistentes e adubar canteiros já saudáveis e adubados.
 
 ### Adicionado
-- Nome oficial "Vale dos Causos".
+- Nome oficial "Vale dos Casos".
 - Animação de abertura com título, fazenda ao fundo, folhas e opção de pular com clique, Enter ou Espaço.
 - Trajetória contínua de sol e lua em arco, com nascer pela esquerda e pôr pela direita.
 - Melhorias visuais nas culturas prontas para colher, com formas mais distintas para cenoura, milho, tomate e morango.
 
 ### Alterado
-- Identidade visual e textos principais atualizados para "Vale dos Causos".
+- Identidade visual e textos principais atualizados para "Vale dos Casos".
 - Ciclo visual de céu e paleta ajustado para transições mais suaves entre dia, tarde, noite e amanhecer.
-- README, documentação e roteiro atualizados com o trocadilho causos/casos, novo nome e ajustes de crescimento/CBR.
+- README, documentação e roteiro atualizados com o trocadilho casos, novo nome e ajustes de crescimento/CBR.
 
 ## [2.7.0] - 2026-05-09
 ### Corrigido

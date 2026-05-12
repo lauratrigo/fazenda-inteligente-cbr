@@ -1,5 +1,5 @@
 export type Weather = "ensolarado" | "chuvoso" | "seco" | "nublado";
-export type TileType = "grass" | "path" | "plot" | "house" | "tree" | "fence" | "water" | "shop" | "sellBox";
+export type TileType = "grass" | "path" | "bridge" | "plot" | "house" | "tree" | "fence" | "water" | "shop" | "sellBox";
 export type ToolId = "hoe" | "seed" | "water" | "fertilizer" | "pesticide" | "harvest" | "fishingRod";
 export type CropType = "carrot" | "corn" | "tomato" | "strawberry";
 export type CropCaseType = CropType | "nenhuma";

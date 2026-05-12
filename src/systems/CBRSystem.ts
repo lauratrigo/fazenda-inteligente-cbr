@@ -78,6 +78,10 @@ export class CBRSystem {
 
   retain(caseData: CBRCurrentCase, action: CBRAction, result: CBRCase["resultado"]): CBRCase {
     const learnedCases = this.getLearnedCases();
+    const isSameExperience = (caseItem: CBRCase) =>
+      caseItem.acaoAplicada === action
+      && caseItem.resultado === result
+      && (Object.keys(weights) as Array<keyof CBRCurrentCase>).every((attribute) => caseItem[attribute] === caseData[attribute]);
     const learnedCase: CBRCase = {
       id: `aprendido-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       ...caseData,
@@ -87,7 +91,8 @@ export class CBRSystem {
       criadoEm: new Date().toISOString(),
     };
 
-    SaveSystem.saveLearnedCases([learnedCase, ...learnedCases].slice(0, 90));
+    const filteredCases = learnedCases.filter((caseItem) => !isSameExperience(caseItem));
+    SaveSystem.saveLearnedCases([learnedCase, ...filteredCases].slice(0, 90));
     return learnedCase;
   }
 
@@ -159,7 +164,7 @@ export class CBRSystem {
 
   private buildExplanation(similarity: SimilarityResult, currentCase: CBRCurrentCase, reusedAction: CBRAction, recommendedAction: CBRAction, adaptations: string[]): string {
     const cropName = currentCase.tipoCultura === "nenhuma" ? "canteiro" : cropTypes[currentCase.tipoCultura].name;
-    let text = `Já vi um causo parecido com ${similarity.percentage}% de similaridade para ${cropName}. Minha recomendação é ${actionLabels[recommendedAction]}.`;
+    let text = `Já vi um caso parecido com ${similarity.percentage}% de similaridade para ${cropName}. Minha recomendação é ${actionLabels[recommendedAction]}.`;
 
     if (recommendedAction !== reusedAction) {
       text += ` Adaptei a experiência anterior, que indicava ${actionLabels[reusedAction]}.`;

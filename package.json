@@ -1,6 +1,6 @@
 {
-  "name": "vale-dos-causos",
-  "version": "2.10.0",
+  "name": "vale-dos-casos",
+  "version": "2.11.0",
   "private": true,
   "type": "module",
   "scripts": {

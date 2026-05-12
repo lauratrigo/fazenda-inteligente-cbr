@@ -383,6 +383,7 @@ export class UISystem {
   }
 
   private renderShop(inventory: InventoryState, economy: EconomyState): void {
+    const scrollTop = this.getModalScroll(this.elements.shopModal);
     this.elements.marketEvent.textContent = economy.eventText;
     this.elements.shopSeeds.innerHTML = "";
     this.elements.shopHarvests.innerHTML = "";
@@ -411,9 +412,11 @@ export class UISystem {
       fishButton.addEventListener("click", () => this.actions.onSellFish(id));
       this.elements.shopFish.appendChild(fishButton);
     });
+    this.restoreModalScroll(this.elements.shopModal, scrollTop);
   }
 
   private renderSellBox(inventory: InventoryState, economy: EconomyState): void {
+    const scrollTop = this.getModalScroll(this.elements.sellBoxModal);
     this.elements.sellBoxEvent.textContent = `${economy.eventText} A caixa aceita apenas vendas.`;
     this.elements.sellBoxHarvests.innerHTML = "";
     this.elements.sellBoxFish.innerHTML = "";
@@ -425,6 +428,7 @@ export class UISystem {
     fishTypeOrder.forEach((id) => {
       this.elements.sellBoxFish.appendChild(this.createFishSaleButton(id, inventory, economy));
     });
+    this.restoreModalScroll(this.elements.sellBoxModal, scrollTop);
   }
 
   private renderCropGuide(): void {
@@ -466,6 +470,17 @@ export class UISystem {
     fishButton.innerHTML = `<strong>${IconSystem.svg(id, "shop-svg-icon")} ${fish.name}</strong><span>${inventory.fishStock[id]} un. · ${economy.prices[id]} moedas <b class="trend-${economy.trends[id]}">${trendSymbol(economy.trends[id])}</b></span>`;
     fishButton.addEventListener("click", () => this.actions.onSellFish(id));
     return fishButton;
+  }
+
+  private getModalScroll(modal: HTMLElement): number {
+    return modal.querySelector<HTMLElement>(".modal-card")?.scrollTop ?? 0;
+  }
+
+  private restoreModalScroll(modal: HTMLElement, scrollTop: number): void {
+    window.requestAnimationFrame(() => {
+      const card = modal.querySelector<HTMLElement>(".modal-card");
+      if (card) card.scrollTop = scrollTop;
+    });
   }
 
   private hideMessage(immediate = false): void {

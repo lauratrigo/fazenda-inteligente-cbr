@@ -1,8 +1,8 @@
-# Vale dos Causos
+# Vale dos Casos
 
-Vale dos Causos é um jogo web 2D top-down de fazenda feito com Vite, TypeScript e Phaser 3. O jogador explora um mapa maior com câmera, cuida dos canteiros, compra sementes, vende colheitas, pesca no lago e recebe recomendações de um assistente agrícola baseado em Raciocínio Baseado em Casos.
+Vale dos Casos é um jogo web 2D top-down de fazenda feito com Vite, TypeScript e Phaser 3. O jogador explora um mapa maior com câmera, cuida dos canteiros, compra sementes, vende colheitas, pesca no lago e recebe recomendações de um assistente agrícola baseado em Raciocínio Baseado em Casos.
 
-O nome brinca com "causos" do campo e do interior, ao mesmo tempo em que remete aos "casos" usados pelo paradigma CBR. A proposta é transformar experiências anteriores da fazenda em causos úteis para resolver novos problemas.
+O nome destaca os "casos" usados pelo paradigma CBR. A proposta é transformar experiências anteriores da fazenda em casos úteis para resolver novos problemas.
 
 O visual usa arte original desenhada por código com Phaser/CSS. A direção é inspirada na sensação de jogos de fazenda e jogos web casuais, mas sem copiar sprites, sons, mapas ou assets protegidos.
 
@@ -78,13 +78,13 @@ base: "/fazenda-inteligente-cbr/"
 
 ## Mecânicas Do Jogo
 
-O jogador começa com sementes iniciais, moedas e uma fazenda com casa, loja, lago, árvores, cercas, espantalho CBR e canteiros. É possível preparar solo, plantar, regar, adubar, tratar pragas, colher, pescar e vender itens.
+O jogador começa com sementes iniciais, moedas e uma fazenda com casa, loja, lago, árvores, cercas, espantalho CBR e canteiros. É possível preparar solo, plantar, regar, adubar, usar inseticida, colher, pescar e vender itens.
 
 A casa é a forma manual de dormir e avançar o dia. Dormir salva o jogo, muda o clima, atualiza a economia e faz as plantações crescerem ou piorarem conforme cuidado, solo, umidade e pragas. Se o jogador não dormir, o ciclo natural de céu também avança o dia ao completar uma volta: o contador aumenta, o clima muda, a economia é atualizada e os casos pendentes do CBR são retidos.
 
 ## Menu E Customização
 
-Ao abrir o site, o jogo mostra uma abertura curta com o título "Vale dos Causos" descendo sobre uma pequena cena de fazenda. A animação pode ser pulada com clique, `Enter` ou `Espaço`, e depois o menu principal aparece normalmente.
+Ao abrir o site, o jogo mostra uma abertura curta com o título "Vale dos Casos" descendo sobre uma pequena cena de fazenda. A animação pode ser pulada com clique, `Enter` ou `Espaço`, e depois o menu principal aparece normalmente.
 
 Antes de entrar na fazenda, o jogo mostra um menu principal com:
 
@@ -94,6 +94,8 @@ Antes de entrar na fazenda, o jogo mostra um menu principal com:
 - Como jogar;
 - Tela cheia;
 - customização do personagem.
+
+O menu também mostra um resumo rápido dos controles: `WASD`/setas para mover, `E`/`Espaço` para interagir, clique esquerdo para usar ferramentas nos canteiros, clique direito ou `Q` para consultar o CBR, `TAB` para trocar semente e `1` a `7` para trocar ferramenta.
 
 A customização salva nome, cor da pele, cor do cabelo, cor da roupa, estilo de cabelo e estilo de roupa. As cores são escolhidas por paletas próprias do jogo, sem depender do seletor nativo do navegador. Há opções curtas, médias, longas, rabo de cavalo, cacheadas, trança, femininas, neutras, boné, chapéu de campo e chapéu de palha. As roupas incluem avental, macacão, camisa, jardineira, casaco, roupa longa, camiseta com alça e roupa de fazenda. Essas escolhas alteram o personagem dentro do jogo e ficam salvas no LocalStorage.
 

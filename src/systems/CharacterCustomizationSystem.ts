@@ -1,7 +1,8 @@
 import { defaultCustomization } from "../data/characterOptions";
 import type { CharacterCustomization, CharacterHairStyle, CharacterOutfitStyle } from "../types";
 
-const customizationKey = "vale-dos-causos-customization";
+const customizationKey = "vale-dos-casos-customization";
+const oldCausosCustomizationKey = "vale-dos-causos-customization";
 const legacyCustomizationKey = "fazendinha-cbr-customization";
 
 function sanitizeColor(value: string | undefined, fallback: string): string {
@@ -10,7 +11,7 @@ function sanitizeColor(value: string | undefined, fallback: string): string {
 
 export class CharacterCustomizationSystem {
   static load(): CharacterCustomization {
-    const raw = localStorage.getItem(customizationKey) ?? localStorage.getItem(legacyCustomizationKey);
+    const raw = localStorage.getItem(customizationKey) ?? localStorage.getItem(oldCausosCustomizationKey) ?? localStorage.getItem(legacyCustomizationKey);
     if (!raw) return { ...defaultCustomization };
 
     try {
@@ -22,10 +23,13 @@ export class CharacterCustomizationSystem {
 
   static save(customization: CharacterCustomization): void {
     localStorage.setItem(customizationKey, JSON.stringify(this.normalize(customization)));
+    localStorage.removeItem(oldCausosCustomizationKey);
+    localStorage.removeItem(legacyCustomizationKey);
   }
 
   static clear(): void {
     localStorage.removeItem(customizationKey);
+    localStorage.removeItem(oldCausosCustomizationKey);
     localStorage.removeItem(legacyCustomizationKey);
   }
 

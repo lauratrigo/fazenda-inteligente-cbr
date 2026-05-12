@@ -1,4 +1,4 @@
-﻿# Roteiro de Apresentação
+# Roteiro de Apresentação
 
 ## 1. O problema
 
@@ -6,7 +6,7 @@
 
 ## 2. A ideia do jogo
 
-"Vale dos Causos é um jogo top-down feito com Vite, TypeScript e Phaser 3. O nome brinca com causos do interior e casos do CBR. O jogador anda por uma fazenda maior, cuida de canteiros, compra sementes, vende colheitas, pesca no lago e dorme na casa para avançar o dia."
+"Vale dos Casos é um jogo top-down feito com Vite, TypeScript e Phaser 3. O nome destaca a ideia central do CBR: resolver novos problemas agrícolas comparando com casos anteriores. O jogador anda por uma fazenda maior, cuida de canteiros, compra sementes, vende colheitas, pesca no lago e dorme na casa para avançar o dia."
 
 "A interface foi organizada para parecer um jogo web casual: há menu principal, customização do personagem, botão de menu dentro da área jogável, ícones, loja, lago, casa e mensagens curtas."
 

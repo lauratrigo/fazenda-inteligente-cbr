@@ -1,4 +1,4 @@
-﻿# Explicação do CBR no jogo
+# Explicação do CBR no jogo
 
 ## O que é Raciocínio Baseado em Casos
 
@@ -8,7 +8,7 @@ A ideia central é: se o sistema já viu uma situação parecida antes, ele pode
 
 ## Como o jogo representa um caso
 
-Em Vale dos Causos, cada caso representa uma situação agrícola de um canteiro. O nome do jogo brinca com a ideia de "causos" do campo e "casos" do Raciocínio Baseado em Casos. Um caso descreve:
+Em Vale dos Casos, cada caso representa uma situação agrícola de um canteiro. O nome reforça a ideia central do Raciocínio Baseado em Casos: guardar experiências anteriores para comparar com novas situações. Um caso descreve:
 
 - clima;
 - tipo de solo;

@@ -619,6 +619,7 @@ body.is-night .cloud {
   display: grid;
   align-content: start;
   gap: 10px;
+  grid-column: 1;
 }
 
 .menu-actions button,
@@ -640,6 +641,8 @@ body.is-night .cloud {
   border: 2px solid rgba(98, 56, 25, 0.22);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.54);
+  grid-column: 2;
+  grid-row: 2 / span 2;
 }
 
 .custom-card h2 {
@@ -706,11 +709,13 @@ body.is-night .cloud {
   justify-self: center;
   position: relative;
   width: 84px;
-  height: 96px;
+  min-height: 104px;
+  height: 104px;
   border: 3px solid rgba(98, 56, 25, 0.26);
   border-radius: 12px;
   background: linear-gradient(180deg, #9bdc76, #6ab35a);
   box-shadow: inset 0 -6px rgba(0, 0, 0, 0.08);
+  overflow: visible;
 }
 
 .custom-preview span {
@@ -880,6 +885,43 @@ body.is-night .cloud {
 
 .custom-preview[data-outfit="fazenda"] .preview-body {
   box-shadow: inset 0 8px rgba(79, 53, 32, 0.22), inset 0 -7px rgba(255, 247, 220, 0.18);
+}
+
+.menu-controls {
+  display: grid;
+  gap: 8px;
+  grid-column: 1;
+  padding: 12px;
+  border: 2px solid rgba(98, 56, 25, 0.18);
+  border-radius: var(--radius);
+  background: rgba(255, 254, 248, 0.66);
+}
+
+.menu-controls p {
+  margin: 0;
+  color: var(--soil-dark);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.menu-controls ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: clamp(0.78rem, 1.5vw, 0.9rem);
+  font-weight: 900;
+}
+
+.menu-controls li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
 }
 
 .menu-help {
@@ -1228,10 +1270,17 @@ body.is-night .cloud {
 
 .tool-buttons button {
   display: grid;
-  grid-template-columns: auto auto 1fr;
+  grid-template-columns: auto auto minmax(0, 1fr);
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   text-align: left;
+  font-size: 0.9rem;
+}
+
+.tool-buttons button span {
+  min-width: 0;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
 }
 
 .tool-button-icon {
@@ -1703,6 +1752,16 @@ body.is-night .cloud {
     grid-template-columns: 1fr;
   }
 
+  .menu-actions,
+  .menu-controls,
+  .custom-card {
+    grid-column: 1;
+  }
+
+  .custom-card {
+    grid-row: auto;
+  }
+
   .crop-guide-grid {
     grid-template-columns: 1fr;
   }
@@ -1719,7 +1778,8 @@ body.is-night .cloud {
 
   .custom-preview {
     width: 76px;
-    height: 82px;
+    min-height: 94px;
+    height: 94px;
   }
 
   .custom-grid {
@@ -1735,6 +1795,16 @@ body.is-night .cloud {
   .menu-card {
     grid-template-columns: 1fr;
     max-height: calc(100dvh - 20px);
+  }
+
+  .menu-actions,
+  .menu-controls,
+  .custom-card {
+    grid-column: 1;
+  }
+
+  .custom-card {
+    grid-row: auto;
   }
 
   .custom-grid,

@@ -141,11 +141,11 @@ export class CropSystem {
       this.applyWeather(plot, weather);
 
       const crop = this.getCrop(plot.cropType);
-      if (this.isCropStage(plot) && plot.age > 1 && Math.random() < 0.15 * (1 - crop.pestResistance)) {
+      if (this.isCropStage(plot) && plot.age > 1 && Math.random() < 0.1 * (1 - crop.pestResistance)) {
         plot.pests = this.worsenPests(plot.pests);
       }
 
-      if (this.isCropStage(plot) && !this.isFertilized(plot, currentDay) && plot.age > 1 && Math.random() < 0.06) {
+      if (this.isCropStage(plot) && !this.isFertilized(plot, currentDay) && plot.age > 1 && Math.random() < 0.035) {
         plot.soil = "pobre";
       }
 
@@ -212,7 +212,7 @@ export class CropSystem {
     const crop = this.getCrop(plot.cropType);
 
     if (weather === "chuvoso") {
-      if (plot.moisture === "alta" && plot.soil !== "pobre") plot.soil = "encharcado";
+      if (plot.moisture === "alta" && plot.soil !== "pobre" && plot.soil !== "encharcado" && Math.random() < 0.18) plot.soil = "encharcado";
       plot.moisture = "alta";
       if (plot.soil === "seco") plot.soil = "normal";
       plot.daysDry = 0;
@@ -231,7 +231,8 @@ export class CropSystem {
 
     if (plot.soil === "encharcado" && weather !== "chuvoso") {
       if (plot.moisture === "alta" && weather === "nublado") plot.moisture = "media";
-      if (plot.moisture !== "alta") plot.soil = "normal";
+      if (weather === "ensolarado" || weather === "seco") plot.moisture = "media";
+      if (plot.moisture !== "alta" || weather === "ensolarado" || weather === "seco") plot.soil = "normal";
     }
   }
 
@@ -262,14 +263,16 @@ export class CropSystem {
   }
 
   private canGrow(plot: CropPlotState): boolean {
-    return this.isCropStage(plot) && plot.stage !== "ready" && plot.stage !== "problem" && plot.moisture !== "baixa" && plot.soil !== "seco" && plot.soil !== "encharcado" && plot.soil !== "pobre" && plot.pests !== "alta" && plot.health === "saudavel";
+    return this.isCropStage(plot) && plot.stage !== "ready" && plot.stage !== "problem" && plot.moisture !== "baixa" && plot.soil !== "seco" && plot.soil !== "pobre" && plot.pests !== "alta" && plot.health === "saudavel";
   }
 
   private grow(plot: CropPlotState, currentDay: number): void {
     const fertilized = this.isFertilized(plot, currentDay);
     const crop = this.getCrop(plot.cropType);
     const cropBonus = plot.cropType === "carrot" ? 0.18 : 0;
-    plot.age += fertilized ? 1.25 + cropBonus : 1;
+    const stressPenalty = plot.soil === "encharcado" ? 0.68 : plot.pests === "media" ? 0.8 : 1;
+    const baseGrowth = fertilized ? 1.3 + cropBonus : 1;
+    plot.age += Math.max(0.6, baseGrowth * stressPenalty);
     const growthDays = crop.growthDays;
     const progress = plot.age / growthDays;
 

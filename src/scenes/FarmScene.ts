@@ -47,7 +47,7 @@ const MORNING_PROGRESS = 0.08;
 type DayAdvanceSource = "sleep" | "shortcut" | "natural";
 
 type DebugWindow = Window & {
-  valeDosCausosGame?: FarmScene;
+  valeDosCasosGame?: FarmScene;
 };
 
 export class FarmScene extends Phaser.Scene {
@@ -156,7 +156,7 @@ export class FarmScene extends Phaser.Scene {
 
     this.input.mouse?.disableContextMenu();
     this.input.on("pointerdown", (pointer: Phaser.Input.Pointer) => this.handlePointerDown(pointer));
-    (window as DebugWindow).valeDosCausosGame = this;
+    (window as DebugWindow).valeDosCasosGame = this;
   }
 
   override update(time: number, delta: number): void {
@@ -551,11 +551,6 @@ export class FarmScene extends Phaser.Scene {
     const currentTile = this.playerSystem.getCurrentTile();
     const assistant = this.map.assistantTile;
 
-    if (Math.abs(tile.x - assistant.x) <= 1 && Math.abs(tile.y - assistant.y) <= 1) {
-      this.askAssistant();
-      return;
-    }
-
     if (this.map.isNearHouseDoor(tile) && this.pointerSystem.isInRange(currentTile, this.map.houseDoorTile, 4)) {
       this.ui.showHouse();
       this.audio.play("click");
@@ -590,33 +585,38 @@ export class FarmScene extends Phaser.Scene {
       return;
     }
 
+    if (this.map.isPlantingTile(tile.x, tile.y)) {
+      const plot = this.crops.getPlotByTile(tile.x, tile.y);
+      if (!plot) return;
+
+      const target = { tile, plot };
+      if (pointer.rightButtonDown()) {
+        this.askAssistant(target);
+        return;
+      }
+
+      if (!this.pointerSystem.isInRange(currentTile, tile, 4)) {
+        this.ui.showMessage("Esse canteiro está longe demais. Aproxime-se para interagir.", { type: "warning" });
+        this.effects.playInvalid(tile);
+        this.audio.play("error");
+        return;
+      }
+
+      this.applyToolToPlot(target);
+      return;
+    }
+
+    if (Math.abs(tile.x - assistant.x) <= 1 && Math.abs(tile.y - assistant.y) <= 1) {
+      this.askAssistant();
+      return;
+    }
+
     const signKind = this.map.getSignKind(tile);
     if (signKind && this.pointerSystem.isInRange(currentTile, tile, 4)) {
       this.showSignTip(signKind);
       return;
     }
 
-    if (!this.map.isPlantingTile(tile.x, tile.y)) {
-      return;
-    }
-
-    const plot = this.crops.getPlotByTile(tile.x, tile.y);
-    if (!plot) return;
-
-    const target = { tile, plot };
-    if (pointer.rightButtonDown()) {
-      this.askAssistant(target);
-      return;
-    }
-
-    if (!this.pointerSystem.isInRange(currentTile, tile, 4)) {
-      this.ui.showMessage("Esse canteiro está longe demais. Aproxime-se para interagir.", { type: "warning" });
-      this.effects.playInvalid(tile);
-      this.audio.play("error");
-      return;
-    }
-
-    this.applyToolToPlot(target);
   }
 
   private renderCrops(time = 0): void {
@@ -723,7 +723,7 @@ export class FarmScene extends Phaser.Scene {
       message = signKind === "stats"
         ? "Pressione E ou Espaço para ver estatísticas das plantas."
         : "Pressione E ou Espaço para ler a placa.";
-    } else if (Math.abs(currentTile.x - this.map.assistantTile.x) <= 2 && Math.abs(currentTile.y - this.map.assistantTile.y) <= 2) {
+    } else if (!this.getTargetPlotInfo() && Math.abs(currentTile.x - this.map.assistantTile.x) <= 2 && Math.abs(currentTile.y - this.map.assistantTile.y) <= 2) {
       tile = this.map.assistantTile;
       label = "Q";
       message = "Pressione Q para pedir uma recomendação CBR.";
